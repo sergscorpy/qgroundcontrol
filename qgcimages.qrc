@@ -196,5 +196,14 @@
         <file alias="Yield.svg">src/ui/toolbar/Images/Yield.svg</file>
         <file alias="ZoomMinus.svg">src/FlightMap/Images/ZoomMinus.svg</file>
         <file alias="ZoomPlus.svg">src/FlightMap/Images/ZoomPlus.svg</file>
+        <file alias="crosshair_1.svg">src/FlightDisplay/Image/crosshair_1.svg</file>
+        <file alias="crosshair_2.svg">src/FlightDisplay/Image/crosshair_2.svg</file>
+        <file alias="But_green.png">src/FlightDisplay/Image/But_green.png</file>
+        <file alias="But_red.png">src/FlightDisplay/Image/But_red.png</file>
+        <file alias="But_red_1.png">src/FlightDisplay/Image/But_red_1.png</file>
+        <file alias="But_red_2.png">src/FlightDisplay/Image/But_red_2.png</file>
+        <file alias="NoVideoBackground.jpg">src/FlightDisplay/Image/NoVideoBackground.jpg</file>
+        <file alias="But_green_1.png">src/FlightDisplay/Image/But_green_1.png</file>
+        <file alias="But_green_2.png">src/FlightDisplay/Image/But_green_2.png</file>
     </qresource>
 </RCC>

@@ -38,10 +38,13 @@ Item {
 
     property double _thermalHeightFactor: 0.85 //-- TODO
 
-    Rectangle {
+
+    Image {
         id:             noVideo
+        source:         "/qmlimages/NoVideoBackground.jpg"
+        fillMode:       Image.PreserveAspectCrop
         anchors.fill:   parent
-        color:          Qt.rgba(0,0,0,0.75)
+        //color:          Qt.rgba(0,50,50,0.75)
         visible:        !(QGroundControl.videoManager.decoding)
         QGCLabel {
             text:               QGroundControl.settingsManager.videoSettings.streamEnabled.rawValue ? qsTr("WAITING FOR VIDEO") : qsTr("VIDEO DISABLED")
@@ -51,6 +54,20 @@ Item {
             anchors.centerIn:   parent
         }
     }
+    // Rectangle {
+    //     id:             noVideo
+    //     color: "#bf008080"
+    //     anchors.fill:   parent
+    //     //color:          Qt.rgba(0,50,50,0.75)
+    //     visible:        !(QGroundControl.videoManager.decoding)
+    //     QGCLabel {
+    //         text:               QGroundControl.settingsManager.videoSettings.streamEnabled.rawValue ? qsTr("WAITING FOR VIDEO") : qsTr("VIDEO DISABLED")
+    //         font.family:        ScreenTools.demiboldFontFamily
+    //         color:              "white"
+    //         font.pointSize:     useSmallFont ? ScreenTools.smallFontPointSize : ScreenTools.largeFontPointSize
+    //         anchors.centerIn:   parent
+    //     }
+    // }
     Rectangle {
         anchors.fill:   parent
         color:          "black"
@@ -71,6 +88,7 @@ Item {
             //-- Fit Width
             return _ar != 0.0 ? parent.width * (1 / _ar) : parent.height
         }
+
         Component {
             id: videoBackgroundComponent
             QGCVideoBackground {

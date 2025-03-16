@@ -122,9 +122,11 @@ Item {
     PhotoVideoControl {
         id:                     photoVideoControl
         anchors.margins:        _toolsMargin
-        anchors.right:          parent.right
+        x:                      hiddenX
+        //anchors.right:          parent.right
         width:                  _rightPanelWidth
         state:                  _verticalCenter ? "verticalCenter" : "topAnchor"
+        //visible: false
         states: [
             State {
                 name: "verticalCenter"
@@ -145,6 +147,59 @@ Item {
         ]
 
         property bool _verticalCenter: !QGroundControl.settingsManager.flyViewSettings.alternateInstrumentPanel.rawValue
+
+        property bool isHidden: false
+        property real hiddenX: parent.width - width * 0.1
+        property real visibleX: parent.width - width
+
+        Behavior on x {
+            NumberAnimation {
+                duration: 300
+                easing.type: Easing.InOutQuad
+            }
+        }
+        Rectangle {
+            id: toggleButton
+            height: parent.width * 0.075
+            width: parent.height
+            radius: ScreenTools.defaultFontPixelHeight / 2
+            border.color: "#ffffff"
+            border.width: 1
+            //anchors.left: parent.left
+            x: height / 2 - width / 2
+            y: width / 2 - height / 2
+            rotation: 90
+
+            Image {
+                id: crossHair1
+                anchors.centerIn: parent
+                source: photoVideoControl.isHidden ? "/qmlimages/ArrowCW.svg" : "/qmlimages/ArrowCCW.svg"
+                mipmap: true
+                width: parent.height * 0.8
+                sourceSize.width: width
+                rotation: - 90
+                fillMode: Image.PreserveAspectCrop
+            }
+
+            gradient: Gradient {
+                GradientStop {
+                    position: 0.00;
+                    color: "#00ffffff";
+                }
+                GradientStop {
+                    position: 1.00;
+                    color: "#80ffffff";
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    photoVideoControl.isHidden = !photoVideoControl.isHidden;
+                    photoVideoControl.x = photoVideoControl.isHidden ? photoVideoControl.hiddenX : photoVideoControl.visibleX;
+                }
+            }
+        }
     }
 
     TelemetryValuesBar {
@@ -240,7 +295,7 @@ Item {
         anchors.left:           parent.left
         anchors.top:            parent.top
         z:                      QGroundControl.zOrderWidgets
-        maxHeight:              parent.height - y - parentToolInsets.bottomEdgeLeftInset - _toolsMargin
+        maxHeight:              parent.height - y - parentToolInsets.bottomEdgeLeftInset - _toolsMargin - customOverlay.scrUnit * 8
         visible:                !QGroundControl.videoManager.fullScreen
 
         onDisplayPreFlightChecklist: mainWindow.showPopupDialogFromComponent(preFlightChecklistPopup)

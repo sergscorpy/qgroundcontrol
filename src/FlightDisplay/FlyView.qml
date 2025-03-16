@@ -88,11 +88,9 @@ Item {
 
     FlyViewCustomLayer {
         id:                 customOverlay
-        anchors.fill:       widgetLayer
-        z:                  _fullItemZorder + 2
-        parentToolInsets:   widgetLayer.totalToolInsets
-        mapControl:         _mapControl
-        visible:            !QGroundControl.videoManager.fullScreen
+        anchors.fill:       parent
+        z:                  _fullItemZorder + 101
+        visible:            videoControl.pipState.state === videoControl.pipState.fullState
     }
 
     GuidedActionsController {
@@ -147,6 +145,8 @@ Item {
     FlyViewVideo {
         id: videoControl
     }
+
+
 
     QGCPipOverlay {
         id:                     _pipOverlay

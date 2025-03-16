@@ -572,6 +572,7 @@ ApplicationWindow {
 
     property var    _vehicleMessageQueue:      []
     property string _vehicleMessage:     ""
+    property real autoCloseTime: 5 // Closing window after 10 seconds
 
     function showCriticalVehicleMessage(message) {
         indicatorPopup.close()
@@ -601,8 +602,17 @@ ApplicationWindow {
             border.width:   2
         }
 
+        Timer {
+            id: autoCloseTimer
+            interval: autoCloseTime * 1000  // 1 seconds = 1000 ms
+            running: false
+            repeat: false
+            onTriggered: criticalVehicleMessagePopup.close()
+        }
+
         onOpened: {
             criticalVehicleMessageText.text = mainWindow._vehicleMessage
+            autoCloseTimer.start()  // Start timer after opening
         }
 
         onClosed: {
