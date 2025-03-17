@@ -33,74 +33,91 @@ import QGroundControl.Vehicle       1.0
 
 
 // Інтерфейс для введення поправки
-Rectangle {
-    id: _root
-    width: scrUnit * 8
-    height: scrUnit * 3
-    color: "#2c2c2c"
-    radius: height/2
-    border.color: "#555555"
-    border.width: 1
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    anchors.margins: _margins
+Item {
+    id: root
+    width: _scrUnit * 8
+    height: _scrUnit * 3
 
-    property int value: correctionSpinBox.value    // Робимо значення доступним ззовні
-    property int minValue: -10                     // Додаткові властивості для гнучкості
-    property int maxValue: 10
-    property int step: 1
+    property real minValue: -10
+    property real maxValue: 10
+    property real stepValue: 0.5
+    property real value: 0.0
 
+    Rectangle {
+        id: background
+        anchors.fill: parent
+        color: "#2c2c2c"
+        radius: height / 2
+        border.color: "#555555"
+        border.width: 1
 
-    SpinBox {
-        id: correctionSpinBox
-        anchors.centerIn: parent
-        width: scrUnit * 2 - _margins
-        height: parent.height - _margins
+        Row {
+            anchors.fill: parent
+            anchors.margins: _margins
+            spacing: _margins
 
-        from: _root.minValue           // Мінімальне значення
-        to: _root.maxValue               // Максимальне значення
-        stepSize: _root.step           // Крок
+            Rectangle {
+                id: decrementButton
+                width: parent.height
+                height: parent.height
+                color: "#80454545"
+                radius: height / 2
+                border.color: "#666"
 
-        value: _root.value              // Початкове значення
+                Text {
+                    anchors.centerIn: parent
+                    text: "-"
+                    color: "white"
+                    font.pointSize: 16
+                }
 
-        // Стиль для кнопок і поля
-        contentItem: Text {
-            text: correctionSpinBox.textFromValue(correctionSpinBox.value)
-            font.pointSize: 16
-            horizontalAlignment: Text.AlignVCenter
-            verticalAlignment: Text.AlignVCenter
-            color: "black"
-        }
-
-        up.indicator: Rectangle {
-            implicitWidth: parent.height
-            implicitHeight: parent.height
-            color: "#80454545"
-            border.color: "#666"
-            visible: true
-            radius: parent.height/2
-            x: - scrUnit * 3
-            Text {
-                anchors.centerIn: parent
-                text: "+"
-                color: "white"
-                font.pixelSize: 24
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (root.value - root.stepValue >= root.minValue) {
+                            root.value = (root.value - root.stepValue).toFixed(1)
+                        }
+                    }
+                }
             }
-        }
 
-        down.indicator: Rectangle {
-            implicitWidth: parent.height
-            implicitHeight: parent.height
-            color: "#80454545"
-            border.color: "#666"
-            visible: true
-            radius: parent.height/2
-            x: scrUnit * 2
-            Text {
-                anchors.centerIn: parent
-                text: "-"
-                color: "white"
-                font.pixelSize: 24
+            Rectangle {
+                id: valueDisplay
+                width: _scrUnit * 2
+                height: parent.height
+                color: "transparent"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: root.value
+                    color: "#ffffff"
+                    font.pointSize: 16
+                }
+            }
+
+            Rectangle {
+                id: incrementButton
+                width: parent.height
+                height: parent.height
+                color: "#80454545"
+                radius: height / 2
+                border.color: "#666"
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "+"
+                    color: "white"
+                    font.pointSize: 16
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        if (root.value + root.stepValue <= root.maxValue) {
+                            root.value = (root.value + root.stepValue).toFixed(1)
+                        }
+                    }
+                }
             }
         }
     }

@@ -148,13 +148,13 @@ Item {
 
         property bool _verticalCenter: !QGroundControl.settingsManager.flyViewSettings.alternateInstrumentPanel.rawValue
 
-        property bool isHidden: false
+        property bool isHidden: true
         property real hiddenX: parent.width - width * 0.1
         property real visibleX: parent.width - width
 
         Behavior on x {
             NumberAnimation {
-                duration: 300
+                duration: 200
                 easing.type: Easing.InOutQuad
             }
         }
@@ -295,7 +295,7 @@ Item {
         anchors.left:           parent.left
         anchors.top:            parent.top
         z:                      QGroundControl.zOrderWidgets
-        maxHeight:              parent.height - y - parentToolInsets.bottomEdgeLeftInset - _toolsMargin - customOverlay.scrUnit * 8
+        maxHeight:              parent.height - y - parentToolInsets.bottomEdgeLeftInset - _toolsMargin - customOverlay._scrUnit * 8
         visible:                !QGroundControl.videoManager.fullScreen
 
         onDisplayPreFlightChecklist: mainWindow.showPopupDialogFromComponent(preFlightChecklistPopup)

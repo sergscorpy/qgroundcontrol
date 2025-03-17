@@ -161,7 +161,7 @@ ApplicationWindow {
     }
 
     function showSettingsTool() {
-        showTool(qsTr("Application Settings"), "AppSettings.qml", "/res/QGCLogoWhite")
+        showTool(qsTr("Application Settings"), "AppSettings.qml", "/res/KSLogoFullWhite_256x256")
     }
 
     //-------------------------------------------------------------------------
@@ -399,7 +399,7 @@ ApplicationWindow {
                         height:             _toolButtonHeight
                         Layout.fillWidth:   true
                         text:               qsTr("Application Settings")
-                        imageResource:      "/res/QGCLogoFull"
+                        imageResource:      "/res/KSLogoFull_512x512"
                         imageColor:         "transparent"
                         visible:            !QGroundControl.corePlugin.options.combineSettingsAndSetup
                         onClicked: {

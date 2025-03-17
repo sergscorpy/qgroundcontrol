@@ -40,7 +40,10 @@ Item {
     property var parentToolInsets               // These insets tell you what screen real estate is available for positioning the controls in your overlay
     property var totalToolInsets:   _toolInsets // These are the insets for your custom overlay additions
     property var mapControl
-    property real _margins:         ScreenTools.defaultFontPixelHeight / 2
+
+    // параметр масштабування відносно ширини екрану
+    property real _scrUnit: width / 65
+    property real _margins: _scrUnit / 4
 
 
     QGCToolInsets {
@@ -96,9 +99,6 @@ Item {
     property real fovX: 2 * Math.atan(sensorWidth / (2 * focalLengthReal)) * (180 / Math.PI)
     property real fovY: 2 * Math.atan(sensorHeight / (2 * focalLengthReal)) * (180 / Math.PI)
 
-    // параметр масштабування відносно ширини екрану
-    property real scrUnit: width / 65
-
     // Обчислення зміщення індикатора (оскільки, зображення з камери на екрані андроїда масштабується
     // по ширині екрану, а верх та низ обрізається, за точку відліку берем ширину екрану та
     // кут огляду по осі Х)
@@ -111,14 +111,14 @@ Item {
 
     // Масив назв камер
     property var cameraNames: [
-        "SiYi A2 Mini",
-        "SiYi A8 Mini"
+        "SiYi A8 Mini",
+        "SiYi A2 Mini"
     ]
 
     // Масив FOV відповідно до камер
     property var cameraFovValues: [
-        160.0,   // FOV для SiYi A2 Mini
-        81.0     // FOV для SiYi A8 Mini
+        81.0,    // FOV для SiYi A8 Mini
+        160.0    // FOV для SiYi A2 Mini
     ]
 
     // Поточний індекс вибраної камери
@@ -175,15 +175,15 @@ Item {
         checked: true
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: _pipOverlay.height + scrUnit
-        anchors.leftMargin: scrUnit
+        anchors.bottomMargin: _pipOverlay.height + _scrUnit
+        anchors.leftMargin: _scrUnit
         visible: true
 
 
         indicator: Image {
             source: toggleSwitch.checked ? "/qmlimages/But_green_1.png" : "/qmlimages/But_red_1.png"
             mipmap: true
-            sourceSize.height: scrUnit * 3
+            sourceSize.height: _scrUnit * 3
             fillMode: Image.PreserveAspectCrop
             anchors.left: parent.left
             anchors.bottom: parent.bottom
@@ -195,15 +195,15 @@ Item {
         checked: false
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: _pipOverlay.height + scrUnit * 5
-        anchors.leftMargin: scrUnit
+        anchors.bottomMargin: _pipOverlay.height + _scrUnit * 5
+        anchors.leftMargin: _scrUnit
         visible: toggleSwitch.checked
 
 
         indicator: Image {
             source: toggleSwitchAim.checked ? "/qmlimages/But_green_2.png" : "/qmlimages/But_red_2.png"
             mipmap: true
-            sourceSize.height: scrUnit * 3
+            sourceSize.height: _scrUnit * 3
             fillMode: Image.PreserveAspectCrop
             anchors.left: parent.left
             anchors.bottom: parent.bottom
@@ -246,7 +246,7 @@ Item {
     // ComboBox для вибору камери
     QGCComboBox {
         id: cameraSelector
-        width: scrUnit * 8
+        width: _scrUnit * 8
         anchors.right: parent.right
         anchors.bottom:  aimCorrX.top
         anchors.margins: _toolsMargin

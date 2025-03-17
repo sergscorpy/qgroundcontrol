@@ -55,6 +55,12 @@
         <file alias="XDeleteBlack.svg">resources/XDeleteBlack.svg</file>
         <file alias="waypoint.svg">resources/waypoint.svg</file>
         <file>resources/icons/qgroundcontrol.ico</file>
+        <file alias="KSLogoFull">resources/icons/KSLogoFull.svg</file>
+        <file alias="KSLogoFull_128x128">resources/icons/KSLogoFull_128x128.png</file>
+        <file alias="KSLogoFull_256x256">resources/icons/KSLogoFull_256x256.png</file>
+        <file alias="KSLogoFull_512x512">resources/icons/KSLogoFull_512x512.png</file>
+        <file alias="KSLogoFullWhite_256x256">resources/icons/KSLogoFullWhite_256x256.png</file>
+        <file>resources/icons/KSLogoFull.ico</file>
     </qresource>
     <qresource prefix="/res/firmware">
         <file alias="3drradio.png">resources/firmware/3drradio.png</file>
