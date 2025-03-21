@@ -102,8 +102,8 @@ Item {
     // Обчислення зміщення індикатора (оскільки, зображення з камери на екрані андроїда масштабується
     // по ширині екрану, а верх та низ обрізається, за точку відліку берем ширину екрану та
     // кут огляду по осі Х)
-    property real dx: Math.tan((_rollAngle + aimCorrX.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
-    property real dy: Math.tan((_pitchAngle + aimCorrY.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
+    property real dx: Math.tan((_rollAngle * aimCorrFovX.value + aimCorrAnglX.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
+    property real dy: Math.tan((_pitchAngle * aimCorrFovY.value + aimCorrAnglY.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
 
     // Відключення донаведення при нахилі більше максимального кута
     property real angleMax: 50 // Максимальний кут відстеження
@@ -146,7 +146,7 @@ Item {
 
         // Переміщення від центру
         x: xc + dx - width / 2
-        y: yc + dy - height / 2 - aimCorrX.value
+        y: yc + dy - height / 2
     }
 
     Shape {
@@ -210,74 +210,113 @@ Item {
 
         }
     }
+    Item {
+        id: correctContainer
+        anchors.fill: parent
+        visible: true
 
-    Text {
-        id: _fovInst
-        text: "fovInst: " + fovInst
-        font.pointSize: 16
-        font.bold: false
-        anchors.right: parent.right
-        anchors.bottom:  _dAng.top
-        anchors.margins: _toolsMargin
-        color: "white"
-    }
-    Text {
-        id: _dAng
-        text: "Roll: " + _rollAngle.toFixed(2) + "°, Pitch: " + _pitchAngle.toFixed(2) + "°"
-        font.pointSize: 16
-        font.bold: false
-        anchors.right: parent.right
-        anchors.bottom:  _dx.top
-        anchors.margins: _toolsMargin
-        color: "white"
-    }
+        Text {
+            id: _fovInst
+            text: "fovInst: " + fovInst
+            font.pointSize: 16
+            font.bold: false
+            anchors.right: parent.right
+            anchors.bottom:  _dAng.top
+            anchors.margins: _toolsMargin
+            color: "white"
+            visible: false
+        }
 
-    Text {
-        id: _dx
-        text: "dx: " + dx.toFixed(2) + "  dy: " + dy.toFixed(2)
-        font.pointSize: 16
-        font.bold: false
-        anchors.right: parent.right
-        anchors.bottom:  cameraSelector.top
-        anchors.margins: _toolsMargin
-        color: "white"
-    }
+        Text {
+            id: _dAng
+            text: "Roll: " + _rollAngle.toFixed(2) + "°, Pitch: " + _pitchAngle.toFixed(2) + "°"
+            font.pointSize: 16
+            font.bold: false
+            anchors.right: parent.right
+            anchors.bottom:  _dx.top
+            anchors.margins: _toolsMargin
+            color: "white"
+        }
 
-    // ComboBox для вибору камери
-    QGCComboBox {
-        id: cameraSelector
-        width: _scrUnit * 8
-        anchors.right: parent.right
-        anchors.bottom:  aimCorrX.top
-        anchors.margins: _toolsMargin
+        Text {
+            id: _dx
+            text: "dx: " + dx.toFixed(2) + "  dy: " + dy.toFixed(2)
+            font.pointSize: 16
+            font.bold: false
+            anchors.right: parent.right
+            anchors.bottom:  cameraSelector.top
+            anchors.margins: _toolsMargin
+            color: "white"
+        }
 
-        model: cameraNames
-        currentIndex: cameraIndex
+        // ComboBox для вибору камери
+        QGCComboBox {
+            id: cameraSelector
+            width: _scrUnit * 8
+            anchors.right: parent.right
+            anchors.bottom:  aimCorrAnglX.top
+            anchors.margins: _toolsMargin
 
-        onActivated: {
-            cameraIndex = index
-            fovInst = cameraFovValues[index]
+            model: cameraNames
+            currentIndex: cameraIndex
 
-            console.log("Selected camera:", cameraNames[index], "FOV:", fovInst)
+            onActivated: {
+                cameraIndex = index
+                fovInst = cameraFovValues[index]
+
+                console.log("Selected camera:", cameraNames[index], "FOV:", fovInst)
+            }
+        }
+
+        FlyViewSpinBox {
+            id: aimCorrAnglX
+
+            anchors.right: parent.right
+            anchors.bottom: aimCorrAnglY.top
+            anchors.margins: _toolsMargin
+
+            minValue: -10
+            maxValue: 10
+            stepValue: 0.5
+            value: 0
+        }
+
+        FlyViewSpinBox {
+            id: aimCorrAnglY
+
+            anchors.right: parent.right
+            anchors.bottom: aimCorrFovX.top
+            anchors.margins: _toolsMargin
+
+            minValue: -10
+            maxValue: 10
+            stepValue: 0.5
+            value: 0
+        }
+
+        FlyViewSpinBox {
+            id: aimCorrFovX
+
+            anchors.right: parent.right
+            anchors.bottom: aimCorrFovY.top
+            anchors.margins: _toolsMargin
+
+            minValue: 0
+            maxValue: 2
+            stepValue: 0.05
+        }
+
+        FlyViewSpinBox {
+            id: aimCorrFovY
+
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.margins: _toolsMargin
+
+            minValue: 0
+            maxValue: 2
+            stepValue: 0.05
         }
     }
-
-    FlyViewSpinBox {
-        id: aimCorrX
-
-        anchors.right: parent.right
-        anchors.bottom: aimCorrY.top
-        anchors.margins: _toolsMargin
-    }
-
-
-    FlyViewSpinBox {
-        id: aimCorrY
-
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.margins: _toolsMargin
-    }
-
 
 }

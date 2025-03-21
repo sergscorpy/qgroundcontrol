@@ -38,10 +38,10 @@ Item {
     width: _scrUnit * 8
     height: _scrUnit * 3
 
-    property real minValue: -10
-    property real maxValue: 10
-    property real stepValue: 0.5
-    property real value: 0.0
+    property real minValue: 0
+    property real maxValue: 2
+    property real stepValue: 0.05
+    property real value: 1.0
 
     Rectangle {
         id: background
@@ -75,7 +75,7 @@ Item {
                     anchors.fill: parent
                     onClicked: {
                         if (root.value - root.stepValue >= root.minValue) {
-                            root.value = (root.value - root.stepValue).toFixed(1)
+                            root.value = (root.value - root.stepValue).toFixed(2)
                         }
                     }
                 }
@@ -114,7 +114,7 @@ Item {
                     anchors.fill: parent
                     onClicked: {
                         if (root.value + root.stepValue <= root.maxValue) {
-                            root.value = (root.value + root.stepValue).toFixed(1)
+                            root.value = (root.value + root.stepValue).toFixed(2)
                         }
                     }
                 }
