@@ -180,6 +180,38 @@ Rectangle {
 
                                 property Fact _showDumbCameraControl: QGroundControl.settingsManager.flyViewSettings.showSimpleCameraControl
                             }
+                            GridLayout {
+                                columns: 2
+
+                                QGCLabel {
+                                    text: qsTr("Aim Correction Settings")
+                                    Layout.columnSpan: 2
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+
+                                // Чекбокс: Відображення елементів корекції
+                                QGCLabel {
+                                    text: qsTr("Show Correction Controls")
+                                    visible: showCorrectionControlsField.visible
+                                }
+                                FactCheckBox {
+                                    id: showCorrectionControlsField
+                                    fact: QGroundControl.settingsManager.flyViewSettings.showCorrectionControls
+                                    visible: fact.visible
+                                }
+
+                                // Поле вводу: Максимальний кут корекції
+                                QGCLabel {
+                                    text: qsTr("Max Correction Angle (degrees)")
+                                    visible: maxCorrectionAngleField.visible
+                                }
+                                FactTextField {
+                                    id: maxCorrectionAngleField
+                                    Layout.preferredWidth: _valueFieldWidth
+                                    fact: QGroundControl.settingsManager.flyViewSettings.maxCorrectionAngle
+                                    visible: fact.visible
+                                }
+                            }
 
                             GridLayout {
                                 columns: 2

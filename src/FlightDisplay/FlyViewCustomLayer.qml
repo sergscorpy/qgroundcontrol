@@ -106,10 +106,13 @@ Item {
     property real dy: Math.tan((_pitchAngle * aimCorrFovY.value + aimCorrAnglY.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
 
     // Відключення донаведення при нахилі більше максимального кута
-    property real angleMax: 50 // Максимальний кут відстеження
+    // Значення задається в налаштуваннях
+    property Fact _maxCorrectionAngle: QGroundControl.settingsManager.flyViewSettings.maxCorrectionAngle
+
+    property real angleMax: _maxCorrectionAngle.value // Максимальний кут відстеження
     property bool rollPichMax: Math.abs(_rollAngle) <= angleMax && Math.abs(_pitchAngle) <= angleMax
 
-    // Масив назв камер
+    // Масив моделей камер
     property var cameraNames: [
         "SiYi A8 Mini",
         "SiYi A2 Mini"
@@ -139,7 +142,7 @@ Item {
         id: aim
         source: "/qmlimages/crosshair_2.svg"
         mipmap: true
-        height: parent.width * 0.03
+        height: parent.width * 0.05
         sourceSize.height: height
         fillMode: Image.PreserveAspectCrop
         visible: toggleSwitch.checked && toggleSwitchAim.checked && rollPichMax
@@ -213,7 +216,7 @@ Item {
     Item {
         id: correctContainer
         anchors.fill: parent
-        visible: true
+        visible: QGroundControl.settingsManager.flyViewSettings.showCorrectionControls.value
 
         Text {
             id: _fovInst
