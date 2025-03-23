@@ -71,7 +71,7 @@
     "name":             "showCorrectionControls",
     "shortDesc":        "Show calibration and correction controls in Fly View.",
     "type":             "bool",
-    "default":          true
+    "default":          false
 },
 {
     "name":             "maxCorrectionAngle",
