@@ -79,8 +79,6 @@
     "longDesc":         "Defines the maximum angle allowed for aiming correction in degrees.",
     "type":             "double",
     "default":          15,
-    "min":              5,
-    "max":              50,
     "units":            "deg"
 }
 ]

@@ -307,6 +307,7 @@ Item {
             minValue: 0
             maxValue: 2
             stepValue: 0.05
+            value: 0.8
         }
 
         FlyViewSpinBox {
@@ -319,6 +320,7 @@ Item {
             minValue: 0
             maxValue: 2
             stepValue: 0.05
+            value: 0.8
         }
     }
 
