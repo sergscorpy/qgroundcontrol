@@ -29,6 +29,7 @@ import QGroundControl.FlightMap     1.0
 import QGroundControl.Palette       1.0
 import QGroundControl.ScreenTools   1.0
 import QGroundControl.Vehicle       1.0
+import QGroundControl.GimbalTools   1.0
 
 // To implement a custom overlay copy this code to your own control in your custom code source. Then override the
 // FlyViewCustomLayer.qml resource with your own qml. See the custom example and documentation for details.
@@ -211,6 +212,112 @@ Item {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
 
+        }
+    }
+    Item {
+        id: cameraControl
+        anchors.fill: parent
+        SdkSender {
+            id: sdkSender
+        }
+        Row {
+            anchors.top: parent.top
+            x: parent.width - _rightPanelWidth - width - _scrUnit * 3
+            spacing: _scrUnit
+            anchors.margins: _toolsMargin
+
+            Button {
+                text: " "
+                width: _scrUnit * 6
+                height: _scrUnit * 3.8
+                onClicked: sdkSender.sendRebootCamera()
+
+                property string normalIcon: "/qmlimages/RebootCamera.png"
+                property string pressedIcon: "/qmlimages/RebootCameraDown.png"
+                property string disabledIcon: "/qmlimages/RebootCameraOff.png"
+
+                background: Image {
+                    id: iconRebootCamera
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+
+                    source: !parent.enabled
+                            ? parent.disabledIcon
+                            : (parent.down ? parent.pressedIcon : parent.normalIcon)
+                }
+            }
+
+            Button {
+                text: " "
+                width: _scrUnit * 6
+                height: _scrUnit * 3.8
+                onClicked: sdkSender.sendRebootGimbal()
+
+                property string normalIcon: "/qmlimages/RebootGimbal.png"
+                property string pressedIcon: "/qmlimages/RebootGimbalDown.png"
+                property string disabledIcon: "/qmlimages/RebootGimbalOff.png"
+
+                background: Image {
+                    id: iconRebootGimbal
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+
+                    source: !parent.enabled
+                            ? parent.disabledIcon
+                            : (parent.down ? parent.pressedIcon : parent.normalIcon)
+                }
+            }
+        }
+        Item {
+            id: testGimbal
+            visible: false
+            Text {
+                anchors.top: butPichDown.bottom
+                anchors.left: parent.left
+                anchors.margins: _scrUnit
+                text: "Pitch: " + sdkSender.pitchCamAngle.toFixed(1) + "°"
+                font.pixelSize: 24
+                color: "lime"
+            }
+            Button {
+                id: butReadPosition
+                anchors.top: parent.top
+                anchors.margins: _scrUnit
+                anchors.left: butPichCenter.right
+
+                width: _scrUnit * 4
+                height: _scrUnit * 4
+                text: "?"
+                onClicked: {
+                    sdkSender.sendReadPositionCommand()
+                }
+            }
+            Button {
+                id: butPichDown
+                anchors.top: parent.top
+                anchors.margins: _scrUnit
+                anchors.left: parent.left
+
+                width: _scrUnit * 4
+                height: _scrUnit * 4
+                text: "-90"
+                onClicked: {
+                    sdkSender.sendPitchDown()
+                }
+            }
+            Button {
+                id: butPichCenter
+                anchors.top: parent.top
+                anchors.margins: _scrUnit
+                anchors.left: butPichDown.right
+
+                width: _scrUnit * 4
+                height: _scrUnit * 4
+                text: "0"
+                onClicked: {
+                    sdkSender.sendPitchCenter()
+                }
+            }
         }
     }
     Item {

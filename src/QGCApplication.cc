@@ -132,6 +132,9 @@
 
 #include "QGCMapEngine.h"
 
+#include "GimbalCommandSender.h"
+
+
 class FinishVideoInitialization : public QRunnable
 {
 public:
@@ -452,6 +455,8 @@ void QGCApplication::_initCommon()
 
     qmlRegisterType<QGCPalette>     ("QGroundControl.Palette", 1, 0, "QGCPalette");
     qmlRegisterType<QGCMapPalette>  ("QGroundControl.Palette", 1, 0, "QGCMapPalette");
+
+    qmlRegisterType<GimbalCommandSender>        ("QGroundControl.GimbalTools",              1, 0, "SdkSender");
 
     qmlRegisterUncreatableType<Vehicle>                 (kQGCVehicle,                       1, 0, "Vehicle",                    kRefOnly);
     qmlRegisterUncreatableType<MissionManager>          (kQGCVehicle,                       1, 0, "MissionManager",             kRefOnly);

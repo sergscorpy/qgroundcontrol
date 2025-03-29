@@ -205,5 +205,11 @@
         <file alias="NoVideoBackground.jpg">src/FlightDisplay/Image/NoVideoBackground.jpg</file>
         <file alias="But_green_1.png">src/FlightDisplay/Image/But_green_1.png</file>
         <file alias="But_green_2.png">src/FlightDisplay/Image/But_green_2.png</file>
+        <file alias="RebootCamera.png">src/FlightDisplay/Image/RebootCamera.png</file>
+        <file alias="RebootCameraOff.png">src/FlightDisplay/Image/RebootCameraOff.png</file>
+        <file alias="RebootGimbal.png">src/FlightDisplay/Image/RebootGimbal.png</file>
+        <file alias="RebootGimbalOff.png">src/FlightDisplay/Image/RebootGimbalOff.png</file>
+        <file alias="RebootCameraDown.png">src/FlightDisplay/Image/RebootCameraDown.png</file>
+        <file alias="RebootGimbalDown.png">src/FlightDisplay/Image/RebootGimbalDown.png</file>
     </qresource>
 </RCC>
