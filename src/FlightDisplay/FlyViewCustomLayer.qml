@@ -217,6 +217,7 @@ Item {
     Item {
         id: cameraControl
         anchors.fill: parent
+        visible: true
         SdkSender {
             id: sdkSender
         }
@@ -227,9 +228,10 @@ Item {
             anchors.margins: _toolsMargin
 
             Button {
-                text: " "
+                text: "Reboot Camera"
                 width: _scrUnit * 6
                 height: _scrUnit * 3.8
+                enabled: !sdkSender.commandInProgress
                 onClicked: sdkSender.sendRebootCamera()
 
                 property string normalIcon: "/qmlimages/RebootCamera.png"
@@ -237,20 +239,19 @@ Item {
                 property string disabledIcon: "/qmlimages/RebootCameraOff.png"
 
                 background: Image {
-                    id: iconRebootCamera
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-
-                    source: !parent.enabled
-                            ? parent.disabledIcon
-                            : (parent.down ? parent.pressedIcon : parent.normalIcon)
+                    source: !parent.enabled ? parent.disabledIcon
+                           : (parent.down ? parent.pressedIcon : parent.normalIcon)
                 }
             }
 
+
             Button {
-                text: " "
+                text: "Reboot Gimbal"
                 width: _scrUnit * 6
                 height: _scrUnit * 3.8
+                enabled: !sdkSender.commandInProgress
                 onClicked: sdkSender.sendRebootGimbal()
 
                 property string normalIcon: "/qmlimages/RebootGimbal.png"
@@ -258,19 +259,17 @@ Item {
                 property string disabledIcon: "/qmlimages/RebootGimbalOff.png"
 
                 background: Image {
-                    id: iconRebootGimbal
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-
-                    source: !parent.enabled
-                            ? parent.disabledIcon
-                            : (parent.down ? parent.pressedIcon : parent.normalIcon)
+                    source: !parent.enabled ? parent.disabledIcon
+                           : (parent.down ? parent.pressedIcon : parent.normalIcon)
                 }
             }
+
         }
         Item {
             id: testGimbal
-            visible: false
+            visible: true
             Text {
                 anchors.top: butPichDown.bottom
                 anchors.left: parent.left
