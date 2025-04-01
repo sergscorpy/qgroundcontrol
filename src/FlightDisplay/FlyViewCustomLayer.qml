@@ -228,10 +228,44 @@ Item {
             anchors.margins: _toolsMargin
 
             Button {
-                text: "Reboot Camera"
+                //text: "FPV Mode"
                 width: _scrUnit * 6
                 height: _scrUnit * 3.8
-                enabled: !sdkSender.commandInProgress
+                enabled: true
+                onClicked: sdkSender.activateAimMode()
+
+                property string normalIcon: "/qmlimages/AimOn.png"
+                property string pressedIcon: "/qmlimages/AimOff.png"
+
+                background: Image {
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    source: parent.down ? parent.pressedIcon : parent.normalIcon
+                }
+            }
+
+            Button {
+                //text: "FPV Mode"
+                width: _scrUnit * 6
+                height: _scrUnit * 3.8
+                enabled: true
+                onClicked: sdkSender.activateFPVMode()
+
+                property string normalIcon: "/qmlimages/ButFPVOn.png"
+                property string pressedIcon: "/qmlimages/ButFPVOff.png"
+
+                background: Image {
+                    anchors.fill: parent
+                    fillMode: Image.PreserveAspectFit
+                    source: parent.down ? parent.pressedIcon : parent.normalIcon
+                }
+            }
+
+            Button {
+                //text: "Reboot Camera"
+                width: _scrUnit * 6
+                height: _scrUnit * 3.8
+                enabled: !sdkSender.cameraCommandInProgress
                 onClicked: sdkSender.sendRebootCamera()
 
                 property string normalIcon: "/qmlimages/RebootCamera.png"
@@ -248,10 +282,10 @@ Item {
 
 
             Button {
-                text: "Reboot Gimbal"
+                //text: "Reboot Gimbal"
                 width: _scrUnit * 6
                 height: _scrUnit * 3.8
-                enabled: !sdkSender.commandInProgress
+                enabled: !sdkSender.gimbalCommandInProgress
                 onClicked: sdkSender.sendRebootGimbal()
 
                 property string normalIcon: "/qmlimages/RebootGimbal.png"
@@ -266,57 +300,6 @@ Item {
                 }
             }
 
-        }
-        Item {
-            id: testGimbal
-            visible: true
-            Text {
-                anchors.top: butPichDown.bottom
-                anchors.left: parent.left
-                anchors.margins: _scrUnit
-                text: "Pitch: " + sdkSender.pitchCamAngle.toFixed(1) + "°"
-                font.pixelSize: 24
-                color: "lime"
-            }
-            Button {
-                id: butReadPosition
-                anchors.top: parent.top
-                anchors.margins: _scrUnit
-                anchors.left: butPichCenter.right
-
-                width: _scrUnit * 4
-                height: _scrUnit * 4
-                text: "?"
-                onClicked: {
-                    sdkSender.sendReadPositionCommand()
-                }
-            }
-            Button {
-                id: butPichDown
-                anchors.top: parent.top
-                anchors.margins: _scrUnit
-                anchors.left: parent.left
-
-                width: _scrUnit * 4
-                height: _scrUnit * 4
-                text: "-90"
-                onClicked: {
-                    sdkSender.sendPitchDown()
-                }
-            }
-            Button {
-                id: butPichCenter
-                anchors.top: parent.top
-                anchors.margins: _scrUnit
-                anchors.left: butPichDown.right
-
-                width: _scrUnit * 4
-                height: _scrUnit * 4
-                text: "0"
-                onClicked: {
-                    sdkSender.sendPitchCenter()
-                }
-            }
         }
     }
     Item {

@@ -1,8 +1,9 @@
-// Реалізація GimbalCommandSender.cpp з асинхронною обробкою ACK та повторною відправкою
-
+// GimbalCommandSender.cpp
 #include "GimbalCommandSender.h"
 #include <QDebug>
 #include <QtEndian>
+#include <QTimer>
+
 
 GimbalCommandSender::GimbalCommandSender(QObject *parent)
     : QObject(parent),
@@ -12,40 +13,37 @@ GimbalCommandSender::GimbalCommandSender(QObject *parent)
 {
     udpSocket->bind(QHostAddress::AnyIPv4, 15000);
     connect(udpSocket, &QUdpSocket::readyRead, this, &GimbalCommandSender::onReadyRead);
-    connect(&updateTimer, &QTimer::timeout, this, &GimbalCommandSender::onUpdateTimerTimeout);
-
-    updateTimer.setInterval(1000);
-    updateTimer.start();
-    qDebug() << "[TIMER] Auto update started on creation.";
 }
 
 double GimbalCommandSender::pitchCamAngle() const {
     return _pitchCamAngle;
 }
 
-bool GimbalCommandSender::commandInProgress() const {
-    return _commandInProgress;
+bool GimbalCommandSender::gimbalCommandInProgress() const {
+    return _gimbalCommandInProgress;
 }
 
-void GimbalCommandSender::setCommandInProgress(bool inProgress) {
-    if (_commandInProgress != inProgress) {
-        _commandInProgress = inProgress;
-        emit commandInProgressChanged();
+bool GimbalCommandSender::cameraCommandInProgress() const {
+    return _cameraCommandInProgress;
+}
+
+void GimbalCommandSender::setGimbalCommandInProgress(bool inProgress) {
+    if (_gimbalCommandInProgress != inProgress) {
+        _gimbalCommandInProgress = inProgress;
+        emit gimbalCommandInProgressChanged();
+    }
+}
+
+void GimbalCommandSender::setCameraCommandInProgress(bool inProgress) {
+    if (_cameraCommandInProgress != inProgress) {
+        _cameraCommandInProgress = inProgress;
+        emit cameraCommandInProgressChanged();
     }
 }
 
 void GimbalCommandSender::sendCommand(const QByteArray& raw)
 {
-    setCommandInProgress(true);
     udpSocket->writeDatagram(raw, gimbalIp, gimbalPort);
-
-    // Повтор команди через 2 с, якщо не отримано ACK
-    QTimer::singleShot(2000, this, [this, raw]() {
-        if (_commandInProgress) {
-            qDebug() << "[RETRY] Resending command...";
-            udpSocket->writeDatagram(raw, gimbalIp, gimbalPort);
-        }
-    });
 }
 
 void GimbalCommandSender::sendPitchDown()
@@ -65,28 +63,6 @@ void GimbalCommandSender::sendPitchCenter()
     sendCommand(raw);
 }
 
-void GimbalCommandSender::sendReadPositionCommand()
-{
-    QByteArray raw = QByteArray::fromHex("556601000000000DE805");
-    udpSocket->writeDatagram(raw, gimbalIp, gimbalPort);
-}
-
-void GimbalCommandSender::startAutoUpdate()
-{
-    if (!updateTimer.isActive()) {
-        updateTimer.start();
-        qDebug() << "[TIMER] Auto update started.";
-    }
-}
-
-void GimbalCommandSender::stopAutoUpdate()
-{
-    if (updateTimer.isActive()) {
-        updateTimer.stop();
-        qDebug() << "[TIMER] Auto update stopped.";
-    }
-}
-
 void GimbalCommandSender::sendRebootCamera()
 {
     QByteArray raw = QByteArray::fromHex("55660102000000800100");
@@ -94,7 +70,9 @@ void GimbalCommandSender::sendRebootCamera()
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
     qDebug() << "[SEND] Reboot Camera:" << raw.toHex(' ').toUpper();
+    setCameraCommandInProgress(true);
     sendCommand(raw);
+    QTimer::singleShot(10000, this, [this]() { setCameraCommandInProgress(false); });
 }
 
 void GimbalCommandSender::sendRebootGimbal()
@@ -104,12 +82,31 @@ void GimbalCommandSender::sendRebootGimbal()
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
     qDebug() << "[SEND] Reboot Gimbal:" << raw.toHex(' ').toUpper();
+    setGimbalCommandInProgress(true);
+    sendCommand(raw);
+    QTimer::singleShot(10000, this, [this]() { setGimbalCommandInProgress(false); });
+}
+
+void GimbalCommandSender::activateFPVMode()
+{
+    sendPitchCenter();
+    QByteArray raw = QByteArray::fromHex("556601010000000c05");
+    quint16 crc = crc16(raw);
+    raw.append(static_cast<char>((crc >> 8) & 0xFF));
+    raw.append(static_cast<char>(crc & 0xFF));
+    qDebug() << "[SEND] Set FPV Mode:" << raw.toHex(' ').toUpper();
     sendCommand(raw);
 }
 
-void GimbalCommandSender::onUpdateTimerTimeout()
+void GimbalCommandSender::activateAimMode()
 {
-    sendReadPositionCommand();
+    sendPitchDown();
+    QByteArray raw = QByteArray::fromHex("556601010000000c04");
+    quint16 crc = crc16(raw);
+    raw.append(static_cast<char>((crc >> 8) & 0xFF));
+    raw.append(static_cast<char>(crc & 0xFF));
+    qDebug() << "[SEND] Set Follow Mode:" << raw.toHex(' ').toUpper();
+    sendCommand(raw);
 }
 
 void GimbalCommandSender::onReadyRead()
@@ -140,20 +137,6 @@ void GimbalCommandSender::onReadyRead()
 
                 qDebug() << "[GIMBAL POS - CMD 0x0D] Pitch:" << newPitch << "Yaw:" << yaw / 10.0 << "Roll:" << roll / 10.0;
             }
-
-            if (cmdId == 0x80 && datagram.size() >= 12) {
-                const uchar* data = reinterpret_cast<const uchar*>(datagram.constData() + 8);
-                quint16 camStat = qFromLittleEndian<quint16>(data);
-                quint16 gimStat = qFromLittleEndian<quint16>(data + 2);
-
-                qDebug() << "[ACK: 0x80] Camera reboot status:" << camStat << ", Gimbal status:" << gimStat;
-                setCommandInProgress(false); // знімаємо блокування
-            }
-
-            if (cmdId == 0x0E || cmdId == 0x08) {
-                // Інші підтвердження дій (опціонально)
-                setCommandInProgress(false);
-            }
         }
     }
 }
@@ -172,7 +155,8 @@ quint16 GimbalCommandSender::crc16(const QByteArray& command)
     return (crc >> 8) | (crc << 8);
 }
 
-const uint16_t GimbalCommandSender::crc16_tab[256] = {0x0,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,
+const uint16_t GimbalCommandSender::crc16_tab[256] = {
+    0x0,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,
     0x8108,0x9129,0xa14a,0xb16b,0xc18c,0xd1ad,0xe1ce,0xf1ef,
     0x1231,0x210,0x3273,0x2252,0x52b5,0x4294,0x72f7,0x62d6,
     0x9339,0x8318,0xb37b,0xa35a,0xd3bd,0xc39c,0xf3ff,0xe3de,
@@ -194,7 +178,7 @@ const uint16_t GimbalCommandSender::crc16_tab[256] = {0x0,0x1021,0x2042,0x3063,0
     0x2b1,0x1290,0x22f3,0x32d2,0x4235,0x5214,0x6277,0x7256,
     0xb5ea,0xa5cb,0x95a8,0x8589,0xf56e,0xe54f,0xd52c,0xc50d,
     0x34e2,0x24c3,0x14a0,0x481,0x7466,0x6447,0x5424,0x4405,
-    0xa7db,0xb7fa,0x8799,0x97b8,0xe75f,0xf77e,0xc71d,0xd73c,
+    0xa7db,0xb7fa,0x8799,0x97b8,0xe75f,0xe7fe,0xd79d,0xc7bc,
     0x26d3,0x36f2,0x691,0x16b0,0x6657,0x7676,0x4615,0x5634,
     0xd94c,0xc96d,0xf90e,0xe92f,0x99c8,0x89e9,0xb98a,0xa9ab,
     0x5844,0x4865,0x7806,0x6827,0x18c0,0x8e1,0x3882,0x28a3,

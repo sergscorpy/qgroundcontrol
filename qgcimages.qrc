@@ -211,5 +211,9 @@
         <file alias="RebootGimbalOff.png">src/FlightDisplay/Image/RebootGimbalOff.png</file>
         <file alias="RebootCameraDown.png">src/FlightDisplay/Image/RebootCameraDown.png</file>
         <file alias="RebootGimbalDown.png">src/FlightDisplay/Image/RebootGimbalDown.png</file>
+        <file alias="AimOff.png">src/FlightDisplay/Image/AimOff.png</file>
+        <file alias="AimOn.png">src/FlightDisplay/Image/AimOn.png</file>
+        <file alias="ButFPVOff.png">src/FlightDisplay/Image/ButFPVOff.png</file>
+        <file alias="ButFPVOn.png">src/FlightDisplay/Image/ButFPVOn.png</file>
     </qresource>
 </RCC>
