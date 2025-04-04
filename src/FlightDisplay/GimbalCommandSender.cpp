@@ -4,7 +4,6 @@
 #include <QtEndian>
 #include <QTimer>
 
-
 GimbalCommandSender::GimbalCommandSender(QObject *parent)
     : QObject(parent),
     udpSocket(new QUdpSocket(this)),
@@ -27,6 +26,10 @@ bool GimbalCommandSender::cameraCommandInProgress() const {
     return _cameraCommandInProgress;
 }
 
+int GimbalCommandSender::gimbalMode() const {
+    return _gimbalMode;
+}
+
 void GimbalCommandSender::setGimbalCommandInProgress(bool inProgress) {
     if (_gimbalCommandInProgress != inProgress) {
         _gimbalCommandInProgress = inProgress;
@@ -38,6 +41,13 @@ void GimbalCommandSender::setCameraCommandInProgress(bool inProgress) {
     if (_cameraCommandInProgress != inProgress) {
         _cameraCommandInProgress = inProgress;
         emit cameraCommandInProgressChanged();
+    }
+}
+
+void GimbalCommandSender::setGimbalMode(int mode) {
+    if (_gimbalMode != mode) {
+        _gimbalMode = mode;
+        emit gimbalModeChanged();
     }
 }
 
@@ -89,23 +99,32 @@ void GimbalCommandSender::sendRebootGimbal()
 
 void GimbalCommandSender::activateFPVMode()
 {
-    sendPitchCenter();
     QByteArray raw = QByteArray::fromHex("556601010000000c05");
     quint16 crc = crc16(raw);
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
     qDebug() << "[SEND] Set FPV Mode:" << raw.toHex(' ').toUpper();
     sendCommand(raw);
+
+    QTimer::singleShot(1000, this, &GimbalCommandSender::requestGimbalMode);
 }
 
 void GimbalCommandSender::activateAimMode()
 {
-    sendPitchDown();
     QByteArray raw = QByteArray::fromHex("556601010000000c04");
     quint16 crc = crc16(raw);
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
     qDebug() << "[SEND] Set Follow Mode:" << raw.toHex(' ').toUpper();
+    sendCommand(raw);
+
+    QTimer::singleShot(1000, this, &GimbalCommandSender::requestGimbalMode);
+}
+
+void GimbalCommandSender::requestGimbalMode()
+{
+    QByteArray raw = QByteArray::fromHex("55660100000000195D57");
+    qDebug() << "[SEND] Request Gimbal Mode:" << raw.toHex(' ').toUpper();
     sendCommand(raw);
 }
 
@@ -122,20 +141,10 @@ void GimbalCommandSender::onReadyRead()
             quint8 cmdId = quint8(datagram.at(7));
             qDebug() << "[RECV] CMD_ID:" << QString("0x%1").arg(cmdId, 2, 16, QLatin1Char('0')).toUpper();
 
-            if (cmdId == 0x0D && datagram.size() >= 21) {
-                const uchar* data = reinterpret_cast<const uchar*>(datagram.constData() + 8);
-                int16_t yaw   = qFromLittleEndian<int16_t>(data + 0);
-                int16_t pitch = qFromLittleEndian<int16_t>(data + 2);
-                int16_t roll  = qFromLittleEndian<int16_t>(data + 4);
-
-                double newPitch = pitch / 10.0;
-
-                if (!qFuzzyCompare(_pitchCamAngle, newPitch)) {
-                    _pitchCamAngle = newPitch;
-                    emit pitchCamAngleChanged();
-                }
-
-                qDebug() << "[GIMBAL POS - CMD 0x0D] Pitch:" << newPitch << "Yaw:" << yaw / 10.0 << "Roll:" << roll / 10.0;
+            if (cmdId == 0x19 && datagram.size() >= 9) {
+                quint8 mode = quint8(datagram.at(8));
+                qDebug() << "[GIMBAL MODE - CMD 0x19] Mode:" << mode;
+                setGimbalMode(mode);
             }
         }
     }

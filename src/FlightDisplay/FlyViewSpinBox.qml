@@ -53,8 +53,8 @@ Item {
 
         Row {
             anchors.fill: parent
-            anchors.margins: _margins
-            spacing: _margins
+            anchors.margins: _scrMargins
+            spacing: _scrMargins
 
             Rectangle {
                 id: decrementButton

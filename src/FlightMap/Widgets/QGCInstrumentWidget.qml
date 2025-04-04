@@ -59,5 +59,6 @@ ColumnLayout {
 
     TerrainProgress {
         Layout.fillWidth: true
+        visible: false
     }
 }

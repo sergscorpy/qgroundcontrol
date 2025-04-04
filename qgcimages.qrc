@@ -215,5 +215,7 @@
         <file alias="AimOn.png">src/FlightDisplay/Image/AimOn.png</file>
         <file alias="ButFPVOff.png">src/FlightDisplay/Image/ButFPVOff.png</file>
         <file alias="ButFPVOn.png">src/FlightDisplay/Image/ButFPVOn.png</file>
+        <file alias="AimDown.png">src/FlightDisplay/Image/AimDown.png</file>
+        <file alias="ButFPVDown.png">src/FlightDisplay/Image/ButFPVDown.png</file>
     </qresource>
 </RCC>

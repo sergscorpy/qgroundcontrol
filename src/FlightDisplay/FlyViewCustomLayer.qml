@@ -44,7 +44,9 @@ Item {
 
     // параметр масштабування відносно ширини екрану
     property real _scrUnit: width / 65
-    property real _margins: _scrUnit / 4
+    property real _scrMargins: _scrUnit / 4
+    property real _scrToolsUnit: ScreenTools.defaultFontPixelWidth
+
 
 
     QGCToolInsets {
@@ -100,11 +102,15 @@ Item {
     property real fovX: 2 * Math.atan(sensorWidth / (2 * focalLengthReal)) * (180 / Math.PI)
     property real fovY: 2 * Math.atan(sensorHeight / (2 * focalLengthReal)) * (180 / Math.PI)
 
+    // Вимкнення поправки по гіроскопу у випадку увімкнення камери в режим прицілювання (Follow Mod)
+    property real aimOn: sdkSender.gimbalMode === 1 ? 0 : 1
+
     // Обчислення зміщення індикатора (оскільки, зображення з камери на екрані андроїда масштабується
     // по ширині екрану, а верх та низ обрізається, за точку відліку берем ширину екрану та
     // кут огляду по осі Х)
-    property real dx: Math.tan((_rollAngle * aimCorrFovX.value + aimCorrAnglX.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
-    property real dy: Math.tan((_pitchAngle * aimCorrFovY.value + aimCorrAnglY.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
+    property real dx: Math.tan((aimOn * _rollAngle * aimCorrFovX.value + aimCorrAnglX.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
+    property real dy: Math.tan((aimOn * _pitchAngle * aimCorrFovY.value + aimCorrAnglY.value) * Math.PI / 180) * (width / 2) / Math.tan(fovInst / 2 * Math.PI / 180)
+
 
     // Відключення донаведення при нахилі більше максимального кута
     // Значення задається в налаштуваннях
@@ -218,90 +224,196 @@ Item {
         id: cameraControl
         anchors.fill: parent
         visible: true
+
         SdkSender {
             id: sdkSender
         }
+
+        Timer {
+            id: gimbalModeUpdateTimer
+            interval: 10000
+            repeat: true
+            running: true
+            triggeredOnStart: true
+            onTriggered: sdkSender.requestGimbalMode()
+        }
+
+        Timer {
+            id: delayedModeRequestTimer
+            interval: 1000
+            repeat: false
+            running: false
+            onTriggered: sdkSender.requestGimbalMode()
+        }
+
         Row {
             anchors.top: parent.top
-            x: parent.width - _rightPanelWidth - width - _scrUnit * 3
-            spacing: _scrUnit
+            anchors.left: parent.left
+            spacing: _toolsMargin
             anchors.margins: _toolsMargin
 
-            Button {
-                //text: "FPV Mode"
-                width: _scrUnit * 6
-                height: _scrUnit * 3.8
-                enabled: true
-                onClicked: sdkSender.activateAimMode()
+            Rectangle {
+                id: modControlPanel
+                width:      _scrToolsUnit * 11 + _scrMargins * 2
+                height: collapsed ? labelCameraMod.implicitHeight + _scrMargins * 2
+                                      : _scrToolsUnit * 9 + _scrMargins * 3
+                color:      "#80000000"
+                radius:     _scrToolsUnit
 
-                property string normalIcon: "/qmlimages/AimOn.png"
-                property string pressedIcon: "/qmlimages/AimOff.png"
+                property bool collapsed: false
 
-                background: Image {
-                    anchors.fill: parent
-                    fillMode: Image.PreserveAspectFit
-                    source: parent.down ? parent.pressedIcon : parent.normalIcon
+                Column {
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: _scrMargins
+                    anchors.margins: _scrMargins
+
+                    Label {
+                        id: labelCameraMod
+                        text: "Приціл"
+                        font.pointSize: 10
+                        font.bold: true
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.margins: _scrMargins
+                        color: "white"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: modControlPanel.collapsed = !modControlPanel.collapsed
+                            cursorShape: Qt.PointingHandCursor
+                        }
+                    }
+
+                    Button {
+                        visible: !modControlPanel.collapsed
+                        width: _scrToolsUnit * 11
+                        height: _scrToolsUnit * 3
+                        onClicked: {
+                            sdkSender.activateAimMode()
+                            delayedModeRequestTimer.restart()
+                        }
+
+                        text: "Скид"
+                        font.pointSize: 10
+                        font.bold: false
+
+                        background: Rectangle {
+                            anchors.fill: parent
+                            radius: _scrToolsUnit
+                            color: sdkSender.gimbalMode === 1
+                                   ? (parent.down ? "#228B22" : "#32CD32")   // Follow Mode — темно/світло зелений
+                                   : (parent.down ? "#DDDDDD" : "#FFFFFF")   // інші — стандартні кольори
+                            border.color: "#666666"
+                            border.width: 1
+                        }
+                    }
+
+                    Button {
+                        visible: !modControlPanel.collapsed
+                        width: _scrToolsUnit * 11
+                        height: _scrToolsUnit * 3
+                        onClicked: {
+                            sdkSender.activateFPVMode()
+                            delayedModeRequestTimer.restart()
+                        }
+
+                        text: "Політ"
+                        font.pointSize: 10
+                        font.bold: false
+
+                        background: Rectangle {
+                            anchors.fill: parent
+                            radius: _scrToolsUnit
+                            color: sdkSender.gimbalMode === 2
+                                   ? (parent.down ? "#228B22" : "#32CD32")   // FPV Mode — темно/світло зелений
+                                   : (parent.down ? "#DDDDDD" : "#FFFFFF")   // інші — стандартні кольори
+                            border.color: "#666666"
+                            border.width: 1
+                        }
+                    }
                 }
             }
 
-            Button {
-                //text: "FPV Mode"
-                width: _scrUnit * 6
-                height: _scrUnit * 3.8
-                enabled: true
-                onClicked: sdkSender.activateFPVMode()
+            Rectangle {
+                id: rebootControlPanel
+                width:      _scrToolsUnit * 11 + _scrMargins * 2
+                height: collapsed ? labelCamera.implicitHeight + _scrMargins * 2
+                                      : _scrToolsUnit * 9 + _scrMargins * 3
+                color:      "#80000000"
+                radius:     _scrToolsUnit
 
-                property string normalIcon: "/qmlimages/ButFPVOn.png"
-                property string pressedIcon: "/qmlimages/ButFPVOff.png"
+                property bool collapsed: true
 
-                background: Image {
-                    anchors.fill: parent
-                    fillMode: Image.PreserveAspectFit
-                    source: parent.down ? parent.pressedIcon : parent.normalIcon
+                Column {
+                    anchors.bottom: parent.bottom
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: _scrMargins
+                    anchors.margins: _scrMargins
+
+                    Label {
+                        id: labelCamera
+                        text: "Перезаг."
+                        font.pointSize: 10
+                        font.bold: true
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.margins: _scrMargins
+                        color: "white"
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: rebootControlPanel.collapsed = !rebootControlPanel.collapsed
+                            cursorShape: Qt.PointingHandCursor
+                        }
+                    }
+
+                    Button {
+                        visible: !rebootControlPanel.collapsed
+                        width: _scrToolsUnit * 11
+                        height: _scrToolsUnit * 3
+                        enabled: !sdkSender.cameraCommandInProgress
+                        onClicked: sdkSender.sendRebootCamera()
+
+                        text: "Камера"
+                        font.pointSize: 10
+                        font.bold: false
+
+                        background: Rectangle {
+                            anchors.fill: parent
+                            radius: _scrToolsUnit
+                            color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
+                                    : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
+                                                    : "#FFFFFF"           // нормальна — біла
+                            border.color: "#666666"
+                            border.width: 1
+                        }
+                    }
+
+                    Button {
+                        visible: !rebootControlPanel.collapsed
+                        width: _scrToolsUnit * 11
+                        height: _scrToolsUnit * 3
+                        enabled: !sdkSender.gimbalCommandInProgress
+                        onClicked: sdkSender.sendRebootGimbal()
+
+                        text: "Гімбал"
+                        font.pointSize: 10
+                        font.bold: false
+
+                        background: Rectangle {
+                            anchors.fill: parent
+                            radius: _scrToolsUnit
+                            color:  !parent.enabled     ? "#AAAAAA"           // неактивна — сіра
+                                    : parent.down       ? "#DDDDDD"           // натиснута — світлосіра
+                                                        : "#FFFFFF"           // нормальна — біла
+                            border.color: "#666666"
+                            border.width: 1
+                        }
+                    }
                 }
             }
-
-            Button {
-                //text: "Reboot Camera"
-                width: _scrUnit * 6
-                height: _scrUnit * 3.8
-                enabled: !sdkSender.cameraCommandInProgress
-                onClicked: sdkSender.sendRebootCamera()
-
-                property string normalIcon: "/qmlimages/RebootCamera.png"
-                property string pressedIcon: "/qmlimages/RebootCameraDown.png"
-                property string disabledIcon: "/qmlimages/RebootCameraOff.png"
-
-                background: Image {
-                    anchors.fill: parent
-                    fillMode: Image.PreserveAspectFit
-                    source: !parent.enabled ? parent.disabledIcon
-                           : (parent.down ? parent.pressedIcon : parent.normalIcon)
-                }
-            }
-
-
-            Button {
-                //text: "Reboot Gimbal"
-                width: _scrUnit * 6
-                height: _scrUnit * 3.8
-                enabled: !sdkSender.gimbalCommandInProgress
-                onClicked: sdkSender.sendRebootGimbal()
-
-                property string normalIcon: "/qmlimages/RebootGimbal.png"
-                property string pressedIcon: "/qmlimages/RebootGimbalDown.png"
-                property string disabledIcon: "/qmlimages/RebootGimbalOff.png"
-
-                background: Image {
-                    anchors.fill: parent
-                    fillMode: Image.PreserveAspectFit
-                    source: !parent.enabled ? parent.disabledIcon
-                           : (parent.down ? parent.pressedIcon : parent.normalIcon)
-                }
-            }
-
         }
     }
+
     Item {
         id: correctContainer
         anchors.fill: parent
@@ -328,6 +440,7 @@ Item {
             anchors.bottom:  _dx.top
             anchors.margins: _toolsMargin
             color: "white"
+            visible: false
         }
 
         Text {
@@ -339,6 +452,7 @@ Item {
             anchors.bottom:  cameraSelector.top
             anchors.margins: _toolsMargin
             color: "white"
+            visible: false
         }
 
         // ComboBox для вибору камери
@@ -348,6 +462,7 @@ Item {
             anchors.right: parent.right
             anchors.bottom:  aimCorrAnglX.top
             anchors.margins: _toolsMargin
+            visible: false
 
             model: cameraNames
             currentIndex: cameraIndex
@@ -359,57 +474,49 @@ Item {
                 console.log("Selected camera:", cameraNames[index], "FOV:", fovInst)
             }
         }
-
-        FlyViewSpinBox {
-            id: aimCorrAnglX
-
-            anchors.right: parent.right
-            anchors.bottom: aimCorrAnglY.top
-            anchors.margins: _toolsMargin
-
-            minValue: -10
-            maxValue: 10
-            stepValue: 0.5
-            value: 0
-        }
-
-        FlyViewSpinBox {
-            id: aimCorrAnglY
-
-            anchors.right: parent.right
-            anchors.bottom: aimCorrFovX.top
-            anchors.margins: _toolsMargin
-
-            minValue: -10
-            maxValue: 10
-            stepValue: 0.5
-            value: 0
-        }
-
-        FlyViewSpinBox {
-            id: aimCorrFovX
-
-            anchors.right: parent.right
-            anchors.bottom: aimCorrFovY.top
-            anchors.margins: _toolsMargin
-
-            minValue: 0
-            maxValue: 2
-            stepValue: 0.05
-            value: 0.8
-        }
-
-        FlyViewSpinBox {
-            id: aimCorrFovY
-
+        Column {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.margins: _toolsMargin
+            spacing: _toolsMargin
 
-            minValue: 0
-            maxValue: 2
-            stepValue: 0.05
-            value: 0.8
+            FlyViewSpinBox {
+                id: aimCorrAnglX
+
+                minValue: -10
+                maxValue: 10
+                stepValue: 0.5
+                value: 0
+            }
+
+            FlyViewSpinBox {
+                id: aimCorrAnglY
+
+                minValue: -10
+                maxValue: 10
+                stepValue: 0.5
+                value: 0
+            }
+
+            FlyViewSpinBox {
+                id: aimCorrFovX
+
+                minValue: 0
+                maxValue: 2
+                stepValue: 0.05
+                value: 0.8
+                visible: false
+            }
+
+            FlyViewSpinBox {
+                id: aimCorrFovY
+
+                minValue: 0
+                maxValue: 2
+                stepValue: 0.05
+                value: 0.8
+                visible: false
+            }
         }
     }
 

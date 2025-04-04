@@ -126,7 +126,7 @@ Item {
         //anchors.right:          parent.right
         width:                  _rightPanelWidth
         state:                  _verticalCenter ? "verticalCenter" : "topAnchor"
-        visible: false
+        visible:                false
         states: [
             State {
                 name: "verticalCenter"
@@ -296,7 +296,7 @@ Item {
         anchors.top:            parent.top
         z:                      QGroundControl.zOrderWidgets
         maxHeight:              parent.height - y - parentToolInsets.bottomEdgeLeftInset - _toolsMargin - customOverlay._scrUnit * 8
-        visible:                !QGroundControl.videoManager.fullScreen
+        visible:                false //!QGroundControl.videoManager.fullScreen
 
         onDisplayPreFlightChecklist: mainWindow.showPopupDialogFromComponent(preFlightChecklistPopup)
 
