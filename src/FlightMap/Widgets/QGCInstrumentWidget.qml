@@ -57,8 +57,7 @@ ColumnLayout {
         }
     }
 
-    TerrainProgress {
-        Layout.fillWidth: true
-        visible: false
-    }
+    // TerrainProgress {
+    //     Layout.fillWidth: true
+    // }
 }

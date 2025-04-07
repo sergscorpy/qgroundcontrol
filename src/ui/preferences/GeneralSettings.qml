@@ -302,6 +302,28 @@ Rectangle {
                                     visible:                rtspUrlLabel.visible
                                 }
 
+                                Item {
+                                    width: 1;
+                                    height: 1
+                                    visible: !_videoAutoStreamConfig && _isRTSP && _videoSettings.rtspUrl.visible
+                                }
+                                FactCheckBox {
+                                    text:       qsTr("Using secondary video stream")
+                                    fact:       _videoSettings.usingSecondaryStream
+                                    visible:    !_videoAutoStreamConfig && _isRTSP && _videoSettings.rtspUrl.visible
+                                }
+
+                                QGCLabel {
+                                    id:         secondaryUrlLabel
+                                    text:       qsTr("Secondary RTSP URL")
+                                    visible:    !_videoAutoStreamConfig && _isRTSP && _videoSettings.rtspUrl.visible && _videoSettings.usingSecondaryStream.value
+                                }
+                                FactTextField {
+                                    Layout.preferredWidth:  _comboFieldWidth
+                                    fact:                   _videoSettings.rtspSecondaryUrl
+                                    visible:                secondaryUrlLabel.visible
+                                }
+
                                 QGCLabel {
                                     id:         tcpUrlLabel
                                     text:       qsTr("TCP URL")
@@ -377,6 +399,13 @@ Rectangle {
                                     text:       qsTr("Auto-Delete Saved Recordings")
                                     fact:       _videoSettings.enableStorageLimit
                                     visible:    _showSaveVideoSettings && fact.visible
+                                }
+
+                                Item { width: 1; height: 1}
+                                FactCheckBox {
+                                    text:       qsTr("Using HDMI stream")
+                                    fact:       _videoSettings.usingHDMIstream
+                                    visible:    !_videoAutoStreamConfig && _isGst && fact.visible
                                 }
                             }
                         }

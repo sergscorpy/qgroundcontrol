@@ -112,6 +112,9 @@ DECLARE_SETTINGSFACT(VideoSettings, rtspTimeout)
 DECLARE_SETTINGSFACT(VideoSettings, streamEnabled)
 DECLARE_SETTINGSFACT(VideoSettings, disableWhenDisarmed)
 DECLARE_SETTINGSFACT(VideoSettings, lowLatencyMode)
+DECLARE_SETTINGSFACT(VideoSettings, usingHDMIstream)
+DECLARE_SETTINGSFACT(VideoSettings, usingSecondaryStream)
+DECLARE_SETTINGSFACT(VideoSettings, rtspSecondaryUrl)
 
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, videoSource)
 {

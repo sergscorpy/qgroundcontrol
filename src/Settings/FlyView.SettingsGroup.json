@@ -61,17 +61,17 @@
 },
 {
     "name":             "maxGoToLocationDistance",
-    "shortDesc": "Maximum distance allowed for Go To Location.",
+    "shortDesc":        "Maximum distance allowed for Go To Location.",
     "type":             "double",
     "units":            "m",
-    "default":     1000,
+    "default":          1000,
     "min":              1
 },
 {
     "name":             "showCorrectionControls",
     "shortDesc":        "Show calibration and correction controls in Fly View.",
     "type":             "bool",
-    "default":          false
+    "default":          true
 },
 {
     "name":             "maxCorrectionAngle",

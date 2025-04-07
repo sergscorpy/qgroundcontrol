@@ -130,6 +130,27 @@
     "default":     true
 },
 {
+    "name":         "usingHDMIstream",
+    "shortDesc":    "Using HDMI stream",
+    "longDesc":     "Can be used if the camera supports HDMI connection",
+    "type":         "bool",
+    "default":      false
+},
+{
+    "name":         "usingSecondaryStream",
+    "shortDesc":    "Using Secondary stream",
+    "longDesc":     "Can be used if the camera supports Secondary connection",
+    "type":         "bool",
+    "default":      false
+},
+{
+    "name":             "rtspSecondaryUrl",
+    "shortDesc":        "Video Secondary RTSP Url",
+    "longDesc":         "Example: rtsp://192.168.42.1:554/live",
+    "type":             "string",
+    "default":          " "
+},
+{
     "name":             "forceVideoDecoder",
     "shortDesc":        "Force specific category of video decode",
     "longDesc":         "Force the change of prioritization between video decode methods, allowing the user to force some video hardware decode plugins if necessary.",

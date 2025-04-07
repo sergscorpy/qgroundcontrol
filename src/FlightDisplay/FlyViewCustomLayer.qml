@@ -42,6 +42,8 @@ Item {
     property var totalToolInsets:   _toolInsets // These are the insets for your custom overlay additions
     property var mapControl
 
+    property var  _videoSettings: QGroundControl.settingsManager.videoSettings
+
     // параметр масштабування відносно ширини екрану
     property real _scrUnit: width / 65
     property real _scrMargins: _scrUnit / 4
@@ -247,6 +249,7 @@ Item {
         }
 
         Row {
+            id: butVideoSource
             anchors.top: parent.top
             anchors.left: parent.left
             spacing: _toolsMargin
@@ -256,7 +259,7 @@ Item {
                 id: modControlPanel
                 width:      _scrToolsUnit * 11 + _scrMargins * 2
                 height: collapsed ? labelCameraMod.implicitHeight + _scrMargins * 2
-                                      : _scrToolsUnit * 9 + _scrMargins * 3
+                                  : _scrToolsUnit * 9 + _scrMargins * 3
                 color:      "#80000000"
                 radius:     _scrToolsUnit
 
@@ -338,7 +341,7 @@ Item {
                 id: rebootControlPanel
                 width:      _scrToolsUnit * 11 + _scrMargins * 2
                 height: collapsed ? labelCamera.implicitHeight + _scrMargins * 2
-                                      : _scrToolsUnit * 9 + _scrMargins * 3
+                                  : _scrToolsUnit * 9 + _scrMargins * 3
                 color:      "#80000000"
                 radius:     _scrToolsUnit
 
@@ -381,8 +384,8 @@ Item {
                             anchors.fill: parent
                             radius: _scrToolsUnit
                             color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
-                                    : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
-                                                    : "#FFFFFF"           // нормальна — біла
+                                                    : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
+                                                                    : "#FFFFFF"           // нормальна — біла
                             border.color: "#666666"
                             border.width: 1
                         }
@@ -403,12 +406,71 @@ Item {
                             anchors.fill: parent
                             radius: _scrToolsUnit
                             color:  !parent.enabled     ? "#AAAAAA"           // неактивна — сіра
-                                    : parent.down       ? "#DDDDDD"           // натиснута — світлосіра
-                                                        : "#FFFFFF"           // нормальна — біла
+                                                        : parent.down       ? "#DDDDDD"           // натиснута — світлосіра
+                                                                            : "#FFFFFF"           // нормальна — біла
                             border.color: "#666666"
                             border.width: 1
                         }
                     }
+                }
+            }
+        }
+
+        Column {
+            anchors.top: butVideoSource.bottom
+            anchors.left: parent.left
+            spacing: _toolsMargin
+            anchors.margins: _toolsMargin
+
+            Button {
+                visible: QGroundControl.settingsManager.videoSettings.usingHDMIstream.value
+                width: _scrToolsUnit * 11 + _scrMargins * 2
+                height: _scrToolsUnit * 3
+                enabled: true
+                // onClicked:
+
+                text: "HDMI"
+                font.pointSize: 10
+                font.bold: false
+
+                background: Rectangle {
+                    anchors.fill: parent
+                    radius: _scrToolsUnit
+                    color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
+                                            : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
+                                                            : "#FFFFFF"           // нормальна — біла
+                    border.color: "#666666"
+                    border.width: 1
+                }
+            }
+
+            Button {
+                visible: QGroundControl.settingsManager.videoSettings.usingSecondaryStream.value
+                width: _scrToolsUnit * 11 + _scrMargins * 2
+                height: _scrToolsUnit * 3
+                enabled: true
+
+                onClicked: {
+                    let currentUrl = _videoSettings.rtspUrl.value
+                    let secondaryUrl = _videoSettings.rtspSecondaryUrl.value
+
+                    // Перемикаємо потоки місцями
+                    _videoSettings.rtspUrl.value = secondaryUrl
+                    _videoSettings.rtspSecondaryUrl.value = currentUrl
+                }
+
+                text: "Video-2"
+                font.pointSize: 10
+                font.bold: false
+
+                background: Rectangle {
+                    anchors.fill: parent
+                    radius: _scrToolsUnit
+                    color:  !parent.enabled     ? "#AAAAAA"           // неактивна — сіра
+                                                : parent.down       ? "#DDDDDD"           // натиснута — світлосіра
+                                                                    : "#FFFFFF"           // нормальна — біла
+                    border.color: "#666666"
+                    border.width: 1
                 }
             }
         }
