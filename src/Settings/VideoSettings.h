@@ -76,6 +76,13 @@ public:
     static const char* videoSource3DRSolo;
     static const char* videoSourceParrotDiscovery;
     static const char* videoSourceYuneecMantisG;
+    // Моя кнопка
+    static const char* videoSourceHerelinkAirUnit;
+    static const char* videoSourceHerelinkHotspot;
+    static const char* videoSourceIPCamera;
+    static const char* videoSourceHerelinkHotspotDynamic;
+
+
 
 signals:
     void streamConfiguredChanged    (bool configured);

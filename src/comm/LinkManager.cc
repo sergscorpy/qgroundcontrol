@@ -43,6 +43,8 @@
 #include <qmdnsengine/server.h>
 #include <qmdnsengine/service.h>
 
+#include "UDPLink.h" // Моя кнопка
+
 QGC_LOGGING_CATEGORY(LinkManagerLog, "LinkManagerLog")
 QGC_LOGGING_CATEGORY(LinkManagerVerboseLog, "LinkManagerVerboseLog")
 
@@ -56,6 +58,19 @@ const int LinkManager::_autoconnectConnectDelayMSecs =  6000;
 #else
 const int LinkManager::_autoconnectConnectDelayMSecs =  1000;
 #endif
+
+QString LinkManager::getLastUDPAddress()
+{
+    for (SharedLinkInterfacePtr& linkPtr : links()) {
+        UDPLink* udpLink = qobject_cast<UDPLink*>(linkPtr.get());
+        if (udpLink) {
+            return udpLink->lastSenderAddress();  // потрібен getter
+        }
+    }
+    return QString();
+}
+
+
 
 LinkManager::LinkManager(QGCApplication* app, QGCToolbox* toolbox)
     : QGCTool(app, toolbox)

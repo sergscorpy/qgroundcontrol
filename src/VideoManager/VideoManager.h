@@ -69,6 +69,8 @@ public:
     virtual bool        hasThermal          ();
     virtual QString     imageFile           ();
 
+
+
     bool streaming(void) {
         return _streaming;
     }
@@ -173,6 +175,7 @@ protected:
     QString                 _videoSourceID;
     bool                    _fullScreen             = false;
     Vehicle*                _activeVehicle          = nullptr;
+    QString _getHerelinkHotspotIP(); // Моя кнопка
 };
 
 #endif

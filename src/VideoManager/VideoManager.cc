@@ -8,6 +8,7 @@
  ****************************************************************************/
 
 
+#include "LinkManager.h"
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QSettings>
@@ -27,6 +28,7 @@
 #include "MultiVehicleManager.h"
 #include "Settings/SettingsManager.h"
 #include "Vehicle.h"
+#include "UDPLink.h"
 #include "QGCCameraManager.h"
 
 #if defined(QGC_GST_STREAMING)
@@ -536,6 +538,10 @@ VideoManager::isGStreamer()
             videoSource == VideoSettings::videoSource3DRSolo ||
             videoSource == VideoSettings::videoSourceParrotDiscovery ||
             videoSource == VideoSettings::videoSourceYuneecMantisG ||
+            videoSource == VideoSettings::videoSourceHerelinkAirUnit ||
+            videoSource == VideoSettings::videoSourceHerelinkHotspot ||
+            videoSource == VideoSettings::videoSourceIPCamera ||
+            videoSource == VideoSettings::videoSourceHerelinkHotspotDynamic ||
             autoStreamConfigured();
 #else
     return false;
@@ -704,6 +710,25 @@ VideoManager::_updateSettings(unsigned id)
         settingsChanged |= _updateVideoUri(0, QStringLiteral("udp://0.0.0.0:8888"));
     else if (source == VideoSettings::videoSourceYuneecMantisG)
         settingsChanged |= _updateVideoUri(0, QStringLiteral("rtsp://192.168.42.1:554/live"));
+    // Моя кнопка
+    else if (source == VideoSettings::videoSourceHerelinkAirUnit)
+        settingsChanged |= _updateVideoUri(0, QStringLiteral("rtsp://192.168.0.10:8554/H264Video"));
+    else if (source == VideoSettings::videoSourceHerelinkHotspot)
+        settingsChanged |= _updateVideoUri(0, QStringLiteral("rtsp://192.168.43.1:8554/fpv_stream"));
+    else if (source == VideoSettings::videoSourceIPCamera)
+        settingsChanged |= _updateVideoUri(0, QStringLiteral("rtsp://192.168.144.25:8554/main.264"));
+
+    else if (source == VideoSettings::videoSourceHerelinkHotspotDynamic) {
+        QString dynamicIp = qgcApp()->toolbox()->linkManager()->getLastUDPAddress();
+        if (!dynamicIp.isEmpty()) {
+            settingsChanged |= _updateVideoUri(0, QStringLiteral("rtsp://%1:8554/fpv_stream").arg(dynamicIp));
+        } else {
+            qCDebug(VideoManagerLog) << "Dynamic Herelink IP not available";
+        }
+    }
+
+
+
 
     return settingsChanged;
 }
@@ -856,7 +881,19 @@ VideoManager::_communicationLostChanged(bool connectionLost)
     }
 }
 
+//---------------------------------------------------------------------------------------- Моя кнопка
+QString VideoManager::_getHerelinkHotspotIP()
+{
+    QString ip = qgcApp()->toolbox()->linkManager()->getLastUDPAddress();  // <- правильний виклик
+    if (!ip.isEmpty()) {
+        qCDebug(VideoManagerLog) << "Detected Herelink Hotspot IP from LinkManager:" << ip;
+    }
+    return ip;
+}
+
+
 //----------------------------------------------------------------------------------------
+
 void
 VideoManager::_aspectRatioChanged()
 {

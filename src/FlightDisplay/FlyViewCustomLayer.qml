@@ -144,7 +144,7 @@ Item {
         height: parent.width * 0.33
         sourceSize.height: height
         fillMode: Image.PreserveAspectCrop
-        visible: toggleSwitch.checked
+        visible: true //toggleSwitch.checked
     }
 
     Image {
@@ -209,7 +209,7 @@ Item {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: _pipOverlay.height + _scrUnit * 5
         anchors.leftMargin: _scrUnit
-        visible: toggleSwitch.checked
+        visible: true //toggleSwitch.checked
 
 
         indicator: Image {
@@ -222,6 +222,7 @@ Item {
 
         }
     }
+
     Item {
         id: cameraControl
         anchors.fill: parent
@@ -255,11 +256,11 @@ Item {
             spacing: _toolsMargin
             anchors.margins: _toolsMargin
 
-            Rectangle {
+            Rectangle { // Блок кнопок керування модами камери
                 id: modControlPanel
-                width:      _scrToolsUnit * 11 + _scrMargins * 2
+                width:      _scrToolsUnit * 13 + _scrMargins * 2
                 height: collapsed ? labelCameraMod.implicitHeight + _scrMargins * 2
-                                  : _scrToolsUnit * 9 + _scrMargins * 3
+                                  : _scrToolsUnit * 13 + _scrMargins * 3
                 color:      "#80000000"
                 radius:     _scrToolsUnit
 
@@ -289,8 +290,8 @@ Item {
 
                     Button {
                         visible: !modControlPanel.collapsed
-                        width: _scrToolsUnit * 11
-                        height: _scrToolsUnit * 3
+                        width: _scrToolsUnit * 13
+                        height: _scrToolsUnit * 5
                         onClicked: {
                             sdkSender.activateAimMode()
                             delayedModeRequestTimer.restart()
@@ -313,8 +314,8 @@ Item {
 
                     Button {
                         visible: !modControlPanel.collapsed
-                        width: _scrToolsUnit * 11
-                        height: _scrToolsUnit * 3
+                        width: _scrToolsUnit * 13
+                        height: _scrToolsUnit * 5
                         onClicked: {
                             sdkSender.activateFPVMode()
                             delayedModeRequestTimer.restart()
@@ -337,11 +338,11 @@ Item {
                 }
             }
 
-            Rectangle {
+            Rectangle { // Кнопки перезавантаження камери
                 id: rebootControlPanel
-                width:      _scrToolsUnit * 11 + _scrMargins * 2
+                width:      _scrToolsUnit * 13 + _scrMargins * 2
                 height: collapsed ? labelCamera.implicitHeight + _scrMargins * 2
-                                  : _scrToolsUnit * 9 + _scrMargins * 3
+                                  : _scrToolsUnit * 13 + _scrMargins * 3
                 color:      "#80000000"
                 radius:     _scrToolsUnit
 
@@ -371,8 +372,8 @@ Item {
 
                     Button {
                         visible: !rebootControlPanel.collapsed
-                        width: _scrToolsUnit * 11
-                        height: _scrToolsUnit * 3
+                        width: _scrToolsUnit * 13
+                        height: _scrToolsUnit * 5
                         enabled: !sdkSender.cameraCommandInProgress
                         onClicked: sdkSender.sendRebootCamera()
 
@@ -393,8 +394,8 @@ Item {
 
                     Button {
                         visible: !rebootControlPanel.collapsed
-                        width: _scrToolsUnit * 11
-                        height: _scrToolsUnit * 3
+                        width: _scrToolsUnit * 13
+                        height: _scrToolsUnit * 5
                         enabled: !sdkSender.gimbalCommandInProgress
                         onClicked: sdkSender.sendRebootGimbal()
 
@@ -416,20 +417,20 @@ Item {
             }
         }
 
-        Column {
+        Column { // Блок кнопок перемикання відео
             anchors.top: butVideoSource.bottom
             anchors.left: parent.left
             spacing: _toolsMargin
             anchors.margins: _toolsMargin
 
-            Button {
+            Button { // Кнопка "HDMI PC"
                 visible: QGroundControl.settingsManager.videoSettings.usingHDMIstream.value
-                width: _scrToolsUnit * 11 + _scrMargins * 2
-                height: _scrToolsUnit * 3
+                width: _scrToolsUnit * 13 + _scrMargins * 2
+                height: _scrToolsUnit * 5
                 enabled: true
                 // onClicked:
 
-                text: "HDMI"
+                text: "HDMI PC"
                 font.pointSize: 10
                 font.bold: false
 
@@ -444,10 +445,54 @@ Item {
                 }
             }
 
-            Button {
+            Button { // Кнопка "HDMI Android"
+                visible: QGroundControl.settingsManager.videoSettings.usingHDMIstream.value
+                width: _scrToolsUnit * 13 + _scrMargins * 2
+                height: _scrToolsUnit * 5
+                enabled: true
+                // onClicked:
+
+                text: "HDMI And"
+                font.pointSize: 10
+                font.bold: false
+
+                background: Rectangle {
+                    anchors.fill: parent
+                    radius: _scrToolsUnit
+                    color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
+                                            : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
+                                                            : "#FFFFFF"           // нормальна — біла
+                    border.color: "#666666"
+                    border.width: 1
+                }
+            }
+
+            Button { // Кнопка "IP Video" Android
+                visible: QGroundControl.settingsManager.videoSettings.usingHDMIstream.value
+                width: _scrToolsUnit * 13 + _scrMargins * 2
+                height: _scrToolsUnit * 5
+                enabled: true
+                // onClicked:
+
+                text: "IP Video"
+                font.pointSize: 10
+                font.bold: false
+
+                background: Rectangle {
+                    anchors.fill: parent
+                    radius: _scrToolsUnit
+                    color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
+                                            : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
+                                                            : "#FFFFFF"           // нормальна — біла
+                    border.color: "#666666"
+                    border.width: 1
+                }
+            }
+
+            Button { // Кнопка "Video-2"
                 visible: QGroundControl.settingsManager.videoSettings.usingSecondaryStream.value
-                width: _scrToolsUnit * 11 + _scrMargins * 2
-                height: _scrToolsUnit * 3
+                width: _scrToolsUnit * 13 + _scrMargins * 2
+                height: _scrToolsUnit * 5
                 enabled: true
 
                 onClicked: {
@@ -476,7 +521,7 @@ Item {
         }
     }
 
-    Item {
+    Item { // Блок прицілу
         id: correctContainer
         anchors.fill: parent
         visible: QGroundControl.settingsManager.flyViewSettings.showCorrectionControls.value

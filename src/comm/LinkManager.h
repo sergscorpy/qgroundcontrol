@@ -82,6 +82,10 @@ public:
     QStringList                     serialPortStrings   (void);
     QStringList                     serialPorts         (void);
 
+
+    QString                         getLastUDPAddress(); // Моя кнопка
+
+
     void loadLinkConfigurationList();
     void saveLinkConfigurationList();
 

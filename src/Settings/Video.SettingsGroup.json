@@ -63,14 +63,14 @@
     "type":             "uint32",
     "enumStrings":      "Fit Width,Fit Height,Stretch",
     "enumValues":       "0,1,2",
-    "default":     1
+    "default":     0
 },
 {
     "name":             "showRecControl",
     "shortDesc": "Show Video Record Control",
     "longDesc":  "Show recording control in the UI.",
     "type":             "bool",
-    "default":     true
+    "default":     false
 },
 {
     "name":             "recordingFormat",
