@@ -67,14 +67,14 @@ LinuxBuild {
 } else:AndroidBuild {
     #- gstreamer assumed to be installed in $$PWD/../../gstreamer-1.0-android-universal-1.18.5/***
     contains(ANDROID_TARGET_ARCH, armeabi-v7a) {
-        GST_ROOT = C:\gstreamer\1.0\gstreamer-1.0-android-universal-1.18.6\armv7
+        GST_ROOT = $$(GSTREAMER_ANDROID_ROOT)/armv7
     } else:contains(ANDROID_TARGET_ARCH, arm64-v8a) {
-        GST_ROOT = C:\gstreamer\1.0\gstreamer-1.0-android-universal-1.18.6\arm64
+        GST_ROOT = $$(GSTREAMER_ANDROID_ROOT)/arm64
     } else:contains(ANDROID_TARGET_ARCH, x86_64) {
-        GST_ROOT = C:\gstreamer\1.0\gstreamer-1.0-android-universal-1.18.6\x86_64
+        GST_ROOT = $$(GSTREAMER_ANDROID_ROOT)/x86_64
     } else {
         message(Unknown ANDROID_TARGET_ARCH $$ANDROID_TARGET_ARCH)
-        GST_ROOT = C:\gstreamer\1.0\gstreamer-1.0-android-universal-1.18.6\x86
+        GST_ROOT = $$(GSTREAMER_ANDROID_ROOT)/x86
     }
     exists($$GST_ROOT) {
         QMAKE_CXXFLAGS  += -pthread
