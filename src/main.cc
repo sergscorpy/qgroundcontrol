@@ -17,6 +17,7 @@
 #include <QUdpSocket>
 #include <QtPlugin>
 #include <QStringListModel>
+#include <MyJoystickHandler.h>
 
 #include "QGC.h"
 #include "QGCApplication.h"
@@ -418,6 +419,8 @@ int main(int argc, char *argv[])
         if (!app->_initForNormalAppBoot()) {
             return -1;
         }
+        MyJoystickHandler* joystickHandler = new MyJoystickHandler(); // TODO
+        Q_UNUSED(joystickHandler); // TODO
         exitCode = app->exec();
     }
 
