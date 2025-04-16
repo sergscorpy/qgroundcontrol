@@ -74,7 +74,7 @@ Item {
     MouseArea {
         id: flyViewVideoMouseArea
         anchors.fill:       parent
-        enabled:            pipState.state === pipState.fullState
+        enabled:            false //pipState.state === pipState.fullState
         hoverEnabled: true
         onDoubleClicked:    QGroundControl.videoManager.fullScreen = !QGroundControl.videoManager.fullScreen
     }

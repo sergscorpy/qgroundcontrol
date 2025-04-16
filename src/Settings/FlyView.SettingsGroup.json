@@ -71,14 +71,14 @@
     "name":             "showCorrectionControls",
     "shortDesc":        "Show calibration and correction controls in Fly View.",
     "type":             "bool",
-    "default":          true
+    "default":          false
 },
 {
     "name":             "maxCorrectionAngle",
     "shortDesc":        "Maximum correction angle",
     "longDesc":         "Defines the maximum angle allowed for aiming correction in degrees.",
     "type":             "double",
-    "default":          15,
+    "default":          20,
     "units":            "deg"
 }
 ]

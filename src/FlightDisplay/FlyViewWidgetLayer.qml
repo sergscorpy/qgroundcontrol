@@ -126,7 +126,7 @@ Item {
         //anchors.right:          parent.right
         width:                  _rightPanelWidth
         state:                  _verticalCenter ? "verticalCenter" : "topAnchor"
-        visible:                true
+        visible:                false
         states: [
             State {
                 name: "verticalCenter"

@@ -89,7 +89,7 @@ Item {
     FlyViewCustomLayer {
         id:                 customOverlay
         anchors.fill:       parent
-        z:                  _fullItemZorder + 101
+        z:                  _pipItemZorder + 101
         visible:            videoControl.pipState.state === videoControl.pipState.fullState
     }
 

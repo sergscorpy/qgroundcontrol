@@ -473,7 +473,8 @@ void LinkManager::_addZeroConfAutoConnectLink(void)
         }
 
         if(service.type().startsWith("_mavlink._udp")) {
-            static QString udpName("ZeroConf UDP");
+            //static QString udpName("ZeroConf UDP");
+            static QString udpName(" ");
             if (checkIfConnectionLinkExist(LinkConfiguration::TypeUdp, udpName)) {
                 return;
             }
@@ -488,7 +489,8 @@ void LinkManager::_addZeroConfAutoConnectLink(void)
         }
 
         if(service.type().startsWith("_mavlink._tcp")) {
-            static QString tcpName("ZeroConf TCP");
+            //static QString tcpName("ZeroConf TCP");
+            static QString tcpName(" ");
             if (checkIfConnectionLinkExist(LinkConfiguration::TypeTcp, tcpName)) {
                 return;
             }

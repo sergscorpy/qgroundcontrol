@@ -43,12 +43,17 @@ Item {
     property var mapControl
 
     property var  _videoSettings: QGroundControl.settingsManager.videoSettings
+    property bool _isRTSP:        _videoSettings.videoSource.rawValue === _videoSettings.rtspVideoSource
+    property bool isAndroid:      Qt.platform.os === "android"
+    property bool isWindows:      Qt.platform.os === "windows"
 
     // параметр масштабування відносно ширини екрану
     property real _scrUnit: width / 65
-    property real _scrMargins: _scrUnit / 4
+    property real _btnHeight: _scrToolsUnit * 5
+    property real _btnWidth: _scrToolsUnit * 13
+    property real _btnRadius: _scrToolsUnit * 2
+    property real _scrMargins: _scrToolsUnit / 2
     property real _scrToolsUnit: ScreenTools.defaultFontPixelWidth
-
 
 
     QGCToolInsets {
@@ -154,7 +159,7 @@ Item {
         height: parent.width * 0.05
         sourceSize.height: height
         fillMode: Image.PreserveAspectCrop
-        visible: toggleSwitch.checked && toggleSwitchAim.checked && rollPichMax
+        visible: toggleSwitchAim.isChecked && rollPichMax
 
         // Переміщення від центру
         x: xc + dx - width / 2
@@ -166,7 +171,7 @@ Item {
         width: parent.width
         height: parent.height
         anchors.fill: parent
-        visible: toggleSwitch.checked && toggleSwitchAim.checked && rollPichMax
+        visible: toggleSwitchAim.isChecked && rollPichMax
 
         ShapePath {
             strokeWidth: 3
@@ -179,47 +184,6 @@ Item {
                 x: aim.x + aim.width / 2
                 y: aim.y + aim.height / 2
             }
-        }
-    }
-
-    Switch {
-        id: toggleSwitch
-        checked: true
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: _pipOverlay.height + _scrUnit
-        anchors.leftMargin: _scrUnit
-        visible: true
-
-
-        indicator: Image {
-            source: toggleSwitch.checked ? "/qmlimages/But_green_1.png" : "/qmlimages/But_red_1.png"
-            mipmap: true
-            sourceSize.height: _scrUnit * 3
-            fillMode: Image.PreserveAspectCrop
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-
-        }
-    }
-    Switch {
-        id: toggleSwitchAim
-        checked: false
-        anchors.left: parent.left
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: _pipOverlay.height + _scrUnit * 5
-        anchors.leftMargin: _scrUnit
-        visible: true //toggleSwitch.checked
-
-
-        indicator: Image {
-            source: toggleSwitchAim.checked ? "/qmlimages/But_green_2.png" : "/qmlimages/But_red_2.png"
-            mipmap: true
-            sourceSize.height: _scrUnit * 3
-            fillMode: Image.PreserveAspectCrop
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-
         }
     }
 
@@ -249,279 +213,364 @@ Item {
             onTriggered: sdkSender.requestGimbalMode()
         }
 
-        Row {
-            id: butVideoSource
-            anchors.top: parent.top
-            anchors.left: parent.left
-            spacing: _toolsMargin
-            anchors.margins: _toolsMargin
-
-            Rectangle { // Блок кнопок керування модами камери
-                id: modControlPanel
-                width:      _scrToolsUnit * 13 + _scrMargins * 2
-                height: collapsed ? labelCameraMod.implicitHeight + _scrMargins * 2
-                                  : _scrToolsUnit * 13 + _scrMargins * 3
-                color:      "#80000000"
-                radius:     _scrToolsUnit
-
-                property bool collapsed: false
-
-                Column {
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: _scrMargins
-                    anchors.margins: _scrMargins
-
-                    Label {
-                        id: labelCameraMod
-                        text: "Приціл"
-                        font.pointSize: 10
-                        font.bold: true
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.margins: _scrMargins
-                        color: "white"
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: modControlPanel.collapsed = !modControlPanel.collapsed
-                            cursorShape: Qt.PointingHandCursor
-                        }
-                    }
-
-                    Button {
-                        visible: !modControlPanel.collapsed
-                        width: _scrToolsUnit * 13
-                        height: _scrToolsUnit * 5
-                        onClicked: {
-                            sdkSender.activateAimMode()
-                            delayedModeRequestTimer.restart()
-                        }
-
-                        text: "Скид"
-                        font.pointSize: 10
-                        font.bold: false
-
-                        background: Rectangle {
-                            anchors.fill: parent
-                            radius: _scrToolsUnit
-                            color: sdkSender.gimbalMode === 1
-                                   ? (parent.down ? "#228B22" : "#32CD32")   // Follow Mode — темно/світло зелений
-                                   : (parent.down ? "#DDDDDD" : "#FFFFFF")   // інші — стандартні кольори
-                            border.color: "#666666"
-                            border.width: 1
-                        }
-                    }
-
-                    Button {
-                        visible: !modControlPanel.collapsed
-                        width: _scrToolsUnit * 13
-                        height: _scrToolsUnit * 5
-                        onClicked: {
-                            sdkSender.activateFPVMode()
-                            delayedModeRequestTimer.restart()
-                        }
-
-                        text: "Політ"
-                        font.pointSize: 10
-                        font.bold: false
-
-                        background: Rectangle {
-                            anchors.fill: parent
-                            radius: _scrToolsUnit
-                            color: sdkSender.gimbalMode === 2
-                                   ? (parent.down ? "#228B22" : "#32CD32")   // FPV Mode — темно/світло зелений
-                                   : (parent.down ? "#DDDDDD" : "#FFFFFF")   // інші — стандартні кольори
-                            border.color: "#666666"
-                            border.width: 1
-                        }
-                    }
-                }
-            }
-
-            Rectangle { // Кнопки перезавантаження камери
-                id: rebootControlPanel
-                width:      _scrToolsUnit * 13 + _scrMargins * 2
-                height: collapsed ? labelCamera.implicitHeight + _scrMargins * 2
-                                  : _scrToolsUnit * 13 + _scrMargins * 3
-                color:      "#80000000"
-                radius:     _scrToolsUnit
-
-                property bool collapsed: true
-
-                Column {
-                    anchors.bottom: parent.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    spacing: _scrMargins
-                    anchors.margins: _scrMargins
-
-                    Label {
-                        id: labelCamera
-                        text: "Перезаг."
-                        font.pointSize: 10
-                        font.bold: true
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.margins: _scrMargins
-                        color: "white"
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: rebootControlPanel.collapsed = !rebootControlPanel.collapsed
-                            cursorShape: Qt.PointingHandCursor
-                        }
-                    }
-
-                    Button {
-                        visible: !rebootControlPanel.collapsed
-                        width: _scrToolsUnit * 13
-                        height: _scrToolsUnit * 5
-                        enabled: !sdkSender.cameraCommandInProgress
-                        onClicked: sdkSender.sendRebootCamera()
-
-                        text: "Камера"
-                        font.pointSize: 10
-                        font.bold: false
-
-                        background: Rectangle {
-                            anchors.fill: parent
-                            radius: _scrToolsUnit
-                            color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
-                                                    : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
-                                                                    : "#FFFFFF"           // нормальна — біла
-                            border.color: "#666666"
-                            border.width: 1
-                        }
-                    }
-
-                    Button {
-                        visible: !rebootControlPanel.collapsed
-                        width: _scrToolsUnit * 13
-                        height: _scrToolsUnit * 5
-                        enabled: !sdkSender.gimbalCommandInProgress
-                        onClicked: sdkSender.sendRebootGimbal()
-
-                        text: "Гімбал"
-                        font.pointSize: 10
-                        font.bold: false
-
-                        background: Rectangle {
-                            anchors.fill: parent
-                            radius: _scrToolsUnit
-                            color:  !parent.enabled     ? "#AAAAAA"           // неактивна — сіра
-                                                        : parent.down       ? "#DDDDDD"           // натиснута — світлосіра
-                                                                            : "#FFFFFF"           // нормальна — біла
-                            border.color: "#666666"
-                            border.width: 1
-                        }
-                    }
-                }
-            }
+        Timer {
+            id: disableTimer
+            interval: 1500    // 5 секунд
+            repeat: false
+            running: false
+            // onTriggered: {
+            //     console.log("Кнопку знову активовано")
+            // }
         }
 
-        Column { // Блок кнопок перемикання відео
-            anchors.top: butVideoSource.bottom
-            anchors.left: parent.left
-            spacing: _toolsMargin
-            anchors.margins: _toolsMargin
+        Rectangle { // тепер загальний блок у вигляді шторки з ліва
+            id:                 leftControlPanel
+            anchors.top:        parent.top
+            anchors.left:       parent.left
+            anchors.leftMargin: _toolsMargin
+            width:              _btnWidth + _scrMargins * 2
+            height: collapsed
+                    ? _btnHeight * 3 + _scrMargins * 4
+                    : crosshairRoot.height - _scrMargins // - _pipOverlay.height
+            color:      "#80000000"
+            //radius:     _scrToolsUnit
 
-            Button { // Кнопка "HDMI PC"
-                visible: QGroundControl.settingsManager.videoSettings.usingHDMIstream.value
-                width: _scrToolsUnit * 13 + _scrMargins * 2
-                height: _scrToolsUnit * 5
-                enabled: true
-                // onClicked:
+            property bool collapsed: true
 
-                text: "HDMI PC"
-                font.pointSize: 10
-                font.bold: false
+            Image {
+                id:             hideBar
+                source:         leftControlPanel.collapsed ? "/qmlimages/barShow.svg" : "/qmlimages/barHide.svg"
+                mipmap:         true
+                fillMode:       Image.PreserveAspectFit
+                anchors.left:   leftControlPanel.right
+                anchors.top:    leftControlPanel.top
+                visible:        true
+                height:         _btnHeight + _scrMargins * 2 // _scrToolsUnit * 8
+                width:          _btnHeight + _scrMargins * 2 // _scrToolsUnit * 8
+                sourceSize.height:  height
 
-                background: Rectangle {
-                    anchors.fill: parent
-                    radius: _scrToolsUnit
-                    color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
-                                            : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
-                                                            : "#FFFFFF"           // нормальна — біла
-                    border.color: "#666666"
-                    border.width: 1
+            }
+            Item {
+                id: mouseHideBar
+                anchors.left:   leftControlPanel.right
+                anchors.top:    leftControlPanel.top
+                height:         _scrToolsUnit * 10
+                width:          _scrToolsUnit * 10
+                MouseArea {
+                    anchors.fill:   parent
+                    onClicked:      leftControlPanel.collapsed = !leftControlPanel.collapsed
+                    cursorShape: Qt.PointingHandCursor
                 }
             }
 
-            Button { // Кнопка "HDMI Android"
-                visible: QGroundControl.settingsManager.videoSettings.usingHDMIstream.value
-                width: _scrToolsUnit * 13 + _scrMargins * 2
-                height: _scrToolsUnit * 5
-                enabled: true
-                // onClicked:
+            Column { // Column "Приціл"
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: _scrMargins
+                anchors.margins: _scrMargins
 
-                text: "HDMI And"
-                font.pointSize: 10
-                font.bold: false
-
-                background: Rectangle {
-                    anchors.fill: parent
-                    radius: _scrToolsUnit
-                    color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
-                                            : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
-                                                            : "#FFFFFF"           // нормальна — біла
-                    border.color: "#666666"
-                    border.width: 1
-                }
-            }
-
-            Button { // Кнопка "IP Video" Android
-                visible: QGroundControl.settingsManager.videoSettings.usingHDMIstream.value
-                width: _scrToolsUnit * 13 + _scrMargins * 2
-                height: _scrToolsUnit * 5
-                enabled: true
-                // onClicked:
-
-                text: "IP Video"
-                font.pointSize: 10
-                font.bold: false
-
-                background: Rectangle {
-                    anchors.fill: parent
-                    radius: _scrToolsUnit
-                    color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
-                                            : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
-                                                            : "#FFFFFF"           // нормальна — біла
-                    border.color: "#666666"
-                    border.width: 1
-                }
-            }
-
-            Button { // Кнопка "Video-2"
-                visible: QGroundControl.settingsManager.videoSettings.usingSecondaryStream.value
-                width: _scrToolsUnit * 13 + _scrMargins * 2
-                height: _scrToolsUnit * 5
-                enabled: true
-
-                onClicked: {
-                    let currentUrl = _videoSettings.rtspUrl.value
-                    let secondaryUrl = _videoSettings.rtspSecondaryUrl.value
-
-                    // Перемикаємо потоки місцями
-                    _videoSettings.rtspUrl.value = secondaryUrl
-                    _videoSettings.rtspSecondaryUrl.value = currentUrl
+                Label { // Label "Приціл"
+                    id: labelCameraMod
+                    visible: !leftControlPanel.collapsed
+                    text: "Режим прицілу"
+                    font.pointSize: 10
+                    font.bold: true
+                    width: _btnWidth
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.margins: _scrMargins
+                    color: "white"
                 }
 
-                text: "Video-2"
-                font.pointSize: 10
-                font.bold: false
+                Button { // Button "Скид"
+                    id: dropp
+                    enabled: !disableTimer.running
+                    visible: true //isAndroid // !leftControlPanel.collapsed
+                    width: _btnWidth
+                    height: _btnHeight
+                    onClicked: {
+                        sdkSender.activateAimMode()
+                        delayedModeRequestTimer.restart()
+                        disableTimer.start()
+                    }
 
-                background: Rectangle {
-                    anchors.fill: parent
-                    radius: _scrToolsUnit
-                    color:  !parent.enabled     ? "#AAAAAA"           // неактивна — сіра
-                                                : parent.down       ? "#DDDDDD"           // натиснута — світлосіра
-                                                                    : "#FFFFFF"           // нормальна — біла
-                    border.color: "#666666"
-                    border.width: 1
+                    text: "Скид"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: sdkSender.gimbalMode === 1
+                               ? (parent.down ? "#228B22" : "#32CD32")   // Follow Mode — темно/світло зелений
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")   // інші — стандартні кольори
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "Політ"
+                    enabled: !disableTimer.running
+                    visible: true //isAndroid //!leftControlPanel.collapsed
+                    width: _btnWidth
+                    height: _btnHeight
+                    onClicked: {
+                        sdkSender.activateFPVMode()
+                        delayedModeRequestTimer.restart()
+                        disableTimer.start()
+                    }
+
+                    text: "Політ"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: sdkSender.gimbalMode === 2
+                               ? (parent.down ? "#228B22" : "#32CD32")   // FPV Mode — темно/світло зелений
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")   // інші — стандартні кольори
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "Баліст."
+                    id: toggleSwitchAim
+                    visible: true // !leftControlPanel.collapsed
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: false
+                    onClicked: {
+                        isChecked = !isChecked
+                    }
+
+                    text: "Баліст."
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#228B22" : "#32CD32")
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Label { // Label "Video"
+                    id: labelReboot
+                    visible: !leftControlPanel.collapsed
+                    text: "Reboot"
+                    font.pointSize: 10
+                    font.bold: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.margins: _scrMargins
+                    color: "white"
+                }
+
+                Button { // Button "Камера"
+                    visible: !leftControlPanel.collapsed
+                    width: _btnWidth
+                    height: _btnHeight
+                    enabled: !sdkSender.cameraCommandInProgress
+                    onClicked: sdkSender.sendRebootCamera()
+
+                    text: "Камера"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
+                                                : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
+                                                                : "#FFFFFF"           // нормальна — біла
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "Гімбал"
+                    visible: !leftControlPanel.collapsed
+                    width: _btnWidth
+                    height: _btnHeight
+                    enabled: !sdkSender.gimbalCommandInProgress
+                    onClicked: sdkSender.sendRebootGimbal()
+
+                    text: "Гімбал"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color:  !parent.enabled     ? "#AAAAAA"           // неактивна — сіра
+                                                    : parent.down       ? "#DDDDDD"           // натиснута — світлосіра
+                                                                        : "#FFFFFF"           // нормальна — біла
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Label { // Label "Video"
+                    id: labelVideo
+                    visible: !leftControlPanel.collapsed
+                    text: "Video"
+                    font.pointSize: 10
+                    font.bold: true
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.margins: _scrMargins
+                    color: "white"
+                }
+
+                Button { // Button "HDMI PC"
+                    visible: !leftControlPanel.collapsed && !isAndroid
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Hotspot"
+                    enabled: true
+                        onClicked: _videoSettings.videoSource.rawValue = "Herelink Hotspot"
+
+                    text: "HotSpot"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#228B22" : "#32CD32")
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "HDMI PC Router"
+                    visible: !leftControlPanel.collapsed && !isAndroid
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Hotspot (Dynamic)"
+                    enabled: true
+                    onClicked: {
+                        _videoSettings.videoSource.rawValue = "Herelink Hotspot (Dynamic)"
+                    }
+
+                    text: "Router"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#228B22" : "#32CD32")
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "HDMI Android"
+                    visible: !leftControlPanel.collapsed && isAndroid
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit"
+                    enabled: true
+                        onClicked: _videoSettings.videoSource.rawValue = "Herelink Air Unit"
+
+                    text: "HDMI"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#228B22" : "#32CD32")
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "IP Video" Android
+                    visible: !leftControlPanel.collapsed && isAndroid
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "IP Camera Stream"
+                    enabled: true
+                        onClicked: _videoSettings.videoSource.rawValue = "IP Camera Stream"
+
+                    text: "- IP -"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#228B22" : "#32CD32")
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "RTSP-1"
+                    visible: !leftControlPanel.collapsed && _videoSettings.usingButtonRTSP1.value
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP Video Stream"
+                    enabled: true
+                    onClicked: _videoSettings.videoSource.rawValue = "RTSP Video Stream"
+
+                    text: "RTSP-1"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#228B22" : "#32CD32")
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "RTSP-2"
+                    visible: !leftControlPanel.collapsed && _videoSettings.usingButtonRTSP2.value
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP2 Video Stream"
+                    enabled: true
+                    onClicked: _videoSettings.videoSource.rawValue = "RTSP2 Video Stream"
+
+                    text: "RTSP-2"
+                    font.pointSize: 10
+                    font.bold: false
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#228B22" : "#32CD32")
+                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
                 }
             }
         }
     }
 
-    Item { // Блок прицілу
+    Item { // Блок налаштувань прицілу
         id: correctContainer
         anchors.fill: parent
         visible: QGroundControl.settingsManager.flyViewSettings.showCorrectionControls.value

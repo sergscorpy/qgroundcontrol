@@ -53,6 +53,7 @@ Rectangle {
     property bool   _isUDP264:                  _isGst && _videoSource === _videoSettings.udp264VideoSource
     property bool   _isUDP265:                  _isGst && _videoSource === _videoSettings.udp265VideoSource
     property bool   _isRTSP:                    _isGst && _videoSource === _videoSettings.rtspVideoSource
+    property bool   _isRTSP2:                   _isGst && _videoSource === _videoSettings.rtspVideoSource2
     property bool   _isTCP:                     _isGst && _videoSource === _videoSettings.tcpVideoSource
     property bool   _isMPEGTS:                  _isGst && _videoSource === _videoSettings.mpegtsVideoSource
     property bool   _videoAutoStreamConfig:     QGroundControl.videoManager.autoStreamConfigured
@@ -302,26 +303,15 @@ Rectangle {
                                     visible:                rtspUrlLabel.visible
                                 }
 
-                                Item {
-                                    width: 1;
-                                    height: 1
-                                    visible: !_videoAutoStreamConfig && _isRTSP && _videoSettings.rtspUrl.visible
-                                }
-                                FactCheckBox {
-                                    text:       qsTr("Using secondary video stream")
-                                    fact:       _videoSettings.usingSecondaryStream
-                                    visible:    !_videoAutoStreamConfig && _isRTSP && _videoSettings.rtspUrl.visible
-                                }
-
                                 QGCLabel {
-                                    id:         secondaryUrlLabel
-                                    text:       qsTr("Secondary RTSP URL")
-                                    visible:    !_videoAutoStreamConfig && _isRTSP && _videoSettings.rtspUrl.visible && _videoSettings.usingSecondaryStream.value
+                                    id:         rtspUrl2Label
+                                    text:       qsTr("RTSP2 URL")
+                                    visible:    !_videoAutoStreamConfig && _isRTSP2 && _videoSettings.rtspUrl2.visible
                                 }
                                 FactTextField {
                                     Layout.preferredWidth:  _comboFieldWidth
-                                    fact:                   _videoSettings.rtspSecondaryUrl
-                                    visible:                secondaryUrlLabel.visible
+                                    fact:                   _videoSettings.rtspUrl2
+                                    visible:                rtspUrl2Label.visible
                                 }
 
                                 QGCLabel {
@@ -401,10 +391,24 @@ Rectangle {
                                     visible:    _showSaveVideoSettings && fact.visible
                                 }
 
+                                // Item { width: 1; height: 1}
+                                // FactCheckBox {
+                                //     text:       qsTr("Using HDMI stream")
+                                //     fact:       _videoSettings.usingHDMIstream
+                                //     visible:    !_videoAutoStreamConfig && _isGst && fact.visible
+                                // }
+
                                 Item { width: 1; height: 1}
                                 FactCheckBox {
-                                    text:       qsTr("Using HDMI stream")
-                                    fact:       _videoSettings.usingHDMIstream
+                                    text:       qsTr("Using Button RTSP-1")
+                                    fact:       _videoSettings.usingButtonRTSP1
+                                    visible:    !_videoAutoStreamConfig && _isGst && fact.visible
+                                }
+
+                                Item { width: 1; height: 1}
+                                FactCheckBox {
+                                    text:       qsTr("Using Button RTSP-2")
+                                    fact:       _videoSettings.usingButtonRTSP2
                                     visible:    !_videoAutoStreamConfig && _isGst && fact.visible
                                 }
                             }

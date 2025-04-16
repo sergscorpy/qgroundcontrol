@@ -22,6 +22,7 @@
 const char* VideoSettings::videoSourceNoVideo           = QT_TRANSLATE_NOOP("VideoSettings", "No Video Available");
 const char* VideoSettings::videoDisabled                = QT_TRANSLATE_NOOP("VideoSettings", "Video Stream Disabled");
 const char* VideoSettings::videoSourceRTSP              = QT_TRANSLATE_NOOP("VideoSettings", "RTSP Video Stream");
+const char* VideoSettings::videoSourceRTSP2             = QT_TRANSLATE_NOOP("VideoSettings", "RTSP2 Video Stream");
 const char* VideoSettings::videoSourceUDPH264           = QT_TRANSLATE_NOOP("VideoSettings", "UDP h.264 Video Stream");
 const char* VideoSettings::videoSourceUDPH265           = QT_TRANSLATE_NOOP("VideoSettings", "UDP h.265 Video Stream");
 const char* VideoSettings::videoSourceTCP               = QT_TRANSLATE_NOOP("VideoSettings", "TCP-MPEG2 Video Stream");
@@ -45,6 +46,7 @@ DECLARE_SETTINGGROUP(Video, "Video")
     QVariantList videoSourceList;
 #ifdef QGC_GST_STREAMING
     videoSourceList.append(videoSourceRTSP);
+    videoSourceList.append(videoSourceRTSP2);
     // Моя кнопка
 #ifdef Q_OS_ANDROID
     videoSourceList.append(videoSourceHerelinkAirUnit);
@@ -128,8 +130,9 @@ DECLARE_SETTINGSFACT(VideoSettings, streamEnabled)
 DECLARE_SETTINGSFACT(VideoSettings, disableWhenDisarmed)
 DECLARE_SETTINGSFACT(VideoSettings, lowLatencyMode)
 DECLARE_SETTINGSFACT(VideoSettings, usingHDMIstream)
-DECLARE_SETTINGSFACT(VideoSettings, usingSecondaryStream)
 DECLARE_SETTINGSFACT(VideoSettings, rtspSecondaryUrl)
+DECLARE_SETTINGSFACT(VideoSettings, usingButtonRTSP1)
+DECLARE_SETTINGSFACT(VideoSettings, usingButtonRTSP2)
 
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, videoSource)
 {
@@ -187,6 +190,14 @@ DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, rtspUrl)
     }
     return _rtspUrlFact;
 }
+DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, rtspUrl2)
+{
+    if (!_rtspUrl2Fact) {
+        _rtspUrl2Fact = _createSettingsFact(rtspUrl2Name);
+        connect(_rtspUrl2Fact, &Fact::valueChanged, this, &VideoSettings::_configChanged);
+    }
+    return _rtspUrl2Fact;
+}
 
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, tcpUrl)
 {
@@ -221,6 +232,11 @@ bool VideoSettings::streamConfigured(void)
     if(vSource == videoSourceRTSP) {
         qCDebug(VideoManagerLog) << "Testing configuration for RTSP Stream:" << rtspUrl()->rawValue().toString();
         return !rtspUrl()->rawValue().toString().isEmpty();
+    }
+    //-- If RTSP2, check for URL
+    if(vSource == videoSourceRTSP2) {
+        qCDebug(VideoManagerLog) << "Testing configuration for RTSP2 Stream:" << rtspUrl2()->rawValue().toString();
+        return !rtspUrl2()->rawValue().toString().isEmpty();
     }
     //-- If TCP, check for URL
     if(vSource == videoSourceTCP) {

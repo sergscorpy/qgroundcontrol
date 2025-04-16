@@ -24,6 +24,7 @@ public:
     DEFINE_SETTINGFACT(udpPort)
     DEFINE_SETTINGFACT(tcpUrl)
     DEFINE_SETTINGFACT(rtspUrl)
+    DEFINE_SETTINGFACT(rtspUrl2)
     DEFINE_SETTINGFACT(aspectRatio)
     DEFINE_SETTINGFACT(videoFit)
     DEFINE_SETTINGFACT(gridLines)
@@ -36,8 +37,9 @@ public:
     DEFINE_SETTINGFACT(disableWhenDisarmed)
     DEFINE_SETTINGFACT(lowLatencyMode)
     DEFINE_SETTINGFACT(usingHDMIstream)
-    DEFINE_SETTINGFACT(usingSecondaryStream)
     DEFINE_SETTINGFACT(rtspSecondaryUrl)
+    DEFINE_SETTINGFACT(usingButtonRTSP1)
+    DEFINE_SETTINGFACT(usingButtonRTSP2)
     DEFINE_SETTINGFACT(forceVideoDecoder)
 
     enum VideoDecoderOptions {
@@ -52,6 +54,7 @@ public:
 
     Q_PROPERTY(bool     streamConfigured        READ streamConfigured       NOTIFY streamConfiguredChanged)
     Q_PROPERTY(QString  rtspVideoSource         READ rtspVideoSource        CONSTANT)
+    Q_PROPERTY(QString  rtspVideoSource2        READ rtspVideoSource2       CONSTANT)
     Q_PROPERTY(QString  udp264VideoSource       READ udp264VideoSource      CONSTANT)
     Q_PROPERTY(QString  udp265VideoSource       READ udp265VideoSource      CONSTANT)
     Q_PROPERTY(QString  tcpVideoSource          READ tcpVideoSource         CONSTANT)
@@ -60,6 +63,7 @@ public:
 
     bool     streamConfigured       ();
     QString  rtspVideoSource        () { return videoSourceRTSP; }
+    QString  rtspVideoSource2       () { return videoSourceRTSP2; }
     QString  udp264VideoSource      () { return videoSourceUDPH264; }
     QString  udp265VideoSource      () { return videoSourceUDPH265; }
     QString  tcpVideoSource         () { return videoSourceTCP; }
@@ -71,6 +75,7 @@ public:
     static const char* videoSourceUDPH264;
     static const char* videoSourceUDPH265;
     static const char* videoSourceRTSP;
+    static const char* videoSourceRTSP2;
     static const char* videoSourceTCP;
     static const char* videoSourceMPEGTS;
     static const char* videoSource3DRSolo;
