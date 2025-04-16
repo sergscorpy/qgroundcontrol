@@ -395,6 +395,7 @@ INCLUDEPATH += \
     src/Geo \
     src/GPS \
     src/Joystick \
+    src/CameraControl \
     src/PlanView \
     src/MissionManager \
     src/PositionManager \
@@ -428,6 +429,9 @@ contains (DEFINES, QGC_ENABLE_PAIRING) {
 #
 
 HEADERS += \
+    src/CameraControl/InputActionDispatcher.h \
+    src/CameraControl/JoystickHandler.h \
+    src/CameraControl/TemplateManager.h \
     src/FlightDisplay/GimbalCommandSender.h \
     src/QmlControls/QmlUnitsConversion.h \
     src/Vehicle/VehicleEscStatusFactGroup.h \
@@ -443,6 +447,9 @@ contains (DEFINES, QGC_ENABLE_PAIRING) {
 }
 
 SOURCES += \
+    src/CameraControl/InputActionDispatcher.cpp \
+    src/CameraControl/JoystickHandler.cpp \
+    src/CameraControl/TemplateManager.cpp \
     src/FlightDisplay/GimbalCommandSender.cpp \
     src/Vehicle/VehicleEscStatusFactGroup.cc \
     src/api/QGCCorePlugin.cc \
@@ -1533,6 +1540,7 @@ DISTFILES += \
     android/gradle/wrapper/gradle-wrapper.properties \
     android/gradlew \
     android/gradlew.bat \
+    resources/camera_template/template.json \
     src/QmlControls/QGroundControl/Specific/qmldir
 
 #

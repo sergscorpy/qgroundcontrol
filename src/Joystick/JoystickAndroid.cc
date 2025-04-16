@@ -159,8 +159,14 @@ bool JoystickAndroid::handleKeyEvent(jobject event) {
 
     for (int i = 0; i <_buttonCount; i++) {
         if (btnCode[i] == keyCode) {
-            if (action == ACTION_DOWN) btnValue[i] = true;
-            if (action == ACTION_UP)   btnValue[i] = false;
+            if (action == ACTION_DOWN) {
+                btnValue[i] = true;
+                emit buttonPressed(i, true);
+            }
+            if (action == ACTION_UP) {
+                btnValue[i] = false;
+                emit buttonPressed(i, false);
+            }
             return true;
         }
     }
@@ -171,11 +177,20 @@ bool JoystickAndroid::handleGenericMotionEvent(jobject event) {
     QJNIObjectPrivate ev(event);
     QMutexLocker lock(&m_mutex);
     const int _deviceId = ev.callMethod<jint>("getDeviceId", "()I");
+
     if (_deviceId!=deviceId) return false;
- 
-    for (int i = 0; i <_axisCount; i++) {
-        const float v = ev.callMethod<jfloat>("getAxisValue", "(I)F",axisCode[i]);
-        axisValue[i] = static_cast<int>((v*32767.f));
+
+    for (int i = 0; i < _axisCount; i++) {
+        if (axisCode[i] == -1)
+            continue;
+
+        float v = ev.callMethod<jfloat>("getAxisValue", "(I)F", axisCode[i]);
+        int value = static_cast<int>(v * 32767.f);
+
+        if (value != axisValue[i]) {
+            axisValue[i] = value;
+            emit axisMoved(i, value);
+        }
     }
     return true;
 }

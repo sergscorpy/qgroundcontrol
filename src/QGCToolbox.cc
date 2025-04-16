@@ -38,6 +38,8 @@
 #include "AirMapManager.h"
 #else
 #include "AirspaceManager.h"
+
+#include <TemplateManager.h>
 #endif
 #if defined(QGC_GST_TAISYNC_ENABLED)
 #include "TaisyncManager.h"
@@ -64,6 +66,7 @@ QGCToolbox::QGCToolbox(QGCApplication* app)
 #endif
     _imageProvider          = new QGCImageProvider          (app, this);
     _joystickManager        = new JoystickManager           (app, this);
+    _templateManager        = new TemplateManager           (app, this);
     _linkManager            = new LinkManager               (app, this);
     _mavlinkProtocol        = new MAVLinkProtocol           (app, this);
     _missionCommandTree     = new MissionCommandTree        (app, this);
@@ -108,6 +111,7 @@ void QGCToolbox::setChildToolboxes(void)
 #endif
     _imageProvider->setToolbox(this);
     _joystickManager->setToolbox(this);
+    _templateManager->setToolbox(this);
     _linkManager->setToolbox(this);
     _mavlinkProtocol->setToolbox(this);
     _missionCommandTree->setToolbox(this);
