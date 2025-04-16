@@ -1,0 +1,123 @@
+{
+    "is_active": true,
+    "ip": "192.168.144.108",
+    "port": 5000,
+    "controls": [
+        {
+            "name": "Button_0",
+            "type": "button",
+            "actions": ["zoom_in"],
+            "is_reversed": false
+        },
+        {
+            "name": "Button_1",
+            "type": "button",
+            "actions": ["zoom_out"],
+            "is_reversed": false
+        },
+        {
+            "name": "Button_2",
+            "type": "button",
+            "actions": ["white_hot", "sepia", "ironbow", "rainbow", "night", "aurora", "red_hot", "jungle", "medical", "black_hot", "glory_hot"],
+            "is_reversed": false
+        },
+        {
+            "name": "Button_3",
+            "type": "button",
+            "actions": ["down", "center"],
+            "is_reversed": false
+        },
+        {
+            "name": "Axis_4",
+            "type": "axis",
+            "actions": ["pitch_up_slow", "pitch_up_fast", "pitch_down_slow", "pitch_down_fast"],
+            "is_reversed": true
+        }
+    ],
+    "ignored_controls": [
+        "Button_5",
+        "Button_4",
+        "Axis_3",
+        "Axis_2",
+        "Axis_1",
+        "Axis_0"
+    ],
+    "actions": [
+        {
+            "name": "pitch_down_fast",
+            "body": "2354505547327747535039433732"
+        },
+        {
+            "name": "pitch_up_fast",
+            "body": "2354505547327747535036343630"
+        },
+        {
+            "name": "pitch_down_slow",
+            "body": "2354505547327747535046413744"
+        },
+        {
+            "name": "pitch_up_slow",
+            "body": "2354505547327747535031343542"
+        },
+        {
+            "name": "center",
+            "body": "2354505547327750545a30353646"
+        },
+        {
+            "name": "down",
+            "body": "2354505547327750545a30323643"
+        },
+        {
+            "name": "zoom_in",
+            "body": "23545055443277445a4d30413635"
+        },
+        {
+            "name": "zoom_out",
+            "body": "23545055443277445a4d30423636"
+        },
+        {
+            "name": "white_hot",
+            "body": "23545055443277494d47303134370d0a"
+        },
+        {
+            "name": "sepia",
+            "body": "23545055443277494d47303334390d0a"
+        },
+        {
+            "name": "ironbow",
+            "body": "23545055443277494d47303434410d0a"
+        },
+        {
+            "name": "rainbow",
+            "body": "23545055443277494d47303534420d0a"
+        },
+        {
+            "name": "night",
+            "body": "23545055443277494d47303634430d0a"
+        },
+        {
+            "name": "aurora",
+            "body": "23545055443277494d47303734440d0a"
+        },
+        {
+            "name": "red_hot",
+            "body": "23545055443277494d47303834450d0a"
+        },
+        {
+            "name": "jungle",
+            "body": "23545055443277494d47303934460d0a"
+        },
+        {
+            "name": "medical",
+            "body": "23545055443277494d47304135370d0a"
+        },
+        {
+            "name": "black_hot",
+            "body": "23545055443277494d47304235380d0a"
+        },
+        {
+            "name": "glory_hot",
+            "body": "23545055443277494d47304335390d0a"
+        }
+    ]
+}
