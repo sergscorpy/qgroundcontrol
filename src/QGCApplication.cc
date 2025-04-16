@@ -594,6 +594,8 @@ bool QGCApplication::_initForNormalAppBoot()
                     "Your old map cache sets have been reset."));
     }
 
+    _joystickHandler = new JoystickHandler();
+
     settings.sync();
     return true;
 }

@@ -31,6 +31,7 @@
 #include "UASMessageHandler.h"
 #include "FactSystem.h"
 #include "GPSRTKFactGroup.h"
+#include <JoystickHandler.h>
 
 #ifdef QGC_RTLAB_ENABLED
 #include "OpalLink.h"
@@ -105,6 +106,8 @@ public:
 
     static QString cachedParameterMetaDataFile(void);
     static QString cachedAirframeMetaDataFile(void);
+
+    JoystickHandler* _joystickHandler;
 
 public slots:
     /// You can connect to this slot to show an information message box from a different thread.

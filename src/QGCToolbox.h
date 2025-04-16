@@ -18,6 +18,7 @@ class FirmwarePluginManager;
 class AudioOutput;
 class GPSManager;
 class JoystickManager;
+class TemplateManager;
 class FollowMe;
 class LinkManager;
 class MAVLinkProtocol;
@@ -54,6 +55,7 @@ public:
     FirmwarePluginManager*      firmwarePluginManager   () { return _firmwarePluginManager; }
     AudioOutput*                audioOutput             () { return _audioOutput; }
     JoystickManager*            joystickManager         () { return _joystickManager; }
+    TemplateManager*            templateManager         () { return _templateManager; }
     LinkManager*                linkManager             () { return _linkManager; }
     MAVLinkProtocol*            mavlinkProtocol         () { return _mavlinkProtocol; }
     MissionCommandTree*         missionCommandTree      () { return _missionCommandTree; }
@@ -95,6 +97,7 @@ private:
 #endif
     QGCImageProvider*           _imageProvider          = nullptr;
     JoystickManager*            _joystickManager        = nullptr;
+    TemplateManager*            _templateManager        = nullptr;
     LinkManager*                _linkManager            = nullptr;
     MAVLinkProtocol*            _mavlinkProtocol        = nullptr;
     MissionCommandTree*         _missionCommandTree     = nullptr;
