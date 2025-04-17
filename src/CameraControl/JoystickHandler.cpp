@@ -1,3 +1,4 @@
+#ifdef __android__
 #include "JoystickHandler.h"
 #include <QDebug>
 #include "QGCApplication.h"
@@ -48,3 +49,4 @@ void JoystickHandler::onAxisMoved(int axisId, int value)
     QString name = QString("Axis_%1").arg(axisId);
     _dispatcher->handleInput(name, value);
 }
+#endif

@@ -2,7 +2,9 @@
 #define JOYSTICKHANDLER_H
 
 #include <QObject>
+#ifdef __android__
 #include "JoystickAndroid.h"
+
 #include "InputActionDispatcher.h"
 
 class JoystickHandler : public QObject
@@ -23,6 +25,6 @@ private:
     QList<JoystickAndroid*> _connectedJoysticks;
     InputActionDispatcher* _dispatcher;
 };
-
+#endif
 #endif // JOYSTICKHANDLER_H
 

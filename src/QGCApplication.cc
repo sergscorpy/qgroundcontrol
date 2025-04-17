@@ -593,9 +593,9 @@ bool QGCApplication::_initForNormalAppBoot()
         showAppMessage(tr("The Offline Map Cache database has been upgraded. "
                     "Your old map cache sets have been reset."));
     }
-
+#ifdef __android__
     _joystickHandler = new JoystickHandler();
-
+#endif
     settings.sync();
     return true;
 }
