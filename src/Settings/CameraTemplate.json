@@ -18,7 +18,7 @@
         {
             "name": "Button_2",
             "type": "button",
-            "actions": ["white_hot", "sepia", "ironbow", "rainbow", "night", "aurora", "red_hot", "jungle", "medical", "black_hot", "glory_hot"],
+            "actions": ["white_hot", "jungle"],
             "is_reversed": false
         },
         {
