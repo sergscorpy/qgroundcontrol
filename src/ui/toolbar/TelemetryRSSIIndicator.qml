@@ -89,16 +89,14 @@ Item {
         Column {
             anchors.verticalCenter: parent.verticalCenter
             QGCLabel {
-                text:                   "  " + _activeVehicle.telemetryLRSSI + " dBm"
+                text: "  " + _activeVehicle.telemetryLRSSI + " dBm"
                 font.pointSize:         ScreenTools.mediumFontPointSize
                 color:                  qgcPal.buttonText
-                //anchors.verticalCenter: parent.verticalCenter
             }
             QGCLabel {
-                text:                   "  " + _activeVehicle.telemetryLNoise + " dBm"
+                text: "  " + _activeVehicle.telemetryLNoise + " dBm"
                 font.pointSize:         ScreenTools.mediumFontPointSize
                 color:                  qgcPal.warningText
-                //anchors.verticalCenter: parent.verticalCenter
             }
         }
     }

@@ -23,7 +23,7 @@ Item {
     width:          rssiRow.width * 1.1
     anchors.top:    parent.top
     anchors.bottom: parent.bottom
-    visible:        false
+    visible:        _activeVehicle.telemetryLRSSI === 0
 
     property bool showIndicator: _activeVehicle.supportsRadio
 
@@ -86,11 +86,18 @@ Item {
             color:              qgcPal.buttonText
         }
 
-        SignalStrength {
+        QGCLabel {
             anchors.verticalCenter: parent.verticalCenter
-            size:                   parent.height * 0.5
-            percent:                _rcRSSIAvailable ? _activeVehicle.rcRSSI : 0
+            text: "  " + _activeVehicle.rcRSSI + " %"
+            font.pointSize:         ScreenTools.mediumFontPointSize
+            color:                  qgcPal.buttonText
         }
+
+        // SignalStrength {
+        //     anchors.verticalCenter: parent.verticalCenter
+        //     size:                   parent.height * 0.5
+        //     percent:                _rcRSSIAvailable ? _activeVehicle.rcRSSI : 0
+        // }
     }
 
     MouseArea {
