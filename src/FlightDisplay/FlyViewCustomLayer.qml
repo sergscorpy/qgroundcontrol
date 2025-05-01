@@ -42,10 +42,11 @@ Item {
     property var totalToolInsets:   _toolInsets // These are the insets for your custom overlay additions
     property var mapControl
 
-    property var  _videoSettings: QGroundControl.settingsManager.videoSettings
-    property bool _isRTSP:        _videoSettings.videoSource.rawValue === _videoSettings.rtspVideoSource
-    property bool isAndroid:      Qt.platform.os === "android"
-    property bool isWindows:      Qt.platform.os === "windows"
+    property var  _activeVehicle:   QGroundControl.multiVehicleManager.activeVehicle
+    property var  _videoSettings:   QGroundControl.settingsManager.videoSettings
+    property bool _isRTSP:          _videoSettings.videoSource.rawValue === _videoSettings.rtspVideoSource
+    property bool isAndroid:        Qt.platform.os === "android"
+    property bool isWindows:        Qt.platform.os === "windows"
 
     // параметр масштабування відносно ширини екрану
     property real _scrUnit: width / 65
