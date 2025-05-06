@@ -93,6 +93,7 @@ Item {
         parentToolInsets:   widgetLayer.totalToolInsets
         mapControl:         _mapControl
         visible:            !QGroundControl.videoManager.fullScreen
+        // Start merge
     }
 
     // Development tool for visualizing the insets for a paticular layer, enable if needed
