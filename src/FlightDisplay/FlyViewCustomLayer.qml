@@ -191,7 +191,7 @@ Item {
     Item {
         id: cameraControl
         anchors.fill: parent
-        visible: true
+        visible: QGroundControl.settingsManager.cameraSettings.cameraType.value < 2
 
         SdkSender {
             id: sdkSender

@@ -90,8 +90,19 @@ Item {
         id:                 customOverlay
         anchors.fill:       parent
         z:                  _pipItemZorder + 101
-        visible:            videoControl.pipState.state === videoControl.pipState.fullState
+        visible: videoControl.pipState.state === videoControl.pipState.fullState
     }
+
+    // FlyViewKazhan {
+    //     id: kazhanOverlay
+    //     anchors.margins: _margins
+    //     anchors.top: parent.top
+    //     anchors.left: parent.left
+    //     z: _pipItemZorder + 101
+
+    //     visible: videoControl.pipState.state === videoControl.pipState.fullState
+    //              && QGroundControl.settingsManager.cameraSettings.cameraType.value === 2
+    // }
 
     GuidedActionsController {
         id:                 guidedActionsController

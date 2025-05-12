@@ -434,6 +434,7 @@ HEADERS += \
     src/CameraControl/TemplateManager.h \
     src/FlightDisplay/GimbalCommandSender.h \
     src/QmlControls/QmlUnitsConversion.h \
+    src/Settings/CameraSettings.h \
     src/Vehicle/VehicleEscStatusFactGroup.h \
     src/api/QGCCorePlugin.h \
     src/api/QGCOptions.h \
@@ -451,6 +452,7 @@ SOURCES += \
     src/CameraControl/JoystickHandler.cpp \
     src/CameraControl/TemplateManager.cpp \
     src/FlightDisplay/GimbalCommandSender.cpp \
+    src/Settings/CameraSettings.cpp \
     src/Vehicle/VehicleEscStatusFactGroup.cc \
     src/api/QGCCorePlugin.cc \
     src/api/QGCOptions.cc \

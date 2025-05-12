@@ -2,8 +2,7 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QDebug>
-#include "QGCApplication.h"
-#include <AppSettings.h>
+#include "SettingsManager.h"
 
 TemplateManager::TemplateManager(QGCApplication* app, QGCToolbox* toolbox)
     : QGCTool(app, toolbox)
@@ -12,13 +11,10 @@ TemplateManager::TemplateManager(QGCApplication* app, QGCToolbox* toolbox)
     _baseTemplatePath = ":/res/src/Settings/" + _templateName;
 
     QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-
     QDir baseDir(downloadPath);
     baseDir.cdUp();
-
     QString configDirPath = baseDir.filePath("49KSConfigs");
     QDir().mkpath(configDirPath);
-
     _templatePath = configDirPath + "/" + _templateName;
 
     qDebug() << "[TemplateManager] Template path:" << _templatePath;
@@ -30,16 +26,48 @@ TemplateManager::TemplateManager(QGCApplication* app, QGCToolbox* toolbox)
             qDebug() << "[TemplateManager] Template copied to" << _templatePath;
         }
     }
-
-    connect(&_watcher, &QFileSystemWatcher::fileChanged, this, &TemplateManager::onFileChanged);
-    loadTemplate();
 }
-
 
 void TemplateManager::setToolbox(QGCToolbox* toolbox)
 {
     QGCTool::setToolbox(toolbox);
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
+
+    _lastCameraType = _toolbox->settingsManager()->cameraSettings()->cameraType()->rawValue().toInt();
+
+    connect(
+        _toolbox->settingsManager()->cameraSettings()->cameraType(),
+        &Fact::rawValueChanged,
+        this,
+        [this](const QVariant& newValue) {
+            if (!newValue.isValid() || !newValue.canConvert<int>()) {
+                qWarning() << "[TemplateManager] Invalid camera type value:" << newValue;
+                return;
+            }
+
+            int id = newValue.toInt();
+            if (id != _lastCameraType) {
+                _lastCameraType = id;
+                loadTemplate();
+            }
+        }
+        );
+
+    _keepaliveTimer.setInterval(500);
+    _keepaliveTimer.setSingleShot(false);
+
+    connect(&_keepaliveTimer, &QTimer::timeout, this, [this]() {
+        QByteArray payload = getActionPayload("empty");
+
+        if (!payload.isEmpty()) {
+            _udpSocket.writeDatagram(payload, QHostAddress(_ip), _port);
+        } else {
+            qWarning() << "[TemplateManager] keep_alive action not found!";
+        }
+    });
+
+    connect(&_watcher, &QFileSystemWatcher::fileChanged, this, &TemplateManager::onFileChanged);
+    loadTemplate();
 }
 
 void TemplateManager::loadTemplate()
@@ -65,7 +93,61 @@ void TemplateManager::loadTemplate()
         return;
     }
 
-    parseJson(doc.object());
+    const QJsonObject rootObj = doc.object();
+
+    if (!rootObj.contains("cameras") || !rootObj["cameras"].isArray()) {
+        qWarning() << "Missing or invalid 'cameras' array in template file";
+        return;
+    }
+
+    QJsonArray camerasArray = rootObj["cameras"].toArray();
+
+    int selectedCameraId = static_cast<int>(
+        _toolbox->settingsManager()->cameraSettings()->cameraType()->rawValue().toInt()
+        );
+
+    bool found = false;
+
+    for (const QJsonValue& camVal : std::as_const(camerasArray)) {
+        if (!camVal.isObject()) continue;
+
+        const QJsonObject& camObj = camVal.toObject();
+        int id = camObj.value("id").toInt(-1);
+
+        if (id == selectedCameraId) {
+            parseJson(camObj);
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        qWarning() << "Camera with ID" << selectedCameraId << "not found in template file";
+        _isActive = false;
+        _ip = "127.0.0.1";
+        _port = 0;
+        _controls.clear();
+        _ignoredControls.clear();
+        _actions.clear();
+
+        emit templateChanged();
+        return;
+    }
+
+    bool requiresKeepalive = (selectedCameraId == 2);
+
+    if (requiresKeepalive) {
+        if (!_keepaliveTimer.isActive()) {
+            _keepaliveTimer.start();
+            qDebug() << "[TemplateManager] Keep-alive started for camera ID" << selectedCameraId;
+        }
+    } else {
+        if (_keepaliveTimer.isActive()) {
+            _keepaliveTimer.stop();
+            qDebug() << "[TemplateManager] Keep-alive stopped";
+        }
+    }
+
 
     if (!_watcher.files().contains(_templatePath)) {
         _watcher.addPath(_templatePath);
@@ -109,6 +191,29 @@ void TemplateManager::parseJson(const QJsonObject& obj)
         a.body = o["body"].toString();
         _actions.append(a);
     }
+}
+
+QByteArray TemplateManager::getActionPayload(const QString& actionName) const {
+    for (const Action& a : _actions) {
+        if (a.name == actionName) {
+            return QByteArray::fromHex(a.body.toUtf8());
+        }
+    }
+    return {};
+}
+
+void TemplateManager::sendActionPacket(const QString& actionName)
+{
+    for (const Action& a : std::as_const(_actions)) {
+        if (a.name == actionName) {
+            QByteArray payload = QByteArray::fromHex(a.body.toUtf8());
+            if (_udpSocket.writeDatagram(payload, QHostAddress(_ip), _port) < 0) {
+               qWarning() << "[TemplateManager] Failed to send action" << actionName;
+            }
+            return;
+        }
+    }
+    qWarning() << "[TemplateManager] Action not found:" << actionName;
 }
 
 bool TemplateManager::isActive() const { return _isActive; }
