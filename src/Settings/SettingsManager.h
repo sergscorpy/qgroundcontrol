@@ -10,8 +10,6 @@
 #ifndef SettingsManager_H
 #define SettingsManager_H
 
-#include "QGCLoggingCategory.h"
-#include "Joystick.h"
 #include "MultiVehicleManager.h"
 #include "QGCToolbox.h"
 #include "AppSettings.h"
@@ -27,6 +25,7 @@
 #include "APMMavlinkStreamRateSettings.h"
 #include "FirmwareUpgradeSettings.h"
 #include "ADSBVehicleManagerSettings.h"
+#include "CameraSettings.h"
 #if defined(QGC_AIRMAP_ENABLED)
 #include "AirMapSettings.h"
 #endif
@@ -50,6 +49,7 @@ public:
     Q_PROPERTY(QObject* flightMapSettings               READ flightMapSettings              CONSTANT)
     Q_PROPERTY(QObject* rtkSettings                     READ rtkSettings                    CONSTANT)
     Q_PROPERTY(QObject* flyViewSettings                 READ flyViewSettings                CONSTANT)
+    Q_PROPERTY(QObject* cameraSettings                  READ cameraSettings                 CONSTANT)
     Q_PROPERTY(QObject* planViewSettings                READ planViewSettings               CONSTANT)
     Q_PROPERTY(QObject* brandImageSettings              READ brandImageSettings             CONSTANT)
     Q_PROPERTY(QObject* offlineMapsSettings             READ offlineMapsSettings            CONSTANT)
@@ -71,6 +71,7 @@ public:
     FlightMapSettings*              flightMapSettings           (void) { return _flightMapSettings; }
     RTKSettings*                    rtkSettings                 (void) { return _rtkSettings; }
     FlyViewSettings*                flyViewSettings             (void) { return _flyViewSettings; }
+    CameraSettings*                 cameraSettings              (void) { return _cameraSettings; }
     PlanViewSettings*               planViewSettings            (void) { return _planViewSettings; }
     BrandImageSettings*             brandImageSettings          (void) { return _brandImageSettings; }
     OfflineMapsSettings*            offlineMapsSettings         (void) { return _offlineMapsSettings; }
@@ -90,6 +91,7 @@ private:
     FlightMapSettings*              _flightMapSettings;
     RTKSettings*                    _rtkSettings;
     FlyViewSettings*                _flyViewSettings;
+    CameraSettings*                 _cameraSettings;
     PlanViewSettings*               _planViewSettings;
     BrandImageSettings*             _brandImageSettings;
     OfflineMapsSettings*            _offlineMapsSettings;

@@ -1,7 +1,6 @@
 #include "InputActionDispatcher.h"
 #include "TemplateManager.h"
 #include "QGCApplication.h"
-
 #include <QHostAddress>
 
 InputActionDispatcher::InputActionDispatcher(QObject* parent)
@@ -24,6 +23,7 @@ InputActionDispatcher::InputActionDispatcher(QObject* parent)
 void InputActionDispatcher::handleInput(const QString& name, int value, bool isRepeat)
 {
     QMutexLocker locker(&_mutex);
+
     TemplateManager* tmpl = qgcApp()->toolbox()->templateManager();
 
     if (!tmpl || !tmpl->isActive()) return;
@@ -81,6 +81,7 @@ void InputActionDispatcher::handleInput(const QString& name, int value, bool isR
                 if (a.name == actionName) {
                     QByteArray payload = QByteArray::fromHex(a.body.toUtf8());
                     _udpSocket.writeDatagram(payload, QHostAddress(tmpl->ip()), tmpl->port());
+                    qDebug() << "AXIS SEND: " << payload;
                     return;
                 }
             }
@@ -99,6 +100,7 @@ void InputActionDispatcher::handleInput(const QString& name, int value, bool isR
                 if (a.name == actionName) {
                     QByteArray payload = QByteArray::fromHex(a.body.toUtf8());
                     _udpSocket.writeDatagram(payload, QHostAddress(tmpl->ip()), tmpl->port());
+                    qDebug() << "BUTTON SEND: " << payload;
                     return;
                 }
             }

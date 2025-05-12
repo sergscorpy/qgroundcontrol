@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QtEndian>
 #include <QTimer>
+#include "TemplateManager.h"
+#include "QGCApplication.h"
 
 GimbalCommandSender::GimbalCommandSender(QObject *parent)
     : QObject(parent),
@@ -64,6 +66,11 @@ void GimbalCommandSender::sendPitchDown()
     raw.append(static_cast<char>(crc & 0xFF));
     qDebug() << "[SEND] Pitch -90°:" << raw.toHex(' ').toUpper();
     sendCommand(raw);
+}
+
+void GimbalCommandSender::changeColorSchema()
+{
+    qgcApp()->toolbox()->templateManager()->sendActionPacket("color_scheme");
 }
 
 void GimbalCommandSender::sendPitchCenter()

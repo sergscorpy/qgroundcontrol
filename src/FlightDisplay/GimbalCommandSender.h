@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE void activateFPVMode();
     Q_INVOKABLE void activateAimMode();
     Q_INVOKABLE void requestGimbalMode();
+    Q_INVOKABLE void changeColorSchema();
 
     double pitchCamAngle() const;
     bool gimbalCommandInProgress() const;
