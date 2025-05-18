@@ -88,6 +88,7 @@ public:
     explicit GstVideoReceiver(QObject* parent = nullptr);
     ~GstVideoReceiver(void);
 
+    void restartPipeline();
 public slots:
     virtual void start(const QString& uri, unsigned timeout, int buffer = 0);
     virtual void stop(void);
@@ -150,6 +151,7 @@ protected:
     gulong              _videoSinkProbeId;
 
     QTimer              _watchdogTimer;
+    QTimer              _restartTimer;
 
     //-- RTSP UDP reconnect timeout
     uint64_t            _udpReconnect_us;

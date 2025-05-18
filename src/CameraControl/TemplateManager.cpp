@@ -66,6 +66,19 @@ void TemplateManager::setToolbox(QGCToolbox* toolbox)
         }
     });
 
+    _resolutionTimer.setInterval(2000);
+    _resolutionTimer.setSingleShot(false);
+
+    connect(&_resolutionTimer, &QTimer::timeout, this, [this]() {
+        QByteArray payload = getActionPayload("quality_1024_20");
+
+        if (!payload.isEmpty()) {
+            _udpSocket.writeDatagram(payload, QHostAddress(_ip), _port);
+        } else {
+            qWarning() << "[TemplateManager] resolution action not found!";
+        }
+    });
+
     connect(&_watcher, &QFileSystemWatcher::fileChanged, this, &TemplateManager::onFileChanged);
     loadTemplate();
 }
@@ -141,13 +154,20 @@ void TemplateManager::loadTemplate()
             _keepaliveTimer.start();
             qDebug() << "[TemplateManager] Keep-alive started for camera ID" << selectedCameraId;
         }
+        if (!_resolutionTimer.isActive()) {
+            _resolutionTimer.start();
+            qDebug() << "[TemplateManager] Resolution Timer started for camera ID" << selectedCameraId;
+        }
     } else {
         if (_keepaliveTimer.isActive()) {
             _keepaliveTimer.stop();
             qDebug() << "[TemplateManager] Keep-alive stopped";
         }
+        if (_resolutionTimer.isActive()) {
+            _resolutionTimer.stop();
+            qDebug() << "[TemplateManager] Resolution Timer stopped";
+        }
     }
-
 
     if (!_watcher.files().contains(_templatePath)) {
         _watcher.addPath(_templatePath);
