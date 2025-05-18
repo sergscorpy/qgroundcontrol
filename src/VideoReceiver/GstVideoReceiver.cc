@@ -59,6 +59,10 @@ GstVideoReceiver::GstVideoReceiver(QObject* parent)
     _slotHandler.start();
     connect(&_watchdogTimer, &QTimer::timeout, this, &GstVideoReceiver::_watchdog);
     _watchdogTimer.start(1000);
+    connect(&_restartTimer, &QTimer::timeout, this, [this]() {
+        restartPipeline();
+    });
+    _restartTimer.start(5*60*1000);
 }
 
 GstVideoReceiver::~GstVideoReceiver(void)
@@ -268,6 +272,20 @@ GstVideoReceiver::start(const QString& uri, unsigned timeout, int buffer)
             emit onStartComplete(STATUS_OK);
         });
     }
+}
+
+void GstVideoReceiver::restartPipeline()
+{
+    qDebug(VideoReceiverLog) << "[Restart] Restarting pipeline due to high latency";
+
+    if (_pipeline)
+    {
+        gst_element_set_state(_pipeline, GST_STATE_NULL);
+        gst_object_unref(_pipeline);
+        _pipeline = nullptr;
+    }
+
+    start(_uri, _timeout, _buffer);
 }
 
 void

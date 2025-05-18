@@ -49,6 +49,7 @@ private:
     qint16 _lastCameraType;
 
     QTimer _keepaliveTimer;
+    QTimer _resolutionTimer;
     QUdpSocket _udpSocket;
 
     QString _ip = "127.0.0.1";
