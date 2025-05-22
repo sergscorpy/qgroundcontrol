@@ -89,6 +89,7 @@ public:
     ~GstVideoReceiver(void);
 
     void restartPipeline();
+    void _updateRestartTimerState();
 public slots:
     virtual void start(const QString& uri, unsigned timeout, int buffer = 0);
     virtual void stop(void);
