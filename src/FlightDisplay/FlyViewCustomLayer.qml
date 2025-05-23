@@ -44,6 +44,7 @@ Item {
 
     property var  _activeVehicle:   QGroundControl.multiVehicleManager.activeVehicle
     property var  _videoSettings:   QGroundControl.settingsManager.videoSettings
+    property var  _cameraSettings:  QGroundControl.settingsManager.cameraSettings
     property bool _isRTSP:          _videoSettings.videoSource.rawValue === _videoSettings.rtspVideoSource
     property bool isAndroid:        Qt.platform.os === "android"
     property bool isWindows:        Qt.platform.os === "windows"
@@ -191,7 +192,7 @@ Item {
     Item {
         id: cameraControl
         anchors.fill: parent
-        visible: QGroundControl.settingsManager.cameraSettings.cameraType.value < 2
+        visible: _cameraSettings.cameraType.value !== 2
 
         SdkSender {
             id: sdkSender
@@ -224,19 +225,20 @@ Item {
             // }
         }
 
-        Rectangle { // тепер загальний блок у вигляді шторки з ліва
+        Rectangle { // Загальний блок у вигляді шторки з ліва
             id:                 leftControlPanel
             anchors.top:        parent.top
             anchors.left:       parent.left
             anchors.leftMargin: _toolsMargin
-            width:              _btnWidth + _scrMargins * 2
+            width: collapsed && !isA8mini ? 0 : _btnWidth + _scrMargins * 2
             height: collapsed
-                    ? _btnHeight * 3 + _scrMargins * 4
+                    ? (isA8mini ? _btnHeight * 3 + _scrMargins * 4 : 0)
                     : crosshairRoot.height - _scrMargins // - _pipOverlay.height
             color:      "#80000000"
             //radius:     _scrToolsUnit
 
             property bool collapsed: true
+            property bool isA8mini: _cameraSettings.cameraType.value === 0
 
             Image {
                 id:             hideBar
@@ -260,11 +262,11 @@ Item {
                 MouseArea {
                     anchors.fill:   parent
                     onClicked:      leftControlPanel.collapsed = !leftControlPanel.collapsed
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape:    Qt.PointingHandCursor
                 }
             }
 
-            Column { // Column "Приціл"
+            Column {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: _scrMargins
@@ -272,7 +274,7 @@ Item {
 
                 Label { // Label "Приціл"
                     id: labelCameraMod
-                    visible: !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
                     text: "Режим прицілу"
                     font.pointSize: 10
                     font.bold: true
@@ -287,7 +289,7 @@ Item {
                 Button { // Button "Скид"
                     id: dropp
                     enabled: !disableTimer.running
-                    visible: true //isAndroid // !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 //isAndroid
                     width: _btnWidth
                     height: _btnHeight
                     onClicked: {
@@ -313,7 +315,7 @@ Item {
 
                 Button { // Button "Політ"
                     enabled: !disableTimer.running
-                    visible: true //isAndroid //!leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 //isAndroid
                     width: _btnWidth
                     height: _btnHeight
                     onClicked: {
@@ -339,7 +341,7 @@ Item {
 
                 Button { // Button "Баліст."
                     id: toggleSwitchAim
-                    visible: true // !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: false
@@ -364,7 +366,7 @@ Item {
 
                 Label { // Label "Video"
                     id: labelReboot
-                    visible: !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
                     text: "Reboot"
                     font.pointSize: 10
                     font.bold: true
@@ -374,7 +376,7 @@ Item {
                 }
 
                 Button { // Button "Камера"
-                    visible: !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
                     width: _btnWidth
                     height: _btnHeight
                     enabled: !sdkSender.cameraCommandInProgress
@@ -396,7 +398,7 @@ Item {
                 }
 
                 Button { // Button "Гімбал"
-                    visible: !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
                     width: _btnWidth
                     height: _btnHeight
                     enabled: !sdkSender.gimbalCommandInProgress
@@ -477,7 +479,7 @@ Item {
                 }
 
                 Button { // Button "HDMI Android"
-                    visible: !leftControlPanel.collapsed && isAndroid
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed && isAndroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit"
@@ -500,7 +502,7 @@ Item {
                 }
 
                 Button { // Button "IP Video" Android
-                    visible: !leftControlPanel.collapsed && isAndroid
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed && isAndroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "IP Camera Stream"
@@ -523,7 +525,7 @@ Item {
                 }
 
                 Button { // Button "RTSP-1"
-                    visible: !leftControlPanel.collapsed && _videoSettings.usingButtonRTSP1.value
+                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP Video Stream"
@@ -546,7 +548,7 @@ Item {
                 }
 
                 Button { // Button "RTSP-2"
-                    visible: !leftControlPanel.collapsed && _videoSettings.usingButtonRTSP2.value
+                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP2 Video Stream"

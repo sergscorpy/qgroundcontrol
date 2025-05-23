@@ -7,7 +7,7 @@
             "name": "cameraType",
             "shortDesc": "Select camera type",
             "type": "uint32",
-            "enumStrings": "None,SkydroidC12,Kazhan",
+            "enumStrings": "SiYi A8mini,SkydroidC12,Kazhan",
             "enumValues": "0,1,2",
             "default": 0
         }

@@ -144,20 +144,6 @@
     "default":      false
 },
 {
-    "name":         "usingButtonRTSP1",
-    "shortDesc":    "Using Button RTSP-1",
-    "longDesc":     "Can be used if the camera supports Secondary connection",
-    "type":         "bool",
-    "default":      false
-},
-{
-    "name":         "usingButtonRTSP2",
-    "shortDesc":    "Using Button RTSP-2",
-    "longDesc":     "Can be used if the camera supports Secondary connection",
-    "type":         "bool",
-    "default":      false
-},
-{
     "name":             "rtspSecondaryUrl",
     "shortDesc":        "Video Secondary RTSP Url",
     "longDesc":         "Example: rtsp://192.168.42.1:554/live",

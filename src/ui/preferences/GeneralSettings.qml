@@ -370,7 +370,6 @@ Rectangle {
                                 visible:                fact.visible
                                 indexModel:             false
                             }
-
                             Item { width: 1; height: 1}
                             FactCheckBox {
                                 text:       qsTr("Disable When Disarmed")
@@ -391,32 +390,18 @@ Rectangle {
                                 fact:       _videoSettings.enableStorageLimit
                                 visible:    _showSaveVideoSettings && fact.visible
                             }
-
-                            // Item { width: 1; height: 1}
-                            // FactCheckBox {
-                            //     text:       qsTr("Using HDMI stream")
-                            //     fact:       _videoSettings.usingHDMIstream
-                            //     visible:    !_videoAutoStreamConfig && _isGst && fact.visible
-                            // }
-
-                            Item { width: 1; height: 1}
-                            FactCheckBox {
-                                text:       qsTr("Using Button RTSP-1")
-                                fact:       _videoSettings.usingButtonRTSP1
-                                visible:    !_videoAutoStreamConfig && _isGst && fact.visible
-                            }
-
-                            Item { width: 1; height: 1}
-                            FactCheckBox {
-                                text:       qsTr("Using Button RTSP-2")
-                                fact:       _videoSettings.usingButtonRTSP2
-                                visible:    !_videoAutoStreamConfig && _isGst && fact.visible
-                            }
                         }
-
                         GridLayout {
-                            id:         camGrid
+                            id:         dronTypeGrid
                             columns:    2
+                            visible:    true
+
+                            QGCLabel {
+                                text:               qsTr("Drone Type and Specification")
+                                Layout.columnSpan:  2
+                                Layout.alignment:   Qt.AlignHCenter
+                            }
+
                             QGCLabel {
                                 id:         cameraSettingsLabel
                                 text:       qsTr("Camera Type")
@@ -427,6 +412,19 @@ Rectangle {
                                 indexModel:             false
                                 fact:                   _cameraSettings.cameraType
                                 visible:                videoSourceLabel.visible
+                            }
+                            Item { width: 1; height: 1}
+                            FactCheckBox {
+                                text:       qsTr("Лівий Скид")
+                                fact:       _flyViewSettings.dropLeft
+                                visible:    fact.visible
+                            }
+
+                            Item { width: 1; height: 1}
+                            FactCheckBox {
+                                text:       qsTr("Правий Скид")
+                                fact:       _flyViewSettings.dropRight
+                                visible:    fact.visible
                             }
                         }
                     }

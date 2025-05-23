@@ -131,8 +131,7 @@ DECLARE_SETTINGSFACT(VideoSettings, disableWhenDisarmed)
 DECLARE_SETTINGSFACT(VideoSettings, lowLatencyMode)
 DECLARE_SETTINGSFACT(VideoSettings, usingHDMIstream)
 DECLARE_SETTINGSFACT(VideoSettings, rtspSecondaryUrl)
-DECLARE_SETTINGSFACT(VideoSettings, usingButtonRTSP1)
-DECLARE_SETTINGSFACT(VideoSettings, usingButtonRTSP2)
+
 
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, videoSource)
 {

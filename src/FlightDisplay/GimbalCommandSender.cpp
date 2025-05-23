@@ -5,6 +5,8 @@
 #include <QTimer>
 #include "TemplateManager.h"
 #include "QGCApplication.h"
+#include "SettingsManager.h"
+
 
 GimbalCommandSender::GimbalCommandSender(QObject *parent)
     : QObject(parent),
@@ -26,6 +28,12 @@ bool GimbalCommandSender::gimbalCommandInProgress() const {
 
 bool GimbalCommandSender::cameraCommandInProgress() const {
     return _cameraCommandInProgress;
+}
+
+bool GimbalCommandSender::isActiveCameraA8Mini() const
+{
+    const auto* cameraFact = qgcApp()->toolbox()->settingsManager()->cameraSettings()->cameraType();
+    return cameraFact && cameraFact->rawValue().toInt() == 0; // 0 = SiYi A8mini
 }
 
 int GimbalCommandSender::gimbalMode() const {
@@ -53,9 +61,14 @@ void GimbalCommandSender::setGimbalMode(int mode) {
     }
 }
 
-void GimbalCommandSender::sendCommand(const QByteArray& raw)
+bool GimbalCommandSender::sendCommand(const QByteArray& raw)
 {
+    if (!isActiveCameraA8Mini()) {
+        return false;
+    }
+
     udpSocket->writeDatagram(raw, gimbalIp, gimbalPort);
+    return true;
 }
 
 void GimbalCommandSender::sendPitchDown()
@@ -131,12 +144,17 @@ void GimbalCommandSender::activateAimMode()
 void GimbalCommandSender::requestGimbalMode()
 {
     QByteArray raw = QByteArray::fromHex("55660100000000195D57");
-    qDebug() << "[SEND] Request Gimbal Mode:" << raw.toHex(' ').toUpper();
-    sendCommand(raw);
+    if (sendCommand(raw)) {
+        qDebug() << "[SEND] Request Gimbal Mode:" << raw.toHex(' ').toUpper();
+    }
 }
 
 void GimbalCommandSender::onReadyRead()
 {
+    if (!isActiveCameraA8Mini()) {
+        return;
+    }
+
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;
         datagram.resize(int(udpSocket->pendingDatagramSize()));

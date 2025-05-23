@@ -38,8 +38,6 @@ public:
     DEFINE_SETTINGFACT(lowLatencyMode)
     DEFINE_SETTINGFACT(usingHDMIstream)
     DEFINE_SETTINGFACT(rtspSecondaryUrl)
-    DEFINE_SETTINGFACT(usingButtonRTSP1)
-    DEFINE_SETTINGFACT(usingButtonRTSP2)
     DEFINE_SETTINGFACT(forceVideoDecoder)
 
     enum VideoDecoderOptions {

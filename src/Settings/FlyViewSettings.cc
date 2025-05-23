@@ -29,5 +29,7 @@ DECLARE_SETTINGSFACT(FlyViewSettings, showSimpleCameraControl)
 DECLARE_SETTINGSFACT(FlyViewSettings, showObstacleDistanceOverlay)
 DECLARE_SETTINGSFACT(FlyViewSettings, showCorrectionControls)
 DECLARE_SETTINGSFACT(FlyViewSettings, maxCorrectionAngle)
+DECLARE_SETTINGSFACT(FlyViewSettings, dropLeft)
+DECLARE_SETTINGSFACT(FlyViewSettings, dropRight)
 
 

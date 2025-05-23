@@ -31,4 +31,6 @@ public:
     DEFINE_SETTINGFACT(showObstacleDistanceOverlay)
     DEFINE_SETTINGFACT(showCorrectionControls)
     DEFINE_SETTINGFACT(maxCorrectionAngle)
+    DEFINE_SETTINGFACT(dropLeft)
+    DEFINE_SETTINGFACT(dropRight)
 };

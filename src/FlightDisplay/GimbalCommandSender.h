@@ -29,6 +29,7 @@ public:
     double pitchCamAngle() const;
     bool gimbalCommandInProgress() const;
     bool cameraCommandInProgress() const;
+    bool isActiveCameraA8Mini() const;
     int gimbalMode() const;
 
 signals:
@@ -41,7 +42,7 @@ private slots:
     void onReadyRead();
 
 private:
-    void sendCommand(const QByteArray& raw);
+    bool sendCommand(const QByteArray& raw);
     void setGimbalCommandInProgress(bool inProgress);
     void setCameraCommandInProgress(bool inProgress);
     void setGimbalMode(int mode);
