@@ -219,5 +219,7 @@
         <file alias="ButFPVDown.png">src/FlightDisplay/Image/ButFPVDown.png</file>
         <file alias="barHide.svg">src/FlightMap/Images/barHide.svg</file>
         <file alias="barShow.svg">src/FlightMap/Images/barShow.svg</file>
+        <file alias="DropsOff.svg">src/FlightDisplay/Image/DropsOff.svg</file>
+        <file alias="DropsOn.svg">src/FlightDisplay/Image/DropsOn.svg</file>
     </qresource>
 </RCC>

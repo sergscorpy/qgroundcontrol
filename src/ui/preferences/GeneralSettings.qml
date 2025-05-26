@@ -415,14 +415,14 @@ Rectangle {
                             }
                             Item { width: 1; height: 1}
                             FactCheckBox {
-                                text:       qsTr("Лівий Скид")
+                                text:       qsTr("Скид (9 канал)")
                                 fact:       _flyViewSettings.dropLeft
                                 visible:    fact.visible
                             }
 
                             Item { width: 1; height: 1}
                             FactCheckBox {
-                                text:       qsTr("Правий Скид")
+                                text:       qsTr("Скид (10 канал)")
                                 fact:       _flyViewSettings.dropRight
                                 visible:    fact.visible
                             }
