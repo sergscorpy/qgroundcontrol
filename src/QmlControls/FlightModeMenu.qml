@@ -38,18 +38,50 @@ QGCLabel {
     property var flightModesMenuItems: []
 
     function updateFlightModesMenu() {
+        // Масив дозволених режимів, які хочемо бачити в меню
+        var allowedModes = [
+            "Altitude Hold",
+            "Loiter",
+            "RTL",
+            "Guided No GPS",
+            "ALT_HOLD",
+            "LOITER",
+            "GUIDED_NOGPS"
+        ]
+
         if (currentVehicle && currentVehicle.flightModeSetAvailable) {
             var i;
-            // Remove old menu items
+
+            // Спочатку видаляємо всі старі пункти меню
             for (i = 0; i < flightModesMenuItems.length; i++) {
                 flightModesMenu.removeItem(flightModesMenuItems[i])
             }
+
+            // Очищуємо масив з пунктами меню
             flightModesMenuItems.length = 0
-            // Add new items
+
+            // Додаємо нові пункти меню тільки з дозволених режимів
             for (i = 0; i < currentVehicle.flightModes.length; i++) {
-                var menuItem = flightModeMenuItemComponent.createObject(null, { "text": currentVehicle.flightModes[i] })
-                flightModesMenuItems.push(menuItem)
-                flightModesMenu.insertItem(i, menuItem)
+                var mode = currentVehicle.flightModes[i]
+
+                // Перевірка: якщо режим є в дозволеному списку - додаємо його в меню
+                if (allowedModes.indexOf(mode) !== -1) {
+                    var menuItem = flightModeMenuItemComponent.createObject(null, {
+                        "text": mode
+                    })
+
+                    flightModesMenuItems.push(menuItem)
+
+                    // Додаємо пункт у меню на позицію, залежно від поточного розміру масиву
+                    flightModesMenu.insertItem(flightModesMenuItems.length - 1, menuItem)
+                } else {
+                    console.log("Flight mode ignored:", mode)
+                }
+            }
+
+            // Якщо жоден режим не потрапив у меню
+            if (flightModesMenuItems.length === 0) {
+                console.warn("Warning: No valid flight modes available in allowedModes list.")
             }
         }
     }

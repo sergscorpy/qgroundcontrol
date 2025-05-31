@@ -164,7 +164,7 @@ ApplicationWindow {
     }
 
     function showSettingsTool() {
-        showTool(qsTr("Application Settings"), "AppSettings.qml", "/res/QGCLogoWhite")
+        showTool(qsTr("Application Settings"), "AppSettings.qml", "/qmlimages/49ks/KSLogoFullWhitePng")
     }
 
     //-------------------------------------------------------------------------
@@ -333,7 +333,7 @@ ApplicationWindow {
                         height:             toolSelectDialog._toolButtonHeight
                         Layout.fillWidth:   true
                         text:               qsTr("Application Settings")
-                        imageResource:      "/res/QGCLogoFull"
+                        imageResource:      "/qmlimages/49ks/KSLogoFull"
                         imageColor:         "transparent"
                         visible:            !QGroundControl.corePlugin.options.combineSettingsAndSetup
                         onClicked: {
@@ -535,6 +535,8 @@ ApplicationWindow {
     //-------------------------------------------------------------------------
     //-- Critical Vehicle Message Popup
 
+        property real autoCloseTime: 5 // Closing window after 10 seconds
+
     function showCriticalVehicleMessage(message) {
         indicatorPopup.close()
         if (criticalVehicleMessagePopup.visible || QGroundControl.videoManager.fullScreen) {
@@ -613,6 +615,18 @@ ApplicationWindow {
                     color:              qgcPal.alertText
                 }
             }
+        }
+
+        Timer {
+            id: autoCloseTimer
+            interval: autoCloseTime * 1000  // 1 seconds = 1000 ms
+            running: false
+            repeat: false
+            onTriggered: criticalVehicleMessagePopup.close()
+        }
+
+        onOpened: {
+            autoCloseTimer.start()  // Start timer after opening
         }
 
         QGCLabel {

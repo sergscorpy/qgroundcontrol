@@ -27,7 +27,7 @@ message(Qt version $$[QT_VERSION])
 
 include(QGCCommon.pri)
 
-TARGET   = QGroundControl
+TARGET   = 49KS
 TEMPLATE = app
 QGCROOT  = $$PWD
 
@@ -52,7 +52,7 @@ LinuxBuild {
 }
 
 WindowsBuild {
-    RC_ICONS = resources/icons/qgroundcontrol.ico
+    RC_ICONS = src\KS49src\KSLogoFull.ico
     CONFIG += resources_big
 }
 
@@ -60,7 +60,7 @@ WindowsBuild {
 # Branding
 #
 
-QGC_APP_NAME        = "QGroundControl"
+QGC_APP_NAME        = "49KS"
 QGC_ORG_NAME        = "QGroundControl.org"
 QGC_ORG_DOMAIN      = "org.qgroundcontrol"
 QGC_APP_DESCRIPTION = "Open source ground control app provided by QGroundControl dev team"
@@ -356,7 +356,7 @@ CustomBuild {
         RESOURCES += $$PWD/resources/InstrumentValueIcons/InstrumentValueIcons.qrc
     }
 } else {
-    DEFINES += QGC_APPLICATION_NAME=\"\\\"QGroundControl\\\"\"
+    DEFINES += QGC_APPLICATION_NAME=\"\\\"49KS\\\"\"
     DEFINES += QGC_ORG_NAME=\"\\\"QGroundControl.org\\\"\"
     DEFINES += QGC_ORG_DOMAIN=\"\\\"org.qgroundcontrol\\\"\"
     RESOURCES += \
@@ -388,6 +388,7 @@ INCLUDEPATH += \
     src/api \
     src/AnalyzeView \
     src/Camera \
+    src/KS49src \
     src/Compression \
     src/AutoPilotPlugins \
     src/FlightDisplay \
@@ -440,6 +441,10 @@ HEADERS += \
     src/api/QGCSettings.h \
     src/api/QmlComponentInfo.h \
     src/GPS/Drivers/src/base_station.h \
+    src/KS49src/GimbalCommandSender.h \
+    src/KS49src/InputActionDispatcher.h \
+    src/KS49src/JoystickHandler.h \
+    src/KS49src/TemplateManager.h \
 
 contains (DEFINES, QGC_ENABLE_PAIRING) {
     HEADERS += \
@@ -453,6 +458,10 @@ SOURCES += \
     src/api/QGCOptions.cc \
     src/api/QGCSettings.cc \
     src/api/QmlComponentInfo.cc \
+    src/KS49src/GimbalCommandSender.cpp \
+    src/KS49src/InputActionDispatcher.cpp \
+    src/KS49src/JoystickHandler.cpp \
+    src/KS49src/TemplateManager.cpp \
 
 contains (DEFINES, QGC_ENABLE_PAIRING) {
     SOURCES += \

@@ -8,7 +8,7 @@
     "shortDesc": "Video source",
     "longDesc":  "Source for video. UDP, TCP, RTSP and UVC Cameras may be supported depending on Vehicle and ground station version.",
     "type":             "string",
-    "default":     ""
+    "default":     "RTSP Video Stream"
 },
 {
     "name":             "udpPort",
@@ -23,7 +23,28 @@
     "shortDesc": "Video RTSP Url",
     "longDesc":  "RTSP url address and port to bind to for video stream. Example: rtsp://192.168.42.1:554/live",
     "type":             "string",
-    "default":     ""
+    "default":     "rtsp://192.168.144.108:554/stream=1"
+},
+{
+    "name":             "rtspUrl2",
+    "shortDesc": "Video RTSP Url",
+    "longDesc":  "RTSP url address and port to bind to for video stream. Example: rtsp://192.168.42.1:554/live",
+    "type":             "string",
+    "default":     "rtsp://192.168.144.108:555/stream=2"
+},
+{
+    "name":         "usingButtonRTSP1",
+    "shortDesc":    "Using Button RTSP-1",
+    "longDesc":     "Can be used if the camera supports Secondary connection",
+    "type":         "bool",
+    "default":      false
+},
+{
+    "name":         "usingButtonRTSP2",
+    "shortDesc":    "Using Button RTSP-2",
+    "longDesc":     "Can be used if the camera supports Secondary connection",
+    "type":         "bool",
+    "default":      false
 },
 {
     "name":             "tcpUrl",
@@ -63,14 +84,14 @@
     "type":             "uint32",
     "enumStrings":      "Fit Width,Fit Height,Stretch",
     "enumValues":       "0,1,2",
-    "default":     1
+    "default":     0
 },
 {
     "name":             "showRecControl",
     "shortDesc": "Show Video Record Control",
     "longDesc":  "Show recording control in the UI.",
     "type":             "bool",
-    "default":     true
+    "default":     false
 },
 {
     "name":             "recordingFormat",
@@ -97,7 +118,7 @@
     "longDesc":  "When enabled, old video files will be auto-deleted when the total size of QGC-recorded video exceeds the maximum video storage usage.",
     "type":             "bool",
     "default":     false,
-    "mobileDefault":   true
+    "mobileDefault":   false
 },
 {
     "name":             "rtspTimeout",

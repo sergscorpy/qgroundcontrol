@@ -45,7 +45,7 @@
     "name":             "keepMapCenteredOnVehicle",
     "shortDesc": "Keep map centered on vehicle",
     "type":             "bool",
-    "default":     false
+    "default":     true
 },
 {
     "name":         "showSimpleCameraControl",
@@ -61,10 +61,10 @@
 },
 {
     "name":             "maxGoToLocationDistance",
-    "shortDesc": "Maximum distance allowed for Go To Location.",
+    "shortDesc":        "Maximum distance allowed for Go To Location.",
     "type":             "double",
     "units":            "m",
-    "default":     1000,
+    "default":          1000,
     "min":              1
 },
 {

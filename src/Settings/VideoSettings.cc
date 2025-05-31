@@ -22,6 +22,7 @@
 const char* VideoSettings::videoSourceNoVideo           = QT_TRANSLATE_NOOP("VideoSettings", "No Video Available");
 const char* VideoSettings::videoDisabled                = QT_TRANSLATE_NOOP("VideoSettings", "Video Stream Disabled");
 const char* VideoSettings::videoSourceRTSP              = QT_TRANSLATE_NOOP("VideoSettings", "RTSP Video Stream");
+const char* VideoSettings::videoSourceRTSP2             = QT_TRANSLATE_NOOP("VideoSettings", "RTSP2 Video Stream");
 const char* VideoSettings::videoSourceUDPH264           = QT_TRANSLATE_NOOP("VideoSettings", "UDP h.264 Video Stream");
 const char* VideoSettings::videoSourceUDPH265           = QT_TRANSLATE_NOOP("VideoSettings", "UDP h.265 Video Stream");
 const char* VideoSettings::videoSourceTCP               = QT_TRANSLATE_NOOP("VideoSettings", "TCP-MPEG2 Video Stream");
@@ -31,6 +32,8 @@ const char* VideoSettings::videoSourceParrotDiscovery   = QT_TRANSLATE_NOOP("Vid
 const char* VideoSettings::videoSourceYuneecMantisG     = QT_TRANSLATE_NOOP("VideoSettings", "Yuneec Mantis G");
 const char* VideoSettings::videoSourceHerelinkAirUnit   = QT_TRANSLATE_NOOP("VideoSettings", "Herelink AirUnit");
 const char* VideoSettings::videoSourceHerelinkHotspot   = QT_TRANSLATE_NOOP("VideoSettings", "Herelink Hotspot");
+const char* VideoSettings::videoSourceIPCamera          = QT_TRANSLATE_NOOP("VideoSettings", "IP Camera Stream");
+const char* VideoSettings::videoSourceHerelinkHotspotDynamic = QT_TRANSLATE_NOOP("VideoSettings", "Herelink Hotspot (Dynamic)");
 
 DECLARE_SETTINGGROUP(Video, "Video")
 {
@@ -40,6 +43,7 @@ DECLARE_SETTINGGROUP(Video, "Video")
     QVariantList videoSourceList;
 #ifdef QGC_GST_STREAMING
     videoSourceList.append(videoSourceRTSP);
+    videoSourceList.append(videoSourceRTSP2);
 #ifndef NO_UDP_VIDEO
     videoSourceList.append(videoSourceUDPH264);
     videoSourceList.append(videoSourceUDPH265);
@@ -51,10 +55,12 @@ DECLARE_SETTINGGROUP(Video, "Video")
     videoSourceList.append(videoSourceYuneecMantisG);
 #endif
 
-#ifdef QGC_HERELINK_AIRUNIT_VIDEO
+#ifdef Q_OS_ANDROID
     videoSourceList.append(videoSourceHerelinkAirUnit);
+    videoSourceList.append(videoSourceIPCamera);
 #else
     videoSourceList.append(videoSourceHerelinkHotspot);
+    videoSourceList.append(videoSourceHerelinkHotspotDynamic);
 #endif
 
 #ifndef QGC_DISABLE_UVC
@@ -127,6 +133,8 @@ DECLARE_SETTINGSFACT(VideoSettings, rtspTimeout)
 DECLARE_SETTINGSFACT(VideoSettings, streamEnabled)
 DECLARE_SETTINGSFACT(VideoSettings, disableWhenDisarmed)
 DECLARE_SETTINGSFACT(VideoSettings, lowLatencyMode)
+DECLARE_SETTINGSFACT(VideoSettings, usingButtonRTSP1)
+DECLARE_SETTINGSFACT(VideoSettings, usingButtonRTSP2)
 
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, videoSource)
 {
@@ -181,6 +189,15 @@ DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, rtspUrl)
     return _rtspUrlFact;
 }
 
+DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, rtspUrl2)
+{
+    if (!_rtspUrl2Fact) {
+        _rtspUrl2Fact = _createSettingsFact(rtspUrl2Name);
+        connect(_rtspUrl2Fact, &Fact::valueChanged, this, &VideoSettings::_configChanged);
+    }
+    return _rtspUrl2Fact;
+}
+
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, tcpUrl)
 {
     if (!_tcpUrlFact) {
@@ -215,6 +232,11 @@ bool VideoSettings::streamConfigured(void)
         qCDebug(VideoManagerLog) << "Testing configuration for RTSP Stream:" << rtspUrl()->rawValue().toString();
         return !rtspUrl()->rawValue().toString().isEmpty();
     }
+    //-- If RTSP2, check for URL
+    if(vSource == videoSourceRTSP2) {
+        qCDebug(VideoManagerLog) << "Testing configuration for RTSP2 Stream:" << rtspUrl2()->rawValue().toString();
+        return !rtspUrl2()->rawValue().toString().isEmpty();
+    }
     //-- If TCP, check for URL
     if(vSource == videoSourceTCP) {
         qCDebug(VideoManagerLog) << "Testing configuration for TCP Stream:" << tcpUrl()->rawValue().toString();
@@ -233,6 +255,16 @@ bool VideoSettings::streamConfigured(void)
     //-- If Herelink Hotspot, good to go
     if(vSource == videoSourceHerelinkHotspot) {
         qCDebug(VideoManagerLog) << "Stream configured for Herelink Hotspot";
+        return true;
+    }
+    //-- If IP Video, good to go
+    if(vSource == videoSourceIPCamera) {
+        qCDebug(VideoManagerLog) << "Stream configured for IP Camera Video";
+        return true;
+    }
+    //-- If Herelink IP address, good to go
+    if(vSource == videoSourceHerelinkHotspotDynamic) {
+        qCDebug(VideoManagerLog) << "Stream configured for Herelink IP address";
         return true;
     }
     return false;

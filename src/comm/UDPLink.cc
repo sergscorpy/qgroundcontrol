@@ -205,6 +205,7 @@ void UDPLink::readBytes()
             qDebug() << "Adding target" << asender << senderPort;
             UDPCLient* target = new UDPCLient(asender, senderPort);
             _sessionTargets.append(target);
+            _lastSenderAddress = asender.toString(); // Моя кнопка
         }
         locker.unlock();
     }

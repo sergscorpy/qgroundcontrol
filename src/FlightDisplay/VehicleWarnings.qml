@@ -29,13 +29,13 @@ Rectangle {
         id:         warningsCol
         spacing:    ScreenTools.defaultFontPixelHeight
 
-        QGCLabel {
-            anchors.horizontalCenter:   parent.horizontalCenter
-            visible:                    _noGPSLockVisible
-            color:                      "black"
-            font.pointSize:             ScreenTools.largeFontPointSize
-            text:                       qsTr("No GPS Lock for Vehicle")
-        }
+        // QGCLabel {
+        //     anchors.horizontalCenter:   parent.horizontalCenter
+        //     visible:                    _noGPSLockVisible
+        //     color:                      "black"
+        //     font.pointSize:             ScreenTools.largeFontPointSize
+        //     text:                       qsTr("No GPS Lock for Vehicle")
+        // }
 
         QGCLabel {
             anchors.horizontalCenter:   parent.horizontalCenter

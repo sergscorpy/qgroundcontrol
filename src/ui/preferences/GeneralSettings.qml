@@ -53,6 +53,7 @@ Rectangle {
     property bool   _isUDP264:                  _isGst && _videoSource === _videoSettings.udp264VideoSource
     property bool   _isUDP265:                  _isGst && _videoSource === _videoSettings.udp265VideoSource
     property bool   _isRTSP:                    _isGst && _videoSource === _videoSettings.rtspVideoSource
+    property bool   _isRTSP2:                   _isGst && _videoSource === _videoSettings.rtspVideoSource2
     property bool   _isTCP:                     _isGst && _videoSource === _videoSettings.tcpVideoSource
     property bool   _isMPEGTS:                  _isGst && _videoSource === _videoSettings.mpegtsVideoSource
     property bool   _videoAutoStreamConfig:     QGroundControl.videoManager.autoStreamConfigured
@@ -342,6 +343,17 @@ Rectangle {
                                 }
 
                                 QGCLabel {
+                                    id:         rtspUrl2Label
+                                    text:       qsTr("RTSP2 URL")
+                                    visible:    !_videoAutoStreamConfig && _isRTSP2 && _videoSettings.rtspUrl2.visible
+                                }
+                                FactTextField {
+                                    Layout.preferredWidth:  _comboFieldWidth
+                                    fact:                   _videoSettings.rtspUrl2
+                                    visible:                rtspUrl2Label.visible
+                                }
+
+                                QGCLabel {
                                     id:         tcpUrlLabel
                                     text:       qsTr("TCP URL")
                                     visible:    !_videoAutoStreamConfig && _isTCP && _videoSettings.tcpUrl.visible
@@ -416,6 +428,20 @@ Rectangle {
                                     text:       qsTr("Auto-Delete Saved Recordings")
                                     fact:       _videoSettings.enableStorageLimit
                                     visible:    _showSaveVideoSettings && fact.visible
+                                }
+
+                                Item { width: 1; height: 1}
+                                FactCheckBox {
+                                    text:       qsTr("Using Button RTSP-1")
+                                    fact:       _videoSettings.usingButtonRTSP1
+                                    visible:    !_videoAutoStreamConfig && _isGst && fact.visible
+                                }
+
+                                Item { width: 1; height: 1}
+                                FactCheckBox {
+                                    text:       qsTr("Using Button RTSP-2")
+                                    fact:       _videoSettings.usingButtonRTSP2
+                                    visible:    !_videoAutoStreamConfig && _isGst && fact.visible
                                 }
                             }
                         }

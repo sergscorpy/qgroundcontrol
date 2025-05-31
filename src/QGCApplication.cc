@@ -136,6 +136,8 @@
 
 #include "QGCMapEngine.h"
 
+#include "GimbalCommandSender.h"
+
 class FinishVideoInitialization : public QRunnable
 {
 public:
@@ -368,7 +370,7 @@ QGCApplication::QGCApplication(int &argc, char* argv[], bool unitTesting)
    }
 #endif /* __mobile__ */
 
-    _checkForNewVersion();
+    //_checkForNewVersion(); // Вимкнув перевірку оновлення
 }
 
 void QGCApplication::_exitWithError(QString errorMessage)
@@ -456,6 +458,8 @@ void QGCApplication::_initCommon()
 
     qmlRegisterType<QGCPalette>     ("QGroundControl.Palette", 1, 0, "QGCPalette");
     qmlRegisterType<QGCMapPalette>  ("QGroundControl.Palette", 1, 0, "QGCMapPalette");
+
+    qmlRegisterType<GimbalCommandSender>        ("QGroundControl.GimbalTools",              1, 0, "SdkSender");
 
     qmlRegisterUncreatableType<Vehicle>                 (kQGCVehicle,                       1, 0, "Vehicle",                    kRefOnly);
     qmlRegisterUncreatableType<MissionManager>          (kQGCVehicle,                       1, 0, "MissionManager",             kRefOnly);
@@ -596,6 +600,10 @@ bool QGCApplication::_initForNormalAppBoot()
         showAppMessage(tr("The Offline Map Cache database has been upgraded. "
                     "Your old map cache sets have been reset."));
     }
+
+#ifdef __android__
+    _joystickHandler = new JoystickHandler();
+#endif
 
     settings.sync();
     return true;

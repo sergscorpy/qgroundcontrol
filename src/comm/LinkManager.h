@@ -85,6 +85,8 @@ public:
     QStringList                     serialPorts                     (void);
     bool                            mavlinkSupportForwardingEnabled (void) { return _mavlinkSupportForwardingEnabled; }
 
+    QString                         getLastUDPAddress(); // Моя кнопка
+
     void loadLinkConfigurationList();
     void saveLinkConfigurationList();
 

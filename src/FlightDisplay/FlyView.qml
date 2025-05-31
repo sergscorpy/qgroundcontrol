@@ -93,7 +93,13 @@ Item {
         parentToolInsets:   widgetLayer.totalToolInsets
         mapControl:         _mapControl
         visible:            !QGroundControl.videoManager.fullScreen
-        // Start merge
+    }
+
+    FlyView49KSLayer {
+        id:                 overlay49KS
+        anchors.fill:       parent
+        z:                  widgetLayer.z + 101
+        visible:            videoControl.pipState.state === videoControl.pipState.fullState
     }
 
     // Development tool for visualizing the insets for a paticular layer, enable if needed

@@ -14,6 +14,7 @@
 
 class JoystickAndroid : public Joystick, public QtAndroidPrivate::GenericMotionEventListener, public QtAndroidPrivate::KeyEventListener
 {
+    Q_OBJECT
 public:
     JoystickAndroid(const QString& name, int axisCount, int buttonCount, int id, MultiVehicleManager* multiVehicleManager);
 
@@ -24,6 +25,10 @@ public:
     static void setNativeMethods();
 
     static QMap<QString, Joystick*> discover(MultiVehicleManager* _multiVehicleManager);
+
+signals:
+    void buttonPressed(int buttonId, bool pressed);
+    void axisMoved(int axisId, int value);
 
 private:
     bool handleKeyEvent(jobject event);

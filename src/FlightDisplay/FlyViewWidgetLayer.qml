@@ -47,6 +47,7 @@ Item {
     property rect   _centerViewport:        Qt.rect(0, 0, width, height)
     property real   _rightPanelWidth:       ScreenTools.defaultFontPixelWidth * 30
     property alias  _gripperMenu:           gripperOptions
+    property bool   isAndroid:              Qt.platform.os === "android"
 
     QGCToolInsets {
         id:                     _totalToolInsets
@@ -134,6 +135,7 @@ Item {
         anchors.margins:        _toolsMargin
         anchors.right:          parent.right
         width:                  _rightPanelWidth
+        visible:                !isAndroid
 
         property real rightEdgeCenterInset: visible ? parent.width - x : 0
 
@@ -276,7 +278,7 @@ Item {
         anchors.top:            parent.top
         z:                      QGroundControl.zOrderWidgets
         maxHeight:              parent.height - y - parentToolInsets.bottomEdgeLeftInset - _toolsMargin
-        visible:                !QGroundControl.videoManager.fullScreen
+        visible:                !QGroundControl.videoManager.fullScreen && videoControl.pipState.state !== videoControl.pipState.fullState
 
         onDisplayPreFlightChecklist: preFlightChecklistPopup.createObject(mainWindow).open()
 

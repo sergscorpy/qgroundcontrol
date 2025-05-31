@@ -113,7 +113,8 @@ Item {
         property var trackingStatus: trackingStatusComponent.createObject(flyViewVideoMouseArea, {})
 
         onClicked:       onScreenGimbalController.clickControl()
-        onDoubleClicked: QGroundControl.videoManager.fullScreen = !QGroundControl.videoManager.fullScreen
+        //Відключив перехід в повноекранний режим по даблкіку
+        //onDoubleClicked: QGroundControl.videoManager.fullScreen = !QGroundControl.videoManager.fullScreen
 
 
         onPressed: {

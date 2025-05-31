@@ -146,7 +146,7 @@ Item {
         mediumFontPointSize     = defaultFontPointSize  * _screenTools.mediumFontPointRatio
         largeFontPointSize      = defaultFontPointSize  * _screenTools.largeFontPointRatio
         minTouchPixels          = Math.round(minTouchMillimeters * realPixelDensity)
-        if (minTouchPixels / Screen.height > 0.15) {
+        if (minTouchPixels / Screen.height > 0.10) {
             // If using physical sizing takes up too much of the vertical real estate fall back to font based sizing
             minTouchPixels      = defaultFontPixelHeight * 3
         }

@@ -73,15 +73,32 @@ Item {
             }
         }
     }
-    QGCColoredImage {
-        id:                 telemIcon
-        anchors.top:        parent.top
-        anchors.bottom:     parent.bottom
-        width:              height
-        sourceSize.height:  height
-        source:             "/qmlimages/TelemRSSI.svg"
-        fillMode:           Image.PreserveAspectFit
-        color:              qgcPal.buttonText
+    Row {
+        anchors.top:    parent.top
+        anchors.bottom: parent.bottom
+        QGCColoredImage {
+            id:                 telemIcon
+            anchors.top:        parent.top
+            anchors.bottom:     parent.bottom
+            width:              height
+            sourceSize.height:  height
+            source:             "/qmlimages/TelemRSSI.svg"
+            fillMode:           Image.PreserveAspectFit
+            color:              qgcPal.buttonText
+        }
+        Column {
+            anchors.verticalCenter: parent.verticalCenter
+            QGCLabel {
+                text: "  " + _activeVehicle.telemetryLRSSI + " dBm"
+                font.pointSize:         ScreenTools.mediumFontPointSize
+                color:                  qgcPal.buttonText
+            }
+            QGCLabel {
+                text: "  " + _activeVehicle.telemetryLNoise + " dBm"
+                font.pointSize:         ScreenTools.mediumFontPointSize
+                color:                  qgcPal.warningText
+            }
+        }
     }
     MouseArea {
         anchors.fill: parent

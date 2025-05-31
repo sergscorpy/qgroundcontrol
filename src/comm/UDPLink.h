@@ -107,6 +107,8 @@ public:
     // QThread overrides
     void run(void) override;
 
+    QString lastSenderAddress() const { return _lastSenderAddress; } // Моя кнопка
+
 public slots:
     void readBytes(void);
 
@@ -115,6 +117,8 @@ private slots:
     void _writeBytes(const QByteArray data) override;
 
 private:
+
+    QString _lastSenderAddress; // Моя кнопка
 
     // LinkInterface overrides
     bool _connect(void) override;

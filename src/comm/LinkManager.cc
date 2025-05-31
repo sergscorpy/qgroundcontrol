@@ -43,6 +43,8 @@
 #include <qmdnsengine/server.h>
 #include <qmdnsengine/service.h>
 
+#include "UDPLink.h" // Моя кнопка
+
 QGC_LOGGING_CATEGORY(LinkManagerLog, "LinkManagerLog")
 QGC_LOGGING_CATEGORY(LinkManagerVerboseLog, "LinkManagerVerboseLog")
 
@@ -57,6 +59,17 @@ const int LinkManager::_autoconnectConnectDelayMSecs =  6000;
 #else
 const int LinkManager::_autoconnectConnectDelayMSecs =  1000;
 #endif
+
+QString LinkManager::getLastUDPAddress()
+{
+    for (SharedLinkInterfacePtr& linkPtr : links()) {
+        UDPLink* udpLink = qobject_cast<UDPLink*>(linkPtr.get());
+        if (udpLink) {
+            return udpLink->lastSenderAddress();  // потрібен getter
+        }
+    }
+    return QString();
+}
 
 LinkManager::LinkManager(QGCApplication* app, QGCToolbox* toolbox)
     : QGCTool(app, toolbox)
@@ -465,7 +478,7 @@ void LinkManager::_addZeroConfAutoConnectLink(void)
         }
 
         if(service.type().startsWith("_mavlink._udp")) {
-            static QString udpName("ZeroConf UDP");
+            static QString udpName("");
             if (checkIfConnectionLinkExist(LinkConfiguration::TypeUdp, udpName)) {
                 qCDebug(LinkManagerVerboseLog) << "Connection already exist";
                 return;
@@ -481,7 +494,7 @@ void LinkManager::_addZeroConfAutoConnectLink(void)
         }
 
         if(service.type().startsWith("_mavlink._tcp")) {
-            static QString tcpName("ZeroConf TCP");
+            static QString tcpName("");
             if (checkIfConnectionLinkExist(LinkConfiguration::TypeTcp, tcpName)) {
                 qCDebug(LinkManagerVerboseLog) << "Connection already exist";
                 return;
