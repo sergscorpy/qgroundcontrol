@@ -5,6 +5,7 @@
 # QGroundControl is licensed according to the terms in the file
 # COPYING.md in the root of the source code directory.
 #
+#
 ################################################################################
 
 QMAKE_PROJECT_DEPTH = 0 # undocumented qmake flag to force absolute paths in makefiles
