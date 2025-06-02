@@ -23,6 +23,14 @@ Item {
     property real fontPointSize: ScreenTools.largeFontPointSize
     property var activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
 
+    property var allowedModes:
+    [
+        "ALT_HOLD",
+        "LOITER",
+        "RTL",
+        "GUIDED_NOGPS"
+    ]
+
     Component {
         id: flightModeMenu
 
@@ -54,8 +62,10 @@ Item {
                         model: activeVehicle ? activeVehicle.flightModes : []
 
                         QGCButton {
+                            visible: allowedModes.indexOf(modelData) !== -1
                             text: modelData
                             Layout.fillWidth: true
+
                             onClicked: {
                                 activeVehicle.flightMode = text
                                 mainWindow.hideIndicatorPopup()

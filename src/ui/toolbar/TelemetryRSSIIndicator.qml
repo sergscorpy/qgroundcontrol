@@ -22,7 +22,7 @@ Item {
     id:             _root
     anchors.top:    parent.top
     anchors.bottom: parent.bottom
-    width:          telemIcon.width * 1.1
+    width:          row.implicitWidth
 
     property bool showIndicator: _hasTelemetry
 
@@ -74,6 +74,7 @@ Item {
         }
     }
     Row {
+        id: row
         anchors.top:    parent.top
         anchors.bottom: parent.bottom
         QGCColoredImage {
