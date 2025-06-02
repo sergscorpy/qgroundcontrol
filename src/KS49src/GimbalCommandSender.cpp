@@ -3,6 +3,10 @@
 #include <QDebug>
 #include <QtEndian>
 #include <QTimer>
+#include "TemplateManager.h"
+#include "QGCApplication.h"
+#include "SettingsManager.h"
+
 
 GimbalCommandSender::GimbalCommandSender(QObject *parent)
     : QObject(parent),
@@ -24,6 +28,12 @@ bool GimbalCommandSender::gimbalCommandInProgress() const {
 
 bool GimbalCommandSender::cameraCommandInProgress() const {
     return _cameraCommandInProgress;
+}
+
+bool GimbalCommandSender::isActiveCameraA8Mini() const
+{
+    const auto* cameraFact = qgcApp()->toolbox()->settingsManager()->cameraSettings()->cameraType();
+    return cameraFact && cameraFact->rawValue().toInt() == 0; // 0 = SiYi A8mini
 }
 
 int GimbalCommandSender::gimbalMode() const {
@@ -51,9 +61,14 @@ void GimbalCommandSender::setGimbalMode(int mode) {
     }
 }
 
-void GimbalCommandSender::sendCommand(const QByteArray& raw)
+bool GimbalCommandSender::sendCommand(const QByteArray& raw)
 {
+    if (!isActiveCameraA8Mini()) {
+        return false;
+    }
+
     udpSocket->writeDatagram(raw, gimbalIp, gimbalPort);
+    return true;
 }
 
 void GimbalCommandSender::sendPitchDown()
@@ -62,14 +77,17 @@ void GimbalCommandSender::sendPitchDown()
     quint16 crc = crc16(raw);
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
-    qDebug() << "[SEND] Pitch -90°:" << raw.toHex(' ').toUpper();
     sendCommand(raw);
+}
+
+void GimbalCommandSender::changeColorSchema()
+{
+    qgcApp()->toolbox()->templateManager()->sendActionPacket("color_scheme");
 }
 
 void GimbalCommandSender::sendPitchCenter()
 {
     QByteArray raw = QByteArray::fromHex("556601010000000801D112");
-    qDebug() << "[SEND] Gimbal Center:" << raw.toHex(' ').toUpper();
     sendCommand(raw);
 }
 
@@ -79,7 +97,6 @@ void GimbalCommandSender::sendRebootCamera()
     quint16 crc = crc16(raw);
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
-    qDebug() << "[SEND] Reboot Camera:" << raw.toHex(' ').toUpper();
     setCameraCommandInProgress(true);
     sendCommand(raw);
     QTimer::singleShot(10000, this, [this]() { setCameraCommandInProgress(false); });
@@ -91,7 +108,6 @@ void GimbalCommandSender::sendRebootGimbal()
     quint16 crc = crc16(raw);
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
-    qDebug() << "[SEND] Reboot Gimbal:" << raw.toHex(' ').toUpper();
     setGimbalCommandInProgress(true);
     sendCommand(raw);
     QTimer::singleShot(10000, this, [this]() { setGimbalCommandInProgress(false); });
@@ -103,7 +119,6 @@ void GimbalCommandSender::activateFPVMode()
     quint16 crc = crc16(raw);
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
-    qDebug() << "[SEND] Set FPV Mode:" << raw.toHex(' ').toUpper();
     sendCommand(raw);
 
     QTimer::singleShot(1000, this, &GimbalCommandSender::requestGimbalMode);
@@ -115,7 +130,6 @@ void GimbalCommandSender::activateAimMode()
     quint16 crc = crc16(raw);
     raw.append(static_cast<char>((crc >> 8) & 0xFF));
     raw.append(static_cast<char>(crc & 0xFF));
-    qDebug() << "[SEND] Set Follow Mode:" << raw.toHex(' ').toUpper();
     sendCommand(raw);
 
     QTimer::singleShot(1000, this, &GimbalCommandSender::requestGimbalMode);
@@ -124,26 +138,26 @@ void GimbalCommandSender::activateAimMode()
 void GimbalCommandSender::requestGimbalMode()
 {
     QByteArray raw = QByteArray::fromHex("55660100000000195D57");
-    qDebug() << "[SEND] Request Gimbal Mode:" << raw.toHex(' ').toUpper();
-    sendCommand(raw);
+    if (sendCommand(raw)) {
+    }
 }
 
 void GimbalCommandSender::onReadyRead()
 {
+    if (!isActiveCameraA8Mini()) {
+        return;
+    }
+
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;
         datagram.resize(int(udpSocket->pendingDatagramSize()));
         udpSocket->readDatagram(datagram.data(), datagram.size());
 
-        qDebug() << "[RECV] Raw:" << datagram.toHex(' ').toUpper();
-
         if (datagram.size() > 7) {
             quint8 cmdId = quint8(datagram.at(7));
-            qDebug() << "[RECV] CMD_ID:" << QString("0x%1").arg(cmdId, 2, 16, QLatin1Char('0')).toUpper();
 
             if (cmdId == 0x19 && datagram.size() >= 9) {
                 quint8 mode = quint8(datagram.at(8));
-                qDebug() << "[GIMBAL MODE - CMD 0x19] Mode:" << mode;
                 setGimbalMode(mode);
             }
         }

@@ -445,6 +445,7 @@ HEADERS += \
     src/KS49src/InputActionDispatcher.h \
     src/KS49src/JoystickHandler.h \
     src/KS49src/TemplateManager.h \
+    src/KS49src/CameraSettings.h \
 
 contains (DEFINES, QGC_ENABLE_PAIRING) {
     HEADERS += \
@@ -462,6 +463,7 @@ SOURCES += \
     src/KS49src/InputActionDispatcher.cpp \
     src/KS49src/JoystickHandler.cpp \
     src/KS49src/TemplateManager.cpp \
+    src/KS49src/CameraSettings.cpp \
 
 contains (DEFINES, QGC_ENABLE_PAIRING) {
     SOURCES += \

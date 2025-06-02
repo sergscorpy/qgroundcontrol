@@ -33,20 +33,6 @@
     "default":     "rtsp://192.168.144.108:555/stream=2"
 },
 {
-    "name":         "usingButtonRTSP1",
-    "shortDesc":    "Using Button RTSP-1",
-    "longDesc":     "Can be used if the camera supports Secondary connection",
-    "type":         "bool",
-    "default":      false
-},
-{
-    "name":         "usingButtonRTSP2",
-    "shortDesc":    "Using Button RTSP-2",
-    "longDesc":     "Can be used if the camera supports Secondary connection",
-    "type":         "bool",
-    "default":      false
-},
-{
     "name":             "tcpUrl",
     "shortDesc": "Video TCP Url",
     "longDesc":  "TCP url address and port to bind to for video stream. Example: 192.168.143.200:3001",

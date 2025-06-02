@@ -32,4 +32,6 @@ public:
     DEFINE_SETTINGFACT(updateHomePosition)
     DEFINE_SETTINGFACT(enableCustomActions)
     DEFINE_SETTINGFACT(customActionDefinitions)
+    DEFINE_SETTINGFACT(dropLeft)
+    DEFINE_SETTINGFACT(dropRight)
 };

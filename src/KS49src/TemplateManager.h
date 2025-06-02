@@ -33,7 +33,8 @@ public:
     QList<Action> actions() const;
     QString ip() const { return _ip; }
     quint16 port() const { return _port; }
-
+    QByteArray getActionPayload(const QString &actionName) const;
+    Q_INVOKABLE void sendActionPacket(const QString& actionName);
 signals:
     void templateChanged();
 
@@ -45,6 +46,11 @@ private:
     QString _templateName;
     QString _baseTemplatePath;
     QString _templatePath;
+    qint16 _lastCameraType;
+
+    QTimer _keepaliveTimer;
+    QTimer _resolutionTimer;
+    QUdpSocket _udpSocket;
 
     QString _ip = "127.0.0.1";
     quint16 _port = 14550;

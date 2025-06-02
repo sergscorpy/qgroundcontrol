@@ -12,6 +12,7 @@ import QtQuick.Controls         2.4
 import QtQuick.Dialogs          1.3
 import QtQuick.Layouts          1.12
 import QtQuick.Shapes           1.12
+import QtGraphicalEffects       1.0
 
 import QtLocation               5.3
 import QtPositioning            5.3
@@ -21,6 +22,7 @@ import QtQml.Models             2.1
 import QGroundControl               1.0
 import QGroundControl.Controllers   1.0
 import QGroundControl.Controls      1.0
+import QGroundControl.FactControls  1.0
 import QGroundControl.FactSystem    1.0
 import QGroundControl.FlightDisplay 1.0
 import QGroundControl.FlightMap     1.0
@@ -42,21 +44,25 @@ Item {
 
     property var  _activeVehicle:   QGroundControl.multiVehicleManager.activeVehicle
     property var  _videoSettings:   QGroundControl.settingsManager.videoSettings
+    property var  _cameraSettings:  QGroundControl.settingsManager.cameraSettings
+    property var  _flyViewSettings: QGroundControl.settingsManager.flyViewSettings
     property bool _isRTSP:          _videoSettings.videoSource.rawValue === _videoSettings.rtspVideoSource
     property bool isAndroid:        Qt.platform.os === "android"
     property bool isWindows:        Qt.platform.os === "windows"
+    property bool isA8mini:         _cameraSettings.cameraType.value === 0
 
     // параметр масштабування відносно ширини екрану
     property real _scrUnit: width / 65
     property real _btnHeight: _scrToolsUnit * 5
     property real _btnWidth: _scrToolsUnit * 13
-    property real _btnRadius: _scrToolsUnit * 2
+    property real _btnRadius: _scrToolsUnit
     property real _scrMargins: _scrToolsUnit / 2
+    property real _dropWidth: _scrToolsUnit * 13
     property real _scrToolsUnit: ScreenTools.defaultFontPixelWidth
 
-    property var  vehicle:      globals.activeVehicle
-    property real _rollAngle:   vehicle ? vehicle.roll.rawValue  : 0
-    property real _pitchAngle:  vehicle ? vehicle.pitch.rawValue : 0
+    property var  _vehicle:      globals.activeVehicle
+    property real _rollAngle:   _vehicle ? _vehicle.roll.rawValue  : 0
+    property real _pitchAngle:  _vehicle ? _vehicle.pitch.rawValue : 0
 
     property int  xc: width / 2
     property int  yc: height / 2
@@ -135,7 +141,7 @@ Item {
         height: parent.width * 0.05
         sourceSize.height: height
         fillMode: Image.PreserveAspectCrop
-        visible: toggleSwitchAim.isChecked && rollPichMax
+        visible: toggleSwitchAim.isChecked && rollPichMax && isA8mini
 
         // Переміщення від центру
         x: xc + dx - width / 2
@@ -147,7 +153,7 @@ Item {
         width: parent.width
         height: parent.height
         anchors.fill: parent
-        visible: toggleSwitchAim.isChecked && rollPichMax
+        visible: toggleSwitchAim.isChecked && rollPichMax && isA8mini
 
         ShapePath {
             strokeWidth: 3
@@ -166,7 +172,7 @@ Item {
     Item {
         id: cameraControl
         anchors.fill: parent
-        visible: true
+        visible: _cameraSettings.cameraType.value !== 2
 
         SdkSender {
             id: sdkSender
@@ -199,16 +205,15 @@ Item {
             // }
         }
 
-        Rectangle { // тепер загальний блок у вигляді шторки з ліва
+        Rectangle { // Загальний блок у вигляді шторки з ліва
             id:                 leftControlPanel
             anchors.top:        parent.top
             anchors.left:       parent.left
-            anchors.leftMargin: _toolsMargin
-            width:              _btnWidth + _scrMargins * 2
+            width:              collapsed && !isA8mini ? 0 : _btnWidth + _scrMargins * 2
             height: collapsed
                     ? _btnHeight * 3 + _scrMargins * 4
                     : crosshairRoot.height - _scrMargins // - _pipOverlay.height
-            color:      "#80000000"
+            color:      "#00000000"
             //radius:     _scrToolsUnit
 
             property bool collapsed: true
@@ -235,7 +240,7 @@ Item {
                 MouseArea {
                     anchors.fill:   parent
                     onClicked:      leftControlPanel.collapsed = !leftControlPanel.collapsed
-                    cursorShape: Qt.PointingHandCursor
+                    cursorShape:    Qt.PointingHandCursor
                 }
             }
 
@@ -245,24 +250,10 @@ Item {
                 spacing: _scrMargins
                 anchors.margins: _scrMargins
 
-                Label { // Label "Приціл"
-                    id: labelCameraMod
-                    visible: !leftControlPanel.collapsed
-                    text: "Режим прицілу"
-                    font.pointSize: 10
-                    font.bold: true
-                    width: _btnWidth
-                    wrapMode: Text.WordWrap
-                    horizontalAlignment: Text.AlignHCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.margins: _scrMargins
-                    color: "white"
-                }
-
                 Button { // Button "Скид"
                     id: dropp
                     enabled: !disableTimer.running
-                    visible: true //isAndroid // !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 //isAndroid
                     width: _btnWidth
                     height: _btnHeight
                     onClicked: {
@@ -271,16 +262,34 @@ Item {
                         disableTimer.start()
                     }
 
-                    text: "Скид"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem1
+                            source: textItem1
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: !parent.enabled ? 0 : 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem1
+                            anchors.centerIn: parent
+                            text: "Скид"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: !parent.enabled ? "darkgray" : "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: sdkSender.gimbalMode === 1
-                               ? (parent.down ? "#228B22" : "#32CD32")   // Follow Mode — темно/світло зелений
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")   // інші — стандартні кольори
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
@@ -288,7 +297,7 @@ Item {
 
                 Button { // Button "Політ"
                     enabled: !disableTimer.running
-                    visible: true //isAndroid //!leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 //isAndroid
                     width: _btnWidth
                     height: _btnHeight
                     onClicked: {
@@ -297,16 +306,34 @@ Item {
                         disableTimer.start()
                     }
 
-                    text: "Політ"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem2
+                            source: textItem2
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: !parent.enabled ? 0 : 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem2
+                            anchors.centerIn: parent
+                            text: "Політ"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: !parent.enabled ? "darkgray" : "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: sdkSender.gimbalMode === 2
-                               ? (parent.down ? "#228B22" : "#32CD32")   // FPV Mode — темно/світло зелений
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")   // інші — стандартні кольори
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
@@ -314,7 +341,7 @@ Item {
 
                 Button { // Button "Баліст."
                     id: toggleSwitchAim
-                    visible: true // !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: false
@@ -322,16 +349,34 @@ Item {
                         isChecked = !isChecked
                     }
 
-                    text: "Баліст."
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem3
+                            source: textItem3
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem3
+                            anchors.centerIn: parent
+                            text: "Баліст."
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#228B22" : "#32CD32")
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
@@ -340,8 +385,8 @@ Item {
                 Label { // Label "Video"
                     id: labelReboot
                     visible: !leftControlPanel.collapsed
-                    text: "Reboot"
-                    font.pointSize: 10
+                    text: " "
+                    font.pointSize: 3
                     font.bold: true
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.margins: _scrMargins
@@ -349,44 +394,80 @@ Item {
                 }
 
                 Button { // Button "Камера"
-                    visible: !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
                     width: _btnWidth
                     height: _btnHeight
                     enabled: !sdkSender.cameraCommandInProgress
                     onClicked: sdkSender.sendRebootCamera()
 
-                    text: "Камера"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem4
+                            source: textItem4
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: !parent.enabled ? 0 : 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem4
+                            anchors.centerIn: parent
+                            text: "Камера"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: !parent.enabled ? "darkgray" : "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
-                        color:  !parent.enabled ? "#AAAAAA"           // неактивна — сіра
-                                                : parent.down   ? "#DDDDDD"           // натиснута — світлосіра
-                                                                : "#FFFFFF"           // нормальна — біла
+                        color:  !parent.enabled ? "#66000000"
+                                                : parent.down   ? "#33000000"
+                                                                : "#66000000"
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
 
                 Button { // Button "Гімбал"
-                    visible: !leftControlPanel.collapsed
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
                     width: _btnWidth
                     height: _btnHeight
                     enabled: !sdkSender.gimbalCommandInProgress
                     onClicked: sdkSender.sendRebootGimbal()
 
-                    text: "Гімбал"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem5
+                            source: textItem5
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: !parent.enabled ? 0 : 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem5
+                            anchors.centerIn: parent
+                            text: "Гімбал"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: !parent.enabled ? "darkgray" : "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
-                        color:  !parent.enabled     ? "#AAAAAA"           // неактивна — сіра
-                                                    : parent.down       ? "#DDDDDD"           // натиснута — світлосіра
-                                                                        : "#FFFFFF"           // нормальна — біла
+                        color:  !parent.enabled ? "#66000000"
+                                                : parent.down   ? "#33000000"
+                                                                : "#66000000"
                         border.color: "#666666"
                         border.width: 1
                     }
@@ -395,8 +476,8 @@ Item {
                 Label { // Label "Video"
                     id: labelVideo
                     visible: !leftControlPanel.collapsed
-                    text: "Video"
-                    font.pointSize: 10
+                    text: " "
+                    font.pointSize: 3
                     font.bold: true
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.margins: _scrMargins
@@ -409,18 +490,36 @@ Item {
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Hotspot"
                     enabled: true
-                        onClicked: _videoSettings.videoSource.rawValue = "Herelink Hotspot"
+                    onClicked: _videoSettings.videoSource.rawValue = "Herelink Hotspot"
 
-                    text: "HotSpot"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem6
+                            source: textItem6
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem6
+                            anchors.centerIn: parent
+                            text: "HotSpot"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#228B22" : "#32CD32")
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
@@ -436,111 +535,261 @@ Item {
                         _videoSettings.videoSource.rawValue = "Herelink Hotspot (Dynamic)"
                     }
 
-                    text: "Router"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem7
+                            source: textItem7
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem7
+                            anchors.centerIn: parent
+                            text: "Router"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#228B22" : "#32CD32")
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
 
                 Button { // Button "HDMI Android"
-                    visible: !leftControlPanel.collapsed && isAndroid
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed && isAndroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit"
                     enabled: true
-                        onClicked: _videoSettings.videoSource.rawValue = "Herelink Air Unit"
+                    onClicked: _videoSettings.videoSource.rawValue = "Herelink Air Unit"
 
-                    text: "HDMI"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem8
+                            source: textItem8
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem8
+                            anchors.centerIn: parent
+                            text: "HDMI"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#228B22" : "#32CD32")
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
 
                 Button { // Button "IP Video" Android
-                    visible: !leftControlPanel.collapsed && isAndroid
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed && isAndroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "IP Camera Stream"
                     enabled: true
-                        onClicked: _videoSettings.videoSource.rawValue = "IP Camera Stream"
+                    onClicked: _videoSettings.videoSource.rawValue = "IP Camera Stream"
 
-                    text: "- IP -"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem9
+                            source: textItem9
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem9
+                            anchors.centerIn: parent
+                            text: "- IP -"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#228B22" : "#32CD32")
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
 
                 Button { // Button "RTSP-1"
-                    visible: !leftControlPanel.collapsed && _videoSettings.usingButtonRTSP1.value
+                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP Video Stream"
                     enabled: true
                     onClicked: _videoSettings.videoSource.rawValue = "RTSP Video Stream"
 
-                    text: "RTSP-1"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem11
+                            source: textItem11
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem11
+                            anchors.centerIn: parent
+                            text: "RTSP-1"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#228B22" : "#32CD32")
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
 
                 Button { // Button "RTSP-2"
-                    visible: !leftControlPanel.collapsed && _videoSettings.usingButtonRTSP2.value
+                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP2 Video Stream"
                     enabled: true
                     onClicked: _videoSettings.videoSource.rawValue = "RTSP2 Video Stream"
 
-                    text: "RTSP-2"
-                    font.pointSize: 10
-                    font.bold: false
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItem10
+                            source: textItem10
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItem10
+                            anchors.centerIn: parent
+                            text: "RTSP-2"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
 
                     background: Rectangle {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#228B22" : "#32CD32")
-                               : (parent.down ? "#DDDDDD" : "#FFFFFF")
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
+                }
+            }
+        }
+    }
+
+    Loader {
+        id: rcLoader
+        active: _vehicle !== null
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 10
+        anchors.topMargin: _scrToolsUnit * 17
+        width: _btnWidth
+        height: _btnHeight * 3
+        sourceComponent: dropsPanelComponent
+    }
+
+    Component { // Drops indicator
+        id: dropsPanelComponent
+
+        Item {
+            id: dropsPanel
+
+            RCChannelMonitorController {
+                id: rcController
+            }
+
+            property int rc2:       78
+            property int rc9:       15
+            property int rc10:      25
+
+            Connections {
+                target: rcController
+                onChannelRCValueChanged: {
+                    //console.log("RC Channel", channel, "value:", rcValue)
+                    if (channel === 1) rc2 = rcValue
+                    if (channel === 8) rc9 = rcValue
+                    if (channel === 9) rc10 = rcValue
+                }
+            }
+
+            Column {
+                anchors.top: parent.top
+                spacing: 6
+
+                Image {
+                    width: _dropWidth
+                    mipmap: true
+                    sourceSize.width: width
+                    fillMode: Image.PreserveAspectCrop
+                    visible: _flyViewSettings.dropLeft.value && _cameraSettings.cameraType.value !== 2
+                    source: rc9 > 1500 ? "/qmlimages/49ks/DropsOn" : "/qmlimages/49ks/DropsOff"
+                }
+                Image {
+                    width: _dropWidth
+                    mipmap: true
+                    sourceSize.width: width
+                    fillMode: Image.PreserveAspectCrop
+                    visible: _flyViewSettings.dropRight.value && _cameraSettings.cameraType.value !== 2
+                    source: rc10 > 1500 ? "/qmlimages/49ks/DropsOn" : "/qmlimages/49ks/DropsOff"
                 }
             }
         }

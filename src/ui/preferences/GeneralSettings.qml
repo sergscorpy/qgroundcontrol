@@ -48,6 +48,7 @@ Rectangle {
     property var    _planViewSettings:          QGroundControl.settingsManager.planViewSettings
     property var    _flyViewSettings:           QGroundControl.settingsManager.flyViewSettings
     property var    _videoSettings:             QGroundControl.settingsManager.videoSettings
+    property var    _cameraSettings:            QGroundControl.settingsManager.cameraSettings
     property string _videoSource:               _videoSettings.videoSource.rawValue
     property bool   _isGst:                     QGroundControl.videoManager.isGStreamer
     property bool   _isUDP264:                  _isGst && _videoSource === _videoSettings.udp264VideoSource
@@ -429,19 +430,43 @@ Rectangle {
                                     fact:       _videoSettings.enableStorageLimit
                                     visible:    _showSaveVideoSettings && fact.visible
                                 }
+                                GridLayout {
+                                    id:         dronTypeGrid
+                                    columns:    2
+                                    visible:    true
 
-                                Item { width: 1; height: 1}
-                                FactCheckBox {
-                                    text:       qsTr("Using Button RTSP-1")
-                                    fact:       _videoSettings.usingButtonRTSP1
-                                    visible:    !_videoAutoStreamConfig && _isGst && fact.visible
-                                }
+                                    QGCLabel {
+                                        text:               qsTr("Drone Type and Specification")
+                                        Layout.columnSpan:  2
+                                        Layout.alignment:   Qt.AlignHCenter
+                                    }
 
-                                Item { width: 1; height: 1}
-                                FactCheckBox {
-                                    text:       qsTr("Using Button RTSP-2")
-                                    fact:       _videoSettings.usingButtonRTSP2
-                                    visible:    !_videoAutoStreamConfig && _isGst && fact.visible
+                                    QGCLabel {
+                                        id:         cameraSettingsLabel
+                                        text:       qsTr("Camera Type")
+                                    }
+                                    FactComboBox {
+                                        id:                     cameraType
+                                        Layout.preferredWidth:  _comboFieldWidth
+                                        indexModel:             false
+                                        fact:                   _cameraSettings.cameraType
+                                        visible:                videoSourceLabel.visible
+                                    }
+
+                                    Item { width: 1; height: 1}
+                                    FactCheckBox {
+                                        text:       qsTr("Скид (9 канал)")
+                                        fact:       _flyViewSettings.dropLeft
+                                        visible:    fact.visible
+                                    }
+
+                                    Item { width: 1; height: 1}
+                                    FactCheckBox {
+                                        text:       qsTr("Скид (10 канал)")
+                                        fact:       _flyViewSettings.dropRight
+                                        visible:    fact.visible
+
+                                    }
                                 }
                             }
                         }

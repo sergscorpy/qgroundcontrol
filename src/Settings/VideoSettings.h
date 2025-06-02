@@ -37,8 +37,6 @@ public:
     DEFINE_SETTINGFACT(disableWhenDisarmed)
     DEFINE_SETTINGFACT(lowLatencyMode)
     DEFINE_SETTINGFACT(forceVideoDecoder)
-    DEFINE_SETTINGFACT(usingButtonRTSP1)
-    DEFINE_SETTINGFACT(usingButtonRTSP2)
 
     enum VideoDecoderOptions {
         ForceVideoDecoderDefault = 0,

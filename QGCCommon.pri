@@ -199,7 +199,7 @@ exists ($$PWD/.git) {
 DEFINES += APP_VERSION_STR=\"\\\"$$APP_VERSION_STR\\\"\"
 
 AndroidBuild {
-    QGC_ANDROID_PACKAGE = org.mavlink.49ks
+    QGC_ANDROID_PACKAGE = org.mavlink.karpatskasich
     
     message(VERSION $${VERSION})
     MAJOR_VERSION   = $$section(VERSION, ".", 0, 0)

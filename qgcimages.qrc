@@ -215,5 +215,7 @@
         <file alias="49ks/KSLogoFullPng">src/KS49src/KSLogoFull_512x512.png</file>
         <file alias="49ks/KSLogoFullWhitePng">src/KS49src/KSLogoFullWhite_256x256.png</file>
         <file alias="49ks/KS49_BrandImage">src/KS49src/KS49_BrandImage.png</file>
+        <file alias="49ks/DropsOff">src/KS49src/DropsOff.svg</file>
+        <file alias="49ks/DropsOn">src/KS49src/DropsOn.svg</file>
     </qresource>
 </RCC>

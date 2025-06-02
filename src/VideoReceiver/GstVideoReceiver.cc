@@ -15,6 +15,8 @@
  */
 
 #include "GstVideoReceiver.h"
+#include "QGCApplication.h"
+#include "SettingsManager.h"
 
 #include <QDebug>
 #include <QUrl>
@@ -59,12 +61,38 @@ GstVideoReceiver::GstVideoReceiver(QObject* parent)
     _slotHandler.start();
     connect(&_watchdogTimer, &QTimer::timeout, this, &GstVideoReceiver::_watchdog);
     _watchdogTimer.start(1000);
+    connect(&_restartTimer, &QTimer::timeout, this, [this]() {
+        restartPipeline();
+    });
+
+    _restartTimer.setInterval(30 * 1000);
+    _restartTimer.setSingleShot(false);
+
+    connect(qgcApp()->toolbox()->settingsManager()->cameraSettings()->cameraType(), &Fact::rawValueChanged,
+            this, &GstVideoReceiver::_updateRestartTimerState);
+    _updateRestartTimerState();
 }
 
 GstVideoReceiver::~GstVideoReceiver(void)
 {
     stop();
     _slotHandler.shutdown();
+}
+
+void GstVideoReceiver::_updateRestartTimerState()
+{
+    int camType = qgcApp()->toolbox()->settingsManager()->cameraSettings()->cameraType()->rawValue().toInt();
+    if (camType == 2) {
+        if (!_restartTimer.isActive()) {
+            qCDebug(VideoReceiverLog) << "[RestartTimer] Enabled for camType:" << camType;
+            _restartTimer.start();
+        }
+    } else {
+        if (_restartTimer.isActive()) {
+            qCDebug(VideoReceiverLog) << "[RestartTimer] Disabled for camType:" << camType;
+            _restartTimer.stop();
+        }
+    }
 }
 
 void
@@ -269,6 +297,20 @@ GstVideoReceiver::start(const QString& uri, unsigned timeout, int buffer)
             emit onStartComplete(STATUS_OK);
         });
     }
+}
+
+void GstVideoReceiver::restartPipeline()
+{
+    qCDebug(VideoReceiverLog) << "[Restart] Restarting pipeline due to high latency";
+
+    if (_pipeline)
+    {
+        gst_element_set_state(_pipeline, GST_STATE_NULL);
+        gst_object_unref(_pipeline);
+        _pipeline = nullptr;
+    }
+
+    start(_uri, _timeout, _buffer);
 }
 
 void
@@ -1155,7 +1197,7 @@ GstVideoReceiver::_addVideoSink(GstPad* pad)
 
     gst_element_sync_state_with_parent(_videoSink);
 
-    g_object_set(_videoSink, "sync", _buffer >= 0, NULL);
+    g_object_set(_videoSink, "sync", FALSE, NULL);
 
     GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "pipeline-with-videosink");
 
