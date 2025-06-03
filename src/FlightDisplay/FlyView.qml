@@ -167,7 +167,6 @@ Item {
 
     FlyViewVideo {
         id: videoControl
-        visible: false
     }
 
     QGCPipOverlay {
