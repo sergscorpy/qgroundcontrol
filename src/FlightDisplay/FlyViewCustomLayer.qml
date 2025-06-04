@@ -689,7 +689,7 @@ Item {
                     }
                 }
 
-                Button { // Button "RTSP-1"
+                Button { // Button "ДЕНЬ/RTSP-1"
                     visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
                     width: _btnWidth
                     height: _btnHeight
@@ -712,7 +712,7 @@ Item {
                         Text {
                             id: textItem11
                             anchors.centerIn: parent
-                            text: "RTSP-1"
+                            text: "ДЕНЬ"
                             font.pointSize: 10
                             font.bold: false
                             color: "white"
@@ -730,7 +730,7 @@ Item {
                     }
                 }
 
-                Button { // Button "RTSP-2"
+                Button { // Button "НІЧ/RTSP-2"
                     visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
                     width: _btnWidth
                     height: _btnHeight
@@ -753,7 +753,7 @@ Item {
                         Text {
                             id: textItem10
                             anchors.centerIn: parent
-                            text: "RTSP-2"
+                            text: "НІЧ"
                             font.pointSize: 10
                             font.bold: false
                             color: "white"
