@@ -770,6 +770,47 @@ Item {
                         border.width: 1
                     }
                 }
+
+                Button { // Button "КУРС"
+                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "UDP h.264 Video Stream"
+                    enabled: true
+                    onClicked: _videoSettings.videoSource.rawValue = "UDP h.264 Video Stream"
+
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItemCource
+                            source: textItemCource
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItemCource
+                            anchors.centerIn: parent
+                            text: "КУРС"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
             }
         }
     }
