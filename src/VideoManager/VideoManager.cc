@@ -827,17 +827,8 @@ VideoManager::_restartVideo(unsigned id)
     }
 
 #if defined(QGC_GST_STREAMING)
-    bool oldLowLatencyStreaming = _lowLatencyStreaming[id];
-    QString oldUri = _videoUri[id];
+
     _updateSettings(id);
-    bool newLowLatencyStreaming = _lowLatencyStreaming[id];
-    QString newUri = _videoUri[id];
-    qCDebug(VideoManagerLog) << "New Video URI " << newUri;
-    // FIXME: AV: use _updateSettings() result to check if settings were changed
-    if (_videoStarted[id] && oldUri == newUri && oldLowLatencyStreaming == newLowLatencyStreaming) {
-        qCDebug(VideoManagerLog) << "No sense to restart video streaming, skipped"  << id;
-        return;
-    }
 
     qCDebug(VideoManagerLog) << "Restart video streaming"  << id;
 
@@ -944,7 +935,7 @@ VideoManager::_aspectRatioChanged()
     emit aspectRatioChanged();
 }
 
-//---------------------------------------------------------------------------------------- Моя кнопка
+//----------------------------------------------------------------------------------------
 QString VideoManager::_getHerelinkHotspotIP()
 {
     QString ip = qgcApp()->toolbox()->linkManager()->getLastUDPAddress();

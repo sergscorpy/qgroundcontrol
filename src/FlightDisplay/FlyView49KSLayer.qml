@@ -572,9 +572,9 @@ Item {
                     visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed && isAndroid
                     width: _btnWidth
                     height: _btnHeight
-                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit"
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink AirUnit"
                     enabled: true
-                    onClicked: _videoSettings.videoSource.rawValue = "Herelink Air Unit"
+                    onClicked: _videoSettings.videoSource.rawValue = "Herelink AirUnit"
 
                     contentItem: Item {
                         anchors.fill: parent
@@ -781,7 +781,7 @@ Item {
                     sourceSize.width: width
                     fillMode: Image.PreserveAspectCrop
                     visible: _flyViewSettings.dropLeft.value && _cameraSettings.cameraType.value !== 2
-                    source: rc9 > 1500 ? "/qmlimages/49ks/DropsOn" : "/qmlimages/49ks/DropsOff"
+                    source: rc9 < 1500 ? "/qmlimages/49ks/DropsOn" : "/qmlimages/49ks/DropsOff"
                 }
                 Image {
                     width: _dropWidth
@@ -789,7 +789,7 @@ Item {
                     sourceSize.width: width
                     fillMode: Image.PreserveAspectCrop
                     visible: _flyViewSettings.dropRight.value && _cameraSettings.cameraType.value !== 2
-                    source: rc10 > 1500 ? "/qmlimages/49ks/DropsOn" : "/qmlimages/49ks/DropsOff"
+                    source: rc10 < 1500 ? "/qmlimages/49ks/DropsOn" : "/qmlimages/49ks/DropsOff"
                 }
             }
         }
