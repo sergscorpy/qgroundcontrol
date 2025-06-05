@@ -291,7 +291,9 @@
         <file alias="QGroundControl/Controls/MockLinkOptionsDlg.qml">src/comm/MockLinkOptionsDlg.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewInsetViewer.qml">src/FlightDisplay/FlyViewInsetViewer.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyView49KSLayer.qml">src/FlightDisplay/FlyView49KSLayer.qml</file>
-        <file alias="QGroundControl/FlightDisplay/FlyViewSpinBox.qml">src/FlightDisplay/FlyViewSpinBox.qml</file>
+        <file alias="QGroundControl/FlightDisplay/FlyView49KSSpinBox.qml">src/FlightDisplay/FlyView49KSSpinBox.qml</file>
+        <file alias="QGroundControl/FlightDisplay/FlyView49KSButtons.qml">src/FlightDisplay/FlyView49KSButtons.qml</file>
+        <file alias="QGroundControl/FlightDisplay/FlyView49KSCrossHair.qml">src/FlightDisplay/FlyView49KSCrossHair.qml</file>
     </qresource>
     <qresource prefix="/FirstRunPromptDialogs">
         <file alias="UnitsFirstRunPrompt.qml">src/FirstRunPromptDialogs/UnitsFirstRunPrompt.qml</file>

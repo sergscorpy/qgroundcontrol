@@ -34,4 +34,5 @@ public:
     DEFINE_SETTINGFACT(customActionDefinitions)
     DEFINE_SETTINGFACT(dropLeft)
     DEFINE_SETTINGFACT(dropRight)
+    DEFINE_SETTINGFACT(crossHair)
 };

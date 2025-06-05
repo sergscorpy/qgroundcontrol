@@ -94,6 +94,13 @@
     "default":      false
 },
 {
+    "name":         "crossHair",
+    "shortDesc":    "Using the Crosshair",
+    "longDesc":     "Can be used the Crosshair",
+    "type":         "bool",
+    "default":      true
+},
+{
     "name":      "customActionDefinitions",
     "shortDesc": "Custom Action Definitions",
     "longDesc":  "File that defines custom actions to send connected vehicle",

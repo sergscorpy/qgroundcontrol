@@ -467,6 +467,14 @@ Rectangle {
                                         visible:    fact.visible
 
                                     }
+
+                                    Item { width: 1; height: 1}
+                                    FactCheckBox {
+                                        text:       qsTr("Приціл")
+                                        fact:       _flyViewSettings.crossHair
+                                        visible:    fact.visible
+
+                                    }
                                 }
                             }
                         }
