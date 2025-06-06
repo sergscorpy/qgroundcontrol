@@ -31,8 +31,6 @@ import QGroundControl.ScreenTools   1.0
 import QGroundControl.Vehicle       1.0
 import QGroundControl.GimbalTools   1.0
 
-// To implement a custom overlay copy this code to your own control in your custom code source. Then override the
-// FlyViewCustomLayer.qml resource with your own qml. See the custom example and documentation for details.
 
 Item {
     id: crosshairRoot
@@ -163,8 +161,6 @@ Item {
             Connections {
                 target: rcController
                 onChannelRCValueChanged: {
-                    //console.log("RC Channel", channel, "value:", rcValue)
-                    if (channel === 1) rc2 = rcValue
                     if (channel === 8) rc9 = rcValue
                     if (channel === 9) rc10 = rcValue
                 }
