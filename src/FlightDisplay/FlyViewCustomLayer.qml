@@ -40,6 +40,28 @@ Item {
     id: crosshairRoot
     anchors.fill: parent
 
+    Component {
+        id: controllerComponent
+        FactPanelController { id: controller; }
+    }
+    property Fact _raspHoldEnabled
+    property Fact _raspHoldDayNight
+    property bool _vehicleReady: QGroundControl.multiVehicleManager.parameterReadyVehicleAvailable
+    property var _paramManager: QGroundControl.multiVehicleManager.activeVehicle.parameterManager
+    on_VehicleReadyChanged: {
+        if (_activeVehicle !== null) {
+            var controller = controllerComponent.createObject()
+            _raspHoldEnabled = controller.getParameterFact(-1, "ARMING_RUDDER", false /* reportMissing */)
+            _raspHoldDayNight = controller.getParameterFact(-1, "ARMING_OPTIONS", false /* reportMissing */)
+            // _raspHoldDayNight = controller.getParameterFact(-1, "RSPH_ST", false /* reportMissing */)
+            // _raspHoldEnabled = controller.getParameterFact(-1, "RSPH_ENABLE", false /* reportMissing */)
+        } else {
+            controller = null
+            _raspHoldDayNight = null
+            _raspHoldEnabled = null
+        }
+    }
+
     property var parentToolInsets               // These insets tell you what screen real estate is available for positioning the controls in your overlay
     property var totalToolInsets:   _toolInsets // These are the insets for your custom overlay additions
     property var mapControl
@@ -851,6 +873,95 @@ Item {
                         border.color: "#666666"
                         border.width: 1
                     }
+                }
+            }
+        }
+
+        Column {
+            id: day_night
+            anchors.bottom: parent.verticalCenter
+            leftPadding: 5
+            spacing: 5
+
+            Button {
+                width: _btnWidth
+                height: _btnHeight
+                property bool isChecked: (_raspHoldEnabled.rawValue === 1) && (_raspHoldDayNight.rawValue === 0)
+                onClicked: {
+                    if (_activeVehicle !== null) {
+                        var enableFlag = 0 
+                        if (_raspHoldEnabled.rawValue === 0 || _raspHoldDayNight.rawValue === 1) {
+                            enableFlag = 1;
+                        }
+                        _raspHoldDayNight.rawValue = 0;_raspHoldEnabled.rawValue = enableFlag;
+                    }
+                }
+                contentItem: Text {
+                    id: textItemHoldDay
+                    anchors.centerIn: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    text: "Стаб ДЕНЬ"
+                    font.pointSize: 10
+                    font.bold: false
+                    color: "white"
+                }
+                DropShadow {
+                    anchors.fill: textItemHoldDay
+                    source: textItemHoldDay
+                    horizontalOffset: 1
+                    verticalOffset: 1
+                    radius: 6
+                    color: "#000000"
+                }
+                background: Rectangle {
+                    radius: _btnRadius
+                    anchors.fill: parent
+                    color: parent.isChecked
+                        ? (parent.down ? "#66008B00" : "#e6005900")
+                        : (parent.down ? "#33000000" : "#66000000")
+                    border.color: "#666666"
+                    border.width: 1
+                }
+            }
+            Button {
+                width: _btnWidth
+                height: _btnHeight
+                property bool isChecked: (_raspHoldEnabled.rawValue === 1) && (_raspHoldDayNight.rawValue === 1)
+                onClicked: {
+                    if (_activeVehicle !== null) {
+                        var enableFlag = 0 
+                        if (_raspHoldEnabled.rawValue === 0 || _raspHoldDayNight.rawValue === 0) {
+                            enableFlag = 1;
+                        }
+                        _raspHoldDayNight.rawValue = 1;_raspHoldEnabled.rawValue = enableFlag;
+                    }
+                }
+                contentItem: Text {
+                    id: textItemHoldNight
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    text: "Стаб НІЧ"
+                    font.pointSize: 10
+                    color: "white"
+                }
+                DropShadow {
+                    anchors.fill: textItemHoldNight
+                    source: textItemHoldNight
+                    horizontalOffset: 1
+                    verticalOffset: 1
+                    radius: 6
+                    color: "#000000"
+                }
+                background: Rectangle {
+                    radius: _btnRadius
+                    anchors.fill: parent
+                    color: parent.isChecked
+                        ? (parent.down ? "#66008B00" : "#e6005900")
+                        : (parent.down ? "#33000000" : "#66000000")
+                    border.color: "#666666"
+                    border.width: 1
                 }
             }
         }
