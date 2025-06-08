@@ -836,7 +836,7 @@ Item {
                 }
 
                 Button { // Button "ТРИМАЧ"
-                    visible: !leftControlPanel.collapsed && isSkydroid
+                    visible: false // hidden for the time being //!leftControlPanel.collapsed && isSkydroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "IP Camera Stream"
