@@ -74,6 +74,7 @@ Item {
     property bool isAndroid:        Qt.platform.os === "android"
     property bool isWindows:        Qt.platform.os === "windows"
     property bool isA8mini:         _cameraSettings.cameraType.value === 0
+    property bool isSkydroid:       _cameraSettings.cameraType.value === 1
 
     // параметр масштабування відносно ширини екрану
     property real _scrUnit: width / 65
@@ -712,7 +713,7 @@ Item {
                 }
 
                 Button { // Button "ДЕНЬ/RTSP-1"
-                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
+                    visible: !leftControlPanel.collapsed && isSkydroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP Video Stream"
@@ -753,7 +754,7 @@ Item {
                 }
 
                 Button { // Button "НІЧ/RTSP-2"
-                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
+                    visible: !leftControlPanel.collapsed && isSkydroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP2 Video Stream"
@@ -794,7 +795,7 @@ Item {
                 }
 
                 Button { // Button "КУРС"
-                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
+                    visible: !leftControlPanel.collapsed && isSkydroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "UDP h.264 Video Stream"
@@ -835,7 +836,7 @@ Item {
                 }
 
                 Button { // Button "ТРИМАЧ"
-                    visible: !leftControlPanel.collapsed && _cameraSettings.cameraType.value === 1
+                    visible: !leftControlPanel.collapsed && isSkydroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "IP Camera Stream"
@@ -882,6 +883,7 @@ Item {
             anchors.bottom: parent.verticalCenter
             leftPadding: 5
             spacing: 5
+            visible: isSkydroid
 
             Button {
                 width: _btnWidth
