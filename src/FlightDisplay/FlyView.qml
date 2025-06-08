@@ -158,6 +158,7 @@ Item {
         id: videoControl
         Component.onCompleted:  {
             pipState.state = pipState.fullState
+            mapControl.pipState.state = pipState.windowState
         }
     }
 
