@@ -261,6 +261,7 @@ Item {
                     ? (isA8mini ? _btnHeight * 3 + _scrMargins * 4 : 0)
                     : crosshairRoot.height - _scrMargins // - _pipOverlay.height
             color:      "#00000000"
+            visible: !isSkydroid
             //radius:     _scrToolsUnit
 
             property bool collapsed: true
@@ -710,8 +711,50 @@ Item {
                     }
                 }
 
+            }
+        }
+
+        Rectangle {
+            id: cameraControls
+            width: cameraButtons.width + 2*cameraControls.radius
+            height: cameraControlsLabel.height + cameraButtons.height + cameraButtons.spacing + cameraButtons.anchors.topMargin
+            color: "#66000000"
+            radius: 2
+            border.color: "#88666666"
+            border.width: 1
+            visible: isSkydroid
+
+            DropShadow {
+                anchors.fill: cameraControlsLabel
+                source: cameraControlsLabel
+                horizontalOffset: 1
+                verticalOffset: 1
+                radius: 6
+                color: "#000000"
+            }
+
+            Label {
+                id: cameraControlsLabel
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Камера"
+                font.pointSize: 10
+                font.bold: false
+                color: "white"
+            }
+
+            Column {
+                id: cameraButtons
+                anchors.top: cameraControlsLabel.bottom
+                anchors.topMargin: 5
+                anchors.horizontalCenter: parent.horizontalCenter
+                padding: 5
+                visible: isSkydroid
+                spacing: 5
+                // back
+
                 Button { // Button "ДЕНЬ/RTSP-1"
-                    visible: !leftControlPanel.collapsed && isSkydroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP Video Stream"
@@ -733,7 +776,7 @@ Item {
                         Text {
                             id: textItem11
                             anchors.centerIn: parent
-                            text: "ДЕНЬ"
+                            text: "День"
                             font.pointSize: 10
                             font.bold: false
                             color: "white"
@@ -744,15 +787,14 @@ Item {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#66008B00" : "#e6005900")
-                               : (parent.down ? "#33000000" : "#66000000")
+                                ? (parent.down ? "#66008B00" : "#e6005900")
+                                : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
 
                 Button { // Button "НІЧ/RTSP-2"
-                    visible: !leftControlPanel.collapsed && isSkydroid
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP2 Video Stream"
@@ -774,7 +816,7 @@ Item {
                         Text {
                             id: textItem10
                             anchors.centerIn: parent
-                            text: "НІЧ"
+                            text: "Ніч"
                             font.pointSize: 10
                             font.bold: false
                             color: "white"
@@ -785,15 +827,15 @@ Item {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#66008B00" : "#e6005900")
-                               : (parent.down ? "#33000000" : "#66000000")
+                                ? (parent.down ? "#66008B00" : "#e6005900")
+                                : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
 
-                Button { // Button "КУРС"
-                    visible: !leftControlPanel.collapsed && isSkydroid
+                Button { // Button "ТРИМАЧ"
+                    visible: false // hidden for the time being
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "UDP h.264 Video Stream"
@@ -815,7 +857,7 @@ Item {
                         Text {
                             id: textItemCource
                             anchors.centerIn: parent
-                            text: "КУРС"
+                            text: "ТРИМАЧ"
                             font.pointSize: 10
                             font.bold: false
                             color: "white"
@@ -826,15 +868,15 @@ Item {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#66008B00" : "#e6005900")
-                               : (parent.down ? "#33000000" : "#66000000")
+                                ? (parent.down ? "#66008B00" : "#e6005900")
+                                : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
 
-                Button { // Button "ТРИМАЧ"
-                    visible: false // hidden for the time being //!leftControlPanel.collapsed && isSkydroid
+                Button { // Button "КУРС"
+                    visible: false // hidden for the time being
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "IP Camera Stream"
@@ -856,7 +898,7 @@ Item {
                         Text {
                             id: textItemHold
                             anchors.centerIn: parent
-                            text: "ТРИМАЧ"
+                            text: "КУРС"
                             font.pointSize: 10
                             font.bold: false
                             color: "white"
@@ -867,101 +909,127 @@ Item {
                         anchors.fill: parent
                         radius: _btnRadius
                         color: parent.isChecked
-                               ? (parent.down ? "#66008B00" : "#e6005900")
-                               : (parent.down ? "#33000000" : "#66000000")
+                                ? (parent.down ? "#66008B00" : "#e6005900")
+                                : (parent.down ? "#33000000" : "#66000000")
                         border.color: "#666666"
                         border.width: 1
                     }
                 }
             }
-        }
 
-        Column {
-            id: day_night
-            anchors.bottom: parent.verticalCenter
-            leftPadding: 5
-            spacing: 5
+        }
+        Rectangle {
+            id: holdControls
+            anchors.top: parent.verticalCenter
+            width: holdButtons.width + 2*holdControls.radius
+            height: holdControlsLabel.height + holdButtons.height + holdButtons.spacing + holdButtons.anchors.topMargin
+            color: "#66000000"
+            radius: 2
+            border.color: "#88666666"
+            border.width: 1
             visible: isSkydroid
 
-            Button {
-                width: _btnWidth
-                height: _btnHeight
-                property bool isChecked: (_raspHoldEnabled.rawValue === 1) && (_raspHoldDayNight.rawValue === 0)
-                onClicked: {
-                    if (_activeVehicle !== null) {
-                        var enableFlag = 0 
-                        if (_raspHoldEnabled.rawValue === 0 || _raspHoldDayNight.rawValue === 1) {
-                            enableFlag = 1;
-                        }
-                        _raspHoldDayNight.rawValue = 0;_raspHoldEnabled.rawValue = enableFlag;
-                    }
-                }
-                contentItem: Text {
-                    id: textItemHoldDay
-                    anchors.centerIn: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: "Стаб ДЕНЬ"
-                    font.pointSize: 10
-                    font.bold: false
-                    color: "white"
-                }
-                DropShadow {
-                    anchors.fill: textItemHoldDay
-                    source: textItemHoldDay
-                    horizontalOffset: 1
-                    verticalOffset: 1
-                    radius: 6
-                    color: "#000000"
-                }
-                background: Rectangle {
-                    radius: _btnRadius
-                    anchors.fill: parent
-                    color: parent.isChecked
-                        ? (parent.down ? "#66008B00" : "#e6005900")
-                        : (parent.down ? "#33000000" : "#66000000")
-                    border.color: "#666666"
-                    border.width: 1
-                }
+            DropShadow {
+                anchors.fill: holdControlsLabel
+                source: holdControlsLabel
+                horizontalOffset: 1
+                verticalOffset: 1
+                radius: 6
+                color: "#000000"
             }
-            Button {
-                width: _btnWidth
-                height: _btnHeight
-                property bool isChecked: (_raspHoldEnabled.rawValue === 1) && (_raspHoldDayNight.rawValue === 1)
-                onClicked: {
-                    if (_activeVehicle !== null) {
-                        var enableFlag = 0 
-                        if (_raspHoldEnabled.rawValue === 0 || _raspHoldDayNight.rawValue === 0) {
-                            enableFlag = 1;
+
+            Label {
+                id: holdControlsLabel
+                anchors.top: parent.top
+                anchors.topMargin: 3
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "Утримання"
+                font.pointSize: 10
+                font.bold: false
+                color: "white"
+            }
+
+            Column {
+                id: holdButtons
+                anchors.top: holdControlsLabel.bottom
+                anchors.topMargin: 5
+                anchors.horizontalCenter: parent.horizontalCenter
+                padding: 5
+                visible: isSkydroid
+                spacing: 5
+
+                Button {
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: (_raspHoldDayNight.rawValue === 0)
+                    onClicked: {
+                        if (_activeVehicle !== null) {
+                            _raspHoldDayNight.rawValue = 1 - _raspHoldDayNight.rawValue;
                         }
-                        _raspHoldDayNight.rawValue = 1;_raspHoldEnabled.rawValue = enableFlag;
+                    }
+                    contentItem: Text {
+                        id: textItemHoldDay
+                        anchors.centerIn: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        text: "День\\Ніч"
+                        font.pointSize: 10
+                        font.bold: false
+                        color: "white"
+                    }
+                    DropShadow {
+                        anchors.fill: textItemHoldDay
+                        source: textItemHoldDay
+                        horizontalOffset: 1
+                        verticalOffset: 1
+                        radius: 6
+                        color: "#000000"
+                    }
+                    background: Rectangle {
+                        radius: _btnRadius
+                        anchors.fill: parent
+                        color: parent.isChecked
+                            ? (parent.down ? "#66008B00" : "#e6005900")
+                            : (parent.down ? "#33000000" : "#66000000")
+                        border.color: "#666666"
+                        border.width: 1
                     }
                 }
-                contentItem: Text {
-                    id: textItemHoldNight
-                    anchors.fill: parent
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: "Стаб НІЧ"
-                    font.pointSize: 10
-                    color: "white"
-                }
-                DropShadow {
-                    anchors.fill: textItemHoldNight
-                    source: textItemHoldNight
-                    horizontalOffset: 1
-                    verticalOffset: 1
-                    radius: 6
-                    color: "#000000"
-                }
-                background: Rectangle {
-                    radius: _btnRadius
-                    anchors.fill: parent
-                    color: parent.isChecked
-                        ? (parent.down ? "#66008B00" : "#e6005900")
-                        : (parent.down ? "#33000000" : "#66000000")
-                    border.color: "#666666"
-                    border.width: 1
+                Button {
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: (_raspHoldEnabled.rawValue === 1)
+                    onClicked: {
+                        if (_activeVehicle !== null) {
+                            _raspHoldEnabled.rawValue = 1 - _raspHoldEnabled.rawValue;
+                        }
+                    }
+                    contentItem: Text {
+                        id: textItemHoldNight
+                        anchors.fill: parent
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        text: "On\\Off"
+                        font.pointSize: 10
+                        color: "white"
+                    }
+                    DropShadow {
+                        anchors.fill: textItemHoldNight
+                        source: textItemHoldNight
+                        horizontalOffset: 1
+                        verticalOffset: 1
+                        radius: 6
+                        color: "#000000"
+                    }
+                    background: Rectangle {
+                        radius: _btnRadius
+                        anchors.fill: parent
+                        color: parent.isChecked
+                            ? (parent.down ? "#66008B00" : "#e6005900")
+                            : (parent.down ? "#33000000" : "#66000000")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
                 }
             }
         }
