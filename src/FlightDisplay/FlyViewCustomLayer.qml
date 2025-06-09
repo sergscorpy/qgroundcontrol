@@ -51,10 +51,8 @@ Item {
     on_VehicleReadyChanged: {
         if (_activeVehicle !== null) {
             var controller = controllerComponent.createObject()
-            _raspHoldEnabled = controller.getParameterFact(-1, "ARMING_RUDDER", false /* reportMissing */)
-            _raspHoldDayNight = controller.getParameterFact(-1, "ARMING_OPTIONS", false /* reportMissing */)
-            // _raspHoldDayNight = controller.getParameterFact(-1, "RSPH_ST", false /* reportMissing */)
-            // _raspHoldEnabled = controller.getParameterFact(-1, "RSPH_ENABLE", false /* reportMissing */)
+            _raspHoldDayNight = controller.getParameterFact(-1, "RSPH_ST", false /* reportMissing */)
+            _raspHoldEnabled = controller.getParameterFact(-1, "RSPH_ENABLE", false /* reportMissing */)
         } else {
             controller = null
             _raspHoldDayNight = null
