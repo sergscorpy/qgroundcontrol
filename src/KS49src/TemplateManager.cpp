@@ -8,12 +8,12 @@ TemplateManager::TemplateManager(QGCApplication* app, QGCToolbox* toolbox)
     : QGCTool(app, toolbox)
 {
     _templateName = "CameraTemplate.json";
-    _baseTemplatePath = ":/res/src/Settings/" + _templateName;
+    _baseTemplatePath = ":/json/" + _templateName;
 
     QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     QDir baseDir(downloadPath);
     baseDir.cdUp();
-    QString configDirPath = baseDir.filePath("49KSConfigs");
+    QString configDirPath = baseDir.filePath("49KS");
     QDir().mkpath(configDirPath);
     _templatePath = configDirPath + "/" + _templateName;
 

@@ -25,9 +25,12 @@ Item {
 
     property var allowedModes:
     [
+        "Altitude Hold",
+        "Loiter",
+        "RTL",
+        "Guided No GPS",
         "ALT_HOLD",
         "LOITER",
-        "RTL",
         "GUIDED_NOGPS"
     ]
 

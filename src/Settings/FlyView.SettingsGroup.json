@@ -91,7 +91,7 @@
     "shortDesc":    "Using the right drop indicator",
     "longDesc":     "Can be used the right drop indicator",
     "type":         "bool",
-    "default":      false
+    "default":      true
 },
 {
     "name":         "crossHair",
