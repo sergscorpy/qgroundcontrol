@@ -55,6 +55,7 @@ Rectangle {
     property bool   _isUDP265:                  _isGst && _videoSource === _videoSettings.udp265VideoSource
     property bool   _isRTSP:                    _isGst && _videoSource === _videoSettings.rtspVideoSource
     property bool   _isRTSP2:                   _isGst && _videoSource === _videoSettings.rtspVideoSource2
+    property bool   _isRTSPHold:                _isGst && _videoSource === _videoSettings.rtspVideoSourceHold
     property bool   _isTCP:                     _isGst && _videoSource === _videoSettings.tcpVideoSource
     property bool   _isMPEGTS:                  _isGst && _videoSource === _videoSettings.mpegtsVideoSource
     property bool   _videoAutoStreamConfig:     QGroundControl.videoManager.autoStreamConfigured
@@ -313,6 +314,17 @@ Rectangle {
                                 Layout.preferredWidth:  _comboFieldWidth
                                 fact:                   _videoSettings.rtspUrl2
                                 visible:                rtspUrl2Label.visible
+                            }
+
+                            QGCLabel {
+                                id:         rtspUrlHoldLabel
+                                text:       qsTr("RTSP RaspHold URL")
+                                visible:    !_videoAutoStreamConfig && _isRTSPHold && _videoSettings.rtspUrlHold.visible
+                            }
+                            FactTextField {
+                                Layout.preferredWidth:  _comboFieldWidth
+                                fact:                   _videoSettings.rtspUrlHold
+                                visible:                rtspUrlHoldLabel.visible
                             }
 
                             QGCLabel {

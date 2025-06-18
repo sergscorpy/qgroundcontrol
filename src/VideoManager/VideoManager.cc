@@ -102,6 +102,7 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
    connect(_videoSettings->udpPort(),       &Fact::rawValueChanged, this, &VideoManager::_udpPortChanged);
    connect(_videoSettings->rtspUrl(),       &Fact::rawValueChanged, this, &VideoManager::_rtspUrlChanged);
    connect(_videoSettings->rtspUrl2(),      &Fact::rawValueChanged, this, &VideoManager::_rtspUrl2Changed);
+   connect(_videoSettings->rtspUrlHold(),   &Fact::rawValueChanged, this, &VideoManager::_rtspUrlHoldChanged);
    connect(_videoSettings->tcpUrl(),        &Fact::rawValueChanged, this, &VideoManager::_tcpUrlChanged);
    connect(_videoSettings->aspectRatio(),   &Fact::rawValueChanged, this, &VideoManager::_aspectRatioChanged);
    connect(_videoSettings->lowLatencyMode(),&Fact::rawValueChanged, this, &VideoManager::_lowLatencyModeChanged);
@@ -509,6 +510,13 @@ VideoManager::_rtspUrl2Changed()
 
 //-----------------------------------------------------------------------------
 void
+VideoManager::_rtspUrlHoldChanged()
+{
+    _restartVideo(0);
+}
+
+//-----------------------------------------------------------------------------
+void
 VideoManager::_tcpUrlChanged()
 {
     _restartVideo(0);
@@ -542,6 +550,7 @@ VideoManager::isGStreamer()
             videoSource == VideoSettings::videoSourceUDPH265 ||
             videoSource == VideoSettings::videoSourceRTSP ||
             videoSource == VideoSettings::videoSourceRTSP2 ||
+            videoSource == VideoSettings::videoSourceRTSPHold ||
             videoSource == VideoSettings::videoSourceTCP ||
             videoSource == VideoSettings::videoSourceMPEGTS ||
             videoSource == VideoSettings::videoSource3DRSolo ||
@@ -713,6 +722,8 @@ VideoManager::_updateSettings(unsigned id)
         settingsChanged |= _updateVideoUri(0, _videoSettings->rtspUrl()->rawValue().toString());
     else if (source == VideoSettings::videoSourceRTSP2)
         settingsChanged |= _updateVideoUri(0, _videoSettings->rtspUrl2()->rawValue().toString());
+    else if (source == VideoSettings::videoSourceRTSPHold)
+        settingsChanged |= _updateVideoUri(0, _videoSettings->rtspUrlHold()->rawValue().toString());
     else if (source == VideoSettings::videoSourceTCP)
         settingsChanged |= _updateVideoUri(0, QStringLiteral("tcp://%1").arg(_videoSettings->tcpUrl()->rawValue().toString()));
     else if (source == VideoSettings::videoSource3DRSolo)

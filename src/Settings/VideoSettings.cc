@@ -23,6 +23,7 @@ const char* VideoSettings::videoSourceNoVideo           = QT_TRANSLATE_NOOP("Vid
 const char* VideoSettings::videoDisabled                = QT_TRANSLATE_NOOP("VideoSettings", "Video Stream Disabled");
 const char* VideoSettings::videoSourceRTSP              = QT_TRANSLATE_NOOP("VideoSettings", "RTSP Video Stream");
 const char* VideoSettings::videoSourceRTSP2             = QT_TRANSLATE_NOOP("VideoSettings", "RTSP2 Video Stream");
+const char* VideoSettings::videoSourceRTSPHold          = QT_TRANSLATE_NOOP("VideoSettings", "RTSP RaspHold Video Stream");
 const char* VideoSettings::videoSourceUDPH264           = QT_TRANSLATE_NOOP("VideoSettings", "UDP h.264 Video Stream");
 const char* VideoSettings::videoSourceUDPH265           = QT_TRANSLATE_NOOP("VideoSettings", "UDP h.265 Video Stream");
 const char* VideoSettings::videoSourceTCP               = QT_TRANSLATE_NOOP("VideoSettings", "TCP-MPEG2 Video Stream");
@@ -47,6 +48,7 @@ DECLARE_SETTINGGROUP(Video, "Video")
 #ifdef QGC_GST_STREAMING
     videoSourceList.append(videoSourceRTSP);
     videoSourceList.append(videoSourceRTSP2);
+    videoSourceList.append(videoSourceRTSPHold);
     // Моя кнопка
 #ifdef Q_OS_ANDROID
     videoSourceList.append(videoSourceHerelinkAirUnit);
@@ -197,6 +199,14 @@ DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, rtspUrl2)
     }
     return _rtspUrl2Fact;
 }
+DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, rtspUrlHold)
+{
+    if (!_rtspUrlHoldFact) {
+        _rtspUrlHoldFact = _createSettingsFact(rtspUrlHoldName);
+        connect(_rtspUrlHoldFact, &Fact::valueChanged, this, &VideoSettings::_configChanged);
+    }
+    return _rtspUrlHoldFact;
+}
 
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, tcpUrl)
 {
@@ -236,6 +246,11 @@ bool VideoSettings::streamConfigured(void)
     if(vSource == videoSourceRTSP2) {
         qCDebug(VideoManagerLog) << "Testing configuration for RTSP2 Stream:" << rtspUrl2()->rawValue().toString();
         return !rtspUrl2()->rawValue().toString().isEmpty();
+    }
+    //-- If RTSPHold, check for URL
+    if(vSource == videoSourceRTSPHold) {
+        qCDebug(VideoManagerLog) << "Testing configuration for RTSP2 Stream:" << rtspUrlHold()->rawValue().toString();
+        return !rtspUrlHold()->rawValue().toString().isEmpty();
     }
     //-- If TCP, check for URL
     if(vSource == videoSourceTCP) {
