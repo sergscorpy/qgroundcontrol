@@ -134,7 +134,6 @@ protected slots:
     void _udpPortChanged            ();
     void _rtspUrlChanged            ();
     void _rtspUrl2Changed           ();
-    void _rtspUrlHoldChanged        ();
     void _tcpUrlChanged             ();
     void _lowLatencyModeChanged     ();
     void _updateUVC                 ();

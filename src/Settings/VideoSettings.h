@@ -25,7 +25,6 @@ public:
     DEFINE_SETTINGFACT(tcpUrl)
     DEFINE_SETTINGFACT(rtspUrl)
     DEFINE_SETTINGFACT(rtspUrl2)
-    DEFINE_SETTINGFACT(rtspUrlHold)
     DEFINE_SETTINGFACT(aspectRatio)
     DEFINE_SETTINGFACT(videoFit)
     DEFINE_SETTINGFACT(gridLines)
@@ -54,7 +53,6 @@ public:
     Q_PROPERTY(bool     streamConfigured        READ streamConfigured       NOTIFY streamConfiguredChanged)
     Q_PROPERTY(QString  rtspVideoSource         READ rtspVideoSource        CONSTANT)
     Q_PROPERTY(QString  rtspVideoSource2        READ rtspVideoSource2       CONSTANT)
-    Q_PROPERTY(QString  rtspVideoSourceHold     READ rtspVideoSourceHold    CONSTANT)
     Q_PROPERTY(QString  udp264VideoSource       READ udp264VideoSource      CONSTANT)
     Q_PROPERTY(QString  udp265VideoSource       READ udp265VideoSource      CONSTANT)
     Q_PROPERTY(QString  tcpVideoSource          READ tcpVideoSource         CONSTANT)
@@ -64,7 +62,6 @@ public:
     bool     streamConfigured       ();
     QString  rtspVideoSource        () { return videoSourceRTSP; }
     QString  rtspVideoSource2       () { return videoSourceRTSP2; }
-    QString  rtspVideoSourceHold    () { return videoSourceRTSPHold; }
     QString  udp264VideoSource      () { return videoSourceUDPH264; }
     QString  udp265VideoSource      () { return videoSourceUDPH265; }
     QString  tcpVideoSource         () { return videoSourceTCP; }
@@ -77,7 +74,6 @@ public:
     static const char* videoSourceUDPH265;
     static const char* videoSourceRTSP;
     static const char* videoSourceRTSP2;
-    static const char* videoSourceRTSPHold;
     static const char* videoSourceTCP;
     static const char* videoSourceMPEGTS;
     static const char* videoSource3DRSolo;
