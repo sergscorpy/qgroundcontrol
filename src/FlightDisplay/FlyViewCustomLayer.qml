@@ -920,9 +920,9 @@ Item {
                 Button { // Button "ТРИМАЧ"
                     width: _btnWidth
                     height: _btnHeight
-                    property bool isChecked: _videoSettings.videoSource.rawValue === "RTSP RaspHold Video Stream"
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "UDP h.264 Video Stream"
                     enabled: true
-                    onClicked: _videoSettings.videoSource.rawValue = "RTSP RaspHold Video Stream"
+                    onClicked: _videoSettings.videoSource.rawValue = "UDP h.264 Video Stream"
 
                     contentItem: Item {
                         anchors.fill: parent
