@@ -835,12 +835,12 @@ Item {
                 }
 
                 Button { // Button "КУРС"
-                    visible: false // hidden for the time being
+                    visible: true
                     width: _btnWidth
                     height: _btnHeight
-                    property bool isChecked: _videoSettings.videoSource.rawValue === "IP Camera Stream"
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit"
                     enabled: true
-                    onClicked: _videoSettings.videoSource.rawValue = "IP Camera Stream"
+                    onClicked: _videoSettings.videoSource.rawValue = "Herelink Air Unit"
 
                     contentItem: Item {
                         anchors.fill: parent
@@ -857,7 +857,7 @@ Item {
                         Text {
                             id: textItemHold
                             anchors.centerIn: parent
-                            text: "КУРС"
+                            text: "Курс"
                             font.pointSize: 10
                             font.bold: false
                             color: "white"
