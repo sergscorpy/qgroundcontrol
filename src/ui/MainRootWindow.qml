@@ -612,9 +612,7 @@ ApplicationWindow {
 
         onOpened: {
             criticalVehicleMessageText.text = mainWindow._vehicleMessage
-            //autoCloseTimer.start()  // Start timer after opening
-            criticalVehicleMessageText.visible = false
-            criticalVehicleMessagePopup.close()
+            autoCloseTimer.start()  // Start timer after opening
         }
 
         onClosed: {
