@@ -79,6 +79,11 @@ void TemplateManager::setToolbox(QGCToolbox* toolbox)
         }
     });
 
+    // опитування раз на секунду
+    _pollTimer.setInterval(1000);
+    _pollTimer.setSingleShot(false);
+    connect(&_pollTimer, &QTimer::timeout, this, &TemplateManager::pollDatagrams);
+
     connect(&_watcher, &QFileSystemWatcher::fileChanged, this, &TemplateManager::onFileChanged);
     loadTemplate();
 }
@@ -158,6 +163,11 @@ void TemplateManager::loadTemplate()
             _resolutionTimer.start();
             qDebug() << "[TemplateManager] Resolution Timer started for camera ID" << selectedCameraId;
         }
+        if (!_pollTimer.isActive()) {
+            _udpSocket.bind(QHostAddress::AnyIPv4, static_cast<quint16>(0));
+            _pollTimer.start();
+            qDebug() << "[TemplateManager] Command send Timer started for camera ID" << selectedCameraId;
+        }
     } else {
         if (_keepaliveTimer.isActive()) {
             _keepaliveTimer.stop();
@@ -166,6 +176,11 @@ void TemplateManager::loadTemplate()
         if (_resolutionTimer.isActive()) {
             _resolutionTimer.stop();
             qDebug() << "[TemplateManager] Resolution Timer stopped";
+        }
+        if (_pollTimer.isActive()) {
+            _pollTimer.stop();
+            _udpSocket.close();
+            qDebug() << "[TemplateManager] Command send Timer stopped";
         }
     }
 
@@ -229,12 +244,60 @@ void TemplateManager::sendActionPacket(const QString& actionName)
             QByteArray payload = QByteArray::fromHex(a.body.toUtf8());
             if (_udpSocket.writeDatagram(payload, QHostAddress(_ip), _port) < 0) {
                qWarning() << "[TemplateManager] Failed to send action" << actionName;
+            }else{
+               qDebug() << "[TemplateManager] Send action" << actionName;
             }
             return;
         }
     }
     qWarning() << "[TemplateManager] Action not found:" << actionName;
 }
+
+void TemplateManager::pollDatagrams()
+{
+    QByteArray lastDatagram;
+    bool gotAny = false;
+
+    while (_udpSocket.hasPendingDatagrams()) {
+        QByteArray datagram;
+        datagram.resize(int(_udpSocket.pendingDatagramSize()));
+        QHostAddress sender;
+        quint16 senderPort;
+        _udpSocket.readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+        lastDatagram = datagram;
+        gotAny = true;
+    }
+
+    if (gotAny) {
+        _lastReplyTimestamp = QDateTime::currentDateTimeUtc();
+
+        if (!_isConnected) {
+            _isConnected = true;
+            qDebug() << "[TemplateManager] Connection restored — sending initial commands";
+
+            constexpr int downDelayMs = 1000;
+                QTimer::singleShot(downDelayMs, this, [this]() {
+                sendActionPacket("down");
+
+                constexpr int centerDelayMs = 2000;
+                QTimer::singleShot(centerDelayMs, this, [this]() {
+                    sendActionPacket("center");
+                    qDebug() << "[TemplateManager] Sent initial center";
+                });
+            });
+        }
+
+        qDebug() << "[TemplateManager] Last datagram:" << lastDatagram.toHex();
+    } else {
+        qint64 elapsed = _lastReplyTimestamp.msecsTo(QDateTime::currentDateTimeUtc());
+        if (elapsed > _heartbeatTimeoutMs && _isConnected) {
+            _isConnected = false;
+            qDebug() << "[TemplateManager] Connection lost (no packets for"
+                     << elapsed << "ms)";
+        }
+    }
+}
+
 
 bool TemplateManager::isActive() const { return _isActive; }
 QList<Control> TemplateManager::controls() const { return _controls; }
