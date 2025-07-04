@@ -287,7 +287,6 @@ void TemplateManager::pollDatagrams()
             });
         }
 
-        qDebug() << "[TemplateManager] Last datagram:" << lastDatagram.toHex();
     } else {
         qint64 elapsed = _lastReplyTimestamp.msecsTo(QDateTime::currentDateTimeUtc());
         if (elapsed > _heartbeatTimeoutMs && _isConnected) {
