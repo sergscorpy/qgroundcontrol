@@ -7,6 +7,8 @@
 #include <QJsonArray>
 #include <QStandardPaths>
 #include "QGCApplication.h"
+#include <QTimer>
+#include <QDateTime>
 
 struct Control {
     QString name;
@@ -41,6 +43,7 @@ signals:
 private slots:
     void loadTemplate();
     void onFileChanged(const QString& path);
+    void pollDatagrams();
 
 private:
     QString _templateName;
@@ -63,6 +66,12 @@ private:
     QList<Action> _actions;
 
     void parseJson(const QJsonObject& obj);
+
+    QTimer    _pollTimer;
+
+    QDateTime _lastReplyTimestamp;
+    bool      _isConnected    = false;
+    const int _heartbeatTimeoutMs = 60 * 1000;
 };
 
 #endif // TEMPLATEMANAGER_H
