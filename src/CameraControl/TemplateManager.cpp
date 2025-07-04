@@ -83,20 +83,6 @@ void TemplateManager::setToolbox(QGCToolbox* toolbox)
     loadTemplate();
 }
 
-void TemplateManager::processPendingDatagrams()
-{
-    while (_udpSocket.hasPendingDatagrams()) {
-        QByteArray datagram;
-        datagram.resize(int(_udpSocket.pendingDatagramSize()));
-        QHostAddress sender;
-        quint16 senderPort;
-        _udpSocket.readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
-        qDebug() << "[TemplateManager] Received from" << sender.toString()
-                 << ":" << senderPort << "--" << datagram.toHex();
-        // Тут можна обробити «empty»-відповідь
-    }
-}
-
 void TemplateManager::loadTemplate()
 {
     QFile file(_templatePath);
@@ -172,15 +158,6 @@ void TemplateManager::loadTemplate()
             _resolutionTimer.start();
             qDebug() << "[TemplateManager] Resolution Timer started for camera ID" << selectedCameraId;
         }
-        if (!(_udpSocket.state() == QAbstractSocket::BoundState)) {
-            if (!_udpSocket.bind(QHostAddress::AnyIPv4, static_cast<quint16>(0))) {
-                qWarning() << "[TemplateManager] Failed to bind UDP socket for listening:"
-                           << _udpSocket.errorString();
-            } else {
-                qDebug() << "[TemplateManager] Listening on port" << _udpSocket.localPort();
-            }
-            connect(&_udpSocket, &QUdpSocket::readyRead, this, &TemplateManager::processPendingDatagrams);
-        }
     } else {
         if (_keepaliveTimer.isActive()) {
             _keepaliveTimer.stop();
@@ -189,11 +166,6 @@ void TemplateManager::loadTemplate()
         if (_resolutionTimer.isActive()) {
             _resolutionTimer.stop();
             qDebug() << "[TemplateManager] Resolution Timer stopped";
-        }
-        if (_udpSocket.state() == QAbstractSocket::BoundState) {
-            _udpSocket.close();
-            qDebug() << "[TemplateManager] Stop listening on port" << _udpSocket.localPort();
-            disconnect(&_udpSocket, &QUdpSocket::readyRead, this, &TemplateManager::processPendingDatagrams);
         }
     }
 

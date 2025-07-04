@@ -41,7 +41,6 @@ signals:
 private slots:
     void loadTemplate();
     void onFileChanged(const QString& path);
-    void processPendingDatagrams();
 
 private:
     QString _templateName;
