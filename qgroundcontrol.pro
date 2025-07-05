@@ -28,7 +28,7 @@ message(Qt version $$[QT_VERSION])
 
 include(QGCCommon.pri)
 
-TARGET   = 49KS #QGroundControl
+TARGET   = GroundStation #QGroundControl
 TEMPLATE = app
 QGCROOT  = $$PWD
 
@@ -58,9 +58,9 @@ WindowsBuild {
 # Branding
 #
 
-QGC_APP_NAME        = "49KS"
-QGC_ORG_NAME        = "QGroundControl.org"
-QGC_ORG_DOMAIN      = "org.qgroundcontrol"
+QGC_APP_NAME        = "$${TARGET}"
+QGC_ORG_NAME        = "49ks.org"
+QGC_ORG_DOMAIN      = "org.49ks"
 QGC_APP_DESCRIPTION = "Open source ground control app provided by QGroundControl dev team"
 QGC_APP_COPYRIGHT   = "Copyright (C) 2019 QGroundControl Development Team. All rights reserved."
 
@@ -355,9 +355,9 @@ CustomBuild {
         RESOURCES += $$PWD/resources/InstrumentValueIcons/InstrumentValueIcons.qrc
     }
 } else {
-    DEFINES += QGC_APPLICATION_NAME=\"\\\"49KS\\\"\"
-    DEFINES += QGC_ORG_NAME=\"\\\"QGroundControl.org\\\"\"
-    DEFINES += QGC_ORG_DOMAIN=\"\\\"org.qgroundcontrol\\\"\"
+    DEFINES += QGC_APPLICATION_NAME=\"\\\"49KS$${TARGET}\\\"\"
+    DEFINES += QGC_ORG_NAME=\"\\\"$${QGC_ORG_NAME}\\\"\"
+    DEFINES += QGC_ORG_DOMAIN=\"\\\"$${QGC_ORG_DOMAIN}\\\"\"
     RESOURCES += \
         $$PWD/qgroundcontrol.qrc \
         $$PWD/qgcresources.qrc \
