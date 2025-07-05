@@ -173,6 +173,7 @@ exists ($$PWD/.git) {
     contains(GIT_DESCRIBE, ^v[0-9]+.[0-9]+.[0-9]+.*) {
         APP_VERSION_STR = $${GIT_DESCRIBE}
         VERSION         = $$replace(GIT_DESCRIBE, "v", "")
+        VERSION         = $$replace(VERSION, "-rasphold", "")
         VERSION         = $$replace(VERSION, "-", ".")
         VERSION         = $$section(VERSION, ".", 0, 3)
     }
