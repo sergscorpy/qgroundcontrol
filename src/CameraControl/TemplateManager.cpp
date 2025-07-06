@@ -164,7 +164,7 @@ void TemplateManager::loadTemplate()
             qDebug() << "[TemplateManager] Resolution Timer started for camera ID" << selectedCameraId;
         }
         if (!_pollTimer.isActive()) {
-            _udpSocket.bind(QHostAddress::AnyIPv4, static_cast<quint16>(0));
+            _udpSocket.bind(QHostAddress::AnyIPv4, 0, QUdpSocket::ShareAddress);
             _pollTimer.start();
             qDebug() << "[TemplateManager] Command send Timer started for camera ID" << selectedCameraId;
         }
