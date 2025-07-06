@@ -940,4 +940,11 @@ Item {
 
         }
     }
+
+    FlyViewDropsButtons {
+        id: dropsButtons
+        anchors.margins: 10
+        anchors.right: parent.right
+        anchors.top: parent.top
+    }
 }
