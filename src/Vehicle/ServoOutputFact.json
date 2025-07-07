@@ -1,0 +1,118 @@
+{
+    "version": 1,
+    "fileType": "FactMetaData",
+    "QGC.MetaData.Facts": [
+    {
+        "name":             "servo1",
+        "shortDesc":        "Servo Output 1",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo2",
+        "shortDesc":        "Servo Output 2",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo3",
+        "shortDesc":        "Servo Output 3",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo4",
+        "shortDesc":        "Servo Output 4",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo5",
+        "shortDesc":        "Servo Output 5",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo6",
+        "shortDesc":        "Servo Output 6",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo7",
+        "shortDesc":        "Servo Output 7",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo8",
+        "shortDesc":        "Servo Output 8",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo9",
+        "shortDesc":        "Servo Output 9",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo10",
+        "shortDesc":        "Servo Output 10",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo11",
+        "shortDesc":        "Servo Output 11",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo12",
+        "shortDesc":        "Servo Output 12",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo13",
+        "shortDesc":        "Servo Output 13",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo14",
+        "shortDesc":        "Servo Output 14",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo15",
+        "shortDesc":        "Servo Output 15",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    },
+    {
+        "name":             "servo16",
+        "shortDesc":        "Servo Output 16",
+        "type":             "float",
+        "decimalPlaces":    1,
+        "units":            "us"
+    }
+       ]
+}

@@ -331,6 +331,7 @@
         <file alias="Units.SettingsGroup.json">src/Settings/Units.SettingsGroup.json</file>
         <file alias="USBBoardInfo.json">src/comm/USBBoardInfo.json</file>
         <file alias="Vehicle/BatteryFact.json">src/Vehicle/BatteryFact.json</file>
+        <file alias="Vehicle/ServoOutputFact.json">src/Vehicle/ServoOutputFact.json</file>
         <file alias="Vehicle/ClockFact.json">src/Vehicle/ClockFact.json</file>
         <file alias="Vehicle/DistanceSensorFact.json">src/Vehicle/DistanceSensorFact.json</file>
         <file alias="Vehicle/EscStatusFactGroup.json">src/Vehicle/EscStatusFactGroup.json</file>

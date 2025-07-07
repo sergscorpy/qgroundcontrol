@@ -437,6 +437,7 @@ HEADERS += \
     src/QmlControls/QmlUnitsConversion.h \
     src/Settings/CameraSettings.h \
     src/Vehicle/VehicleEscStatusFactGroup.h \
+    src/Vehicle/VehicleServoOutputFactGroup.h \
     src/api/QGCCorePlugin.h \
     src/api/QGCOptions.h \
     src/api/QGCSettings.h \
@@ -455,6 +456,7 @@ SOURCES += \
     src/FlightDisplay/GimbalCommandSender.cpp \
     src/Settings/CameraSettings.cpp \
     src/Vehicle/VehicleEscStatusFactGroup.cc \
+    src/Vehicle/VehicleServoOutputFactGroup.cc \
     src/api/QGCCorePlugin.cc \
     src/api/QGCOptions.cc \
     src/api/QGCSettings.cc \
