@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="107.06mm" height="28.6836mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 82.945 22.223"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil1 {fill:black}
+    .fil0 {fill:#FF6600}
+   ]]>
+  </style>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2500075005744">
+   <g>
+    <path class="fil0" d="M-0 11.111c5.361,2.274 8.804,6.823 17.023,6.823l36.467 0 -2.976 -2.436 27.878 0 0.46 0.842 0 -1.617 1.166 0 0 -7.224 -1.166 0 0 -1.617 -0.46 0.842 -27.878 0 2.976 -2.436 -36.467 0c-8.219,0 -11.662,4.548 -17.023,6.823z"/>
+    <path id="_1" class="fil1" d="M2.474 11.111c0.97,0.532 1.89,1.111 2.817,1.695 3.163,1.99 6.414,4.035 11.732,4.035l33.406 0 -0.608 -0.497 -2.369 -1.939 3.06 0 27.244 0 0 -0.775 1.093 0 0.073 0 0 -5.037 -0.073 0 -1.093 0 0 -0.775 -27.244 0 -3.06 0 2.369 -1.939 0.608 -0.497 -33.406 0c-5.317,0 -8.568,2.045 -11.732,4.035 -0.927,0.583 -1.847,1.162 -2.817,1.695zm-2.474 0c5.361,2.274 8.804,6.823 17.023,6.823l36.467 0 -2.976 -2.436 27.878 0 0.46 0.842 0 -1.617 1.166 0 0 -7.224 -1.166 0 0 -1.617 -0.46 0.842 -27.878 0 2.976 -2.436 -36.467 0c-8.219,0 -11.662,4.548 -17.023,6.823z"/>
+   </g>
+   <g>
+    <polygon class="fil0" points="78.759,7.752 47.565,7.752 56.934,0 82.945,0 "/>
+    <path id="_1_0" class="fil1" d="M78.759 7.752l-31.194 0 9.368 -7.752 26.011 0 -4.186 7.752zm-28.16 -1.093l27.51 0 3.005 -5.566 -23.79 0 -6.726 5.566z"/>
+   </g>
+   <g>
+    <polygon class="fil0" points="78.755,14.421 47.531,14.421 56.908,22.223 82.945,22.223 "/>
+    <path id="_1_1" class="fil1" d="M78.104 15.514l-27.557 0 6.749 5.616 23.823 0 -3.016 -5.616zm0.651 -1.093l-31.224 0 9.377 7.802 26.037 0 -4.19 -7.802z"/>
+   </g>
+  </g>
+ </g>
+</svg>
