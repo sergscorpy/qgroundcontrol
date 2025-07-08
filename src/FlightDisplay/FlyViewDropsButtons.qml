@@ -34,24 +34,24 @@ Item {
     property var _servoOutput:  _activeVehicle ? _activeVehicle.servoOutput : null
     property real _scrToolsUnit: ScreenTools.defaultFontPixelWidth
 
-    Row {
-        id: buttonRow
+    Column {
+        id: buttonColumn
         spacing: _scrToolsUnit
         anchors.top: parent.top
         anchors.right: parent.right
 
         Rectangle {
-            id: ch9Button
+            id: button01
             enabled: _activeVehicle ? true : false
             width: _scrToolsUnit * 8
             height: _scrToolsUnit * 4
             radius: 4
-            color: !enabled ? "gray" : (ch9Active ? "green" : "orange")
-            property bool ch9Active: _servoOutput && !isNaN(_servoOutput.servo9.rawValue) && _servoOutput.servo9.rawValue > 1500
+            color: !enabled ? "gray" : (ch16Active ? "green" : "orange")
+            property bool ch16Active: _servoOutput && !isNaN(_servoOutput.servo16.rawValue) && _servoOutput.servo16.rawValue > 1100
 
             Text {
                 anchors.centerIn: parent
-                text: "Ch9"
+                text: "Ch16"
                 color: "white"
             }
 
@@ -59,25 +59,25 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     if (_activeVehicle) {
-                        var pwm = ch9Button.ch9Active ? 1100 : 1800
-                        _activeVehicle.sendCommand( 1, 183, false, 9, pwm)
+                        var pwm = button01.ch16Active ? 800 : 1350
+                        _activeVehicle.sendCommand( 1, 183, false, 16, pwm)
                     }
                 }
             }
         }
 
         Rectangle {
-            id: ch10Button
+            id: button02
             enabled: _activeVehicle ? true : false
             width: _scrToolsUnit * 8
             height: _scrToolsUnit * 4
             radius: 4
-            color: !enabled ? "gray" : (ch10Active ? "green" : "orange")
-            property bool ch10Active: _servoOutput && !isNaN(_servoOutput.servo10.rawValue) && _servoOutput.servo10.rawValue > 1500
+            color: !enabled ? "gray" : (ch17Active ? "green" : "orange")
+            property bool ch17Active: _servoOutput && !isNaN(_servoOutput.servo17.rawValue) && _servoOutput.servo17.rawValue > 1100
 
             Text {
                 anchors.centerIn: parent
-                text: "Ch10"
+                text: "Ch17"
                 color: "white"
             }
 
@@ -85,8 +85,60 @@ Item {
                 anchors.fill: parent
                 onClicked: {
                     if (_activeVehicle) {
-                        var pwm = ch10Button.ch10Active ? 1100 : 1800
-                        _activeVehicle.sendCommand(1, 183, false, 10, pwm)
+                        var pwm = button02.ch17Active ? 800 : 1350
+                        _activeVehicle.sendCommand(1, 183, false, 17, pwm)
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: button03
+            enabled: _activeVehicle ? true : false
+            width: _scrToolsUnit * 8
+            height: _scrToolsUnit * 4
+            radius: 4
+            color: !enabled ? "gray" : (ch18Active ? "green" : "orange")
+            property bool ch18Active: _servoOutput && !isNaN(_servoOutput.servo18.rawValue) && _servoOutput.servo18.rawValue > 1100
+
+            Text {
+                anchors.centerIn: parent
+                text: "Ch18"
+                color: "white"
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (_activeVehicle) {
+                        var pwm = button03.ch18Active ? 800 : 1350
+                        _activeVehicle.sendCommand(1, 183, false, 18, pwm)
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            id: button04
+            enabled: _activeVehicle ? true : false
+            width: _scrToolsUnit * 8
+            height: _scrToolsUnit * 4
+            radius: 4
+            color: !enabled ? "gray" : (ch19Active ? "green" : "orange")
+            property bool ch19Active: _servoOutput && !isNaN(_servoOutput.servo19.rawValue) && _servoOutput.servo19.rawValue > 1100
+
+            Text {
+                anchors.centerIn: parent
+                text: "Ch19"
+                color: "white"
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (_activeVehicle) {
+                        var pwm = button04.ch19Active ? 800 : 1350
+                        _activeVehicle.sendCommand(1, 183, false, 19, pwm)
                     }
                 }
             }
