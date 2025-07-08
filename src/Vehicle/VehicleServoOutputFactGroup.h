@@ -37,6 +37,22 @@ public:
     Q_PROPERTY(Fact* servo14 READ servo14 CONSTANT)
     Q_PROPERTY(Fact* servo15 READ servo15 CONSTANT)
     Q_PROPERTY(Fact* servo16 READ servo16 CONSTANT)
+    Q_PROPERTY(Fact* servo17 READ servo17 CONSTANT)
+    Q_PROPERTY(Fact* servo18 READ servo18 CONSTANT)
+    Q_PROPERTY(Fact* servo19 READ servo19 CONSTANT)
+    Q_PROPERTY(Fact* servo20 READ servo20 CONSTANT)
+    Q_PROPERTY(Fact* servo21 READ servo21 CONSTANT)
+    Q_PROPERTY(Fact* servo22 READ servo22 CONSTANT)
+    Q_PROPERTY(Fact* servo23 READ servo23 CONSTANT)
+    Q_PROPERTY(Fact* servo24 READ servo24 CONSTANT)
+    Q_PROPERTY(Fact* servo25 READ servo25 CONSTANT)
+    Q_PROPERTY(Fact* servo26 READ servo26 CONSTANT)
+    Q_PROPERTY(Fact* servo27 READ servo27 CONSTANT)
+    Q_PROPERTY(Fact* servo28 READ servo28 CONSTANT)
+    Q_PROPERTY(Fact* servo29 READ servo29 CONSTANT)
+    Q_PROPERTY(Fact* servo30 READ servo30 CONSTANT)
+    Q_PROPERTY(Fact* servo31 READ servo31 CONSTANT)
+    Q_PROPERTY(Fact* servo32 READ servo32 CONSTANT)
 
     Fact* servo1 () { return &_servo1Fact; }
     Fact* servo2 () { return &_servo2Fact; }
@@ -54,6 +70,22 @@ public:
     Fact* servo14() { return &_servo14Fact; }
     Fact* servo15() { return &_servo15Fact; }
     Fact* servo16() { return &_servo16Fact; }
+    Fact* servo17() { return &_servo17Fact; }
+    Fact* servo18() { return &_servo18Fact; }
+    Fact* servo19() { return &_servo19Fact; }
+    Fact* servo20() { return &_servo20Fact; }
+    Fact* servo21() { return &_servo21Fact; }
+    Fact* servo22() { return &_servo22Fact; }
+    Fact* servo23() { return &_servo23Fact; }
+    Fact* servo24() { return &_servo24Fact; }
+    Fact* servo25() { return &_servo25Fact; }
+    Fact* servo26() { return &_servo26Fact; }
+    Fact* servo27() { return &_servo27Fact; }
+    Fact* servo28() { return &_servo28Fact; }
+    Fact* servo29() { return &_servo29Fact; }
+    Fact* servo30() { return &_servo30Fact; }
+    Fact* servo31() { return &_servo31Fact; }
+    Fact* servo32() { return &_servo32Fact; }
 
     // Overrides from FactGroup
     void handleMessage(Vehicle* vehicle, mavlink_message_t& message) override;
@@ -74,6 +106,22 @@ public:
     static const char* _servo14FactName;
     static const char* _servo15FactName;
     static const char* _servo16FactName;
+    static const char* _servo17FactName;
+    static const char* _servo18FactName;
+    static const char* _servo19FactName;
+    static const char* _servo20FactName;
+    static const char* _servo21FactName;
+    static const char* _servo22FactName;
+    static const char* _servo23FactName;
+    static const char* _servo24FactName;
+    static const char* _servo25FactName;
+    static const char* _servo26FactName;
+    static const char* _servo27FactName;
+    static const char* _servo28FactName;
+    static const char* _servo29FactName;
+    static const char* _servo30FactName;
+    static const char* _servo31FactName;
+    static const char* _servo32FactName;
 
 private:
     void _handleServoOutputRaw(mavlink_message_t& message);
@@ -95,4 +143,20 @@ private:
     Fact _servo14Fact;
     Fact _servo15Fact;
     Fact _servo16Fact;
+    Fact _servo17Fact;
+    Fact _servo18Fact;
+    Fact _servo19Fact;
+    Fact _servo20Fact;
+    Fact _servo21Fact;
+    Fact _servo22Fact;
+    Fact _servo23Fact;
+    Fact _servo24Fact;
+    Fact _servo25Fact;
+    Fact _servo26Fact;
+    Fact _servo27Fact;
+    Fact _servo28Fact;
+    Fact _servo29Fact;
+    Fact _servo30Fact;
+    Fact _servo31Fact;
+    Fact _servo32Fact;
 };
