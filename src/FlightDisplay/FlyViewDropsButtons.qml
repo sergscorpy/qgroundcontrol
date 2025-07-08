@@ -26,7 +26,7 @@ import QGroundControl.GimbalTools   1.0
 
 Item {
     id: dropsButtons
-    anchors.topMargin: _scrToolsUnit * 0
+    anchors.topMargin: _scrToolsUnit * 35
     anchors.rightMargin: _scrToolsUnit * 30
 
 
@@ -34,14 +34,5 @@ Item {
     property var _servoOutput:  _activeVehicle ? _activeVehicle.servoOutput : null
     property real _scrToolsUnit: ScreenTools.defaultFontPixelWidth
 
-    Column {
-        spacing: 2
-        Repeater {
-            model: 32
-            delegate: QGCLabel {
-                property var servoFact: _servoOutput ? _servoOutput["servo" + (index + 1)] : null
-                text: qsTr("Servo %1: ").arg(index + 1) + (servoFact ? servoFact.valueString + " " + servoFact.units : qsTr("N/A"))
-            }
-        }
-    }
+
 }
