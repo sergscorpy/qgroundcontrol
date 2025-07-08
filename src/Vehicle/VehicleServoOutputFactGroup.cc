@@ -135,10 +135,12 @@ void VehicleServoOutputFactGroup::_handleServoOutputRaw(mavlink_message_t& messa
     mavlink_servo_output_raw_t out;
     mavlink_msg_servo_output_raw_decode(&message, &out);
 
-    uint16_t values[8] = { out.servo1_raw, out.servo2_raw, out.servo3_raw, out.servo4_raw,
-                          out.servo5_raw, out.servo6_raw, out.servo7_raw, out.servo8_raw };
-    int offset = out.port * 8;
-    for (int i=0; i<8 && (offset + i) < 32; ++i) {
+    uint16_t values[16] = { out.servo1_raw, out.servo2_raw, out.servo3_raw, out.servo4_raw,
+                          out.servo5_raw, out.servo6_raw, out.servo7_raw, out.servo8_raw,
+                          out.servo9_raw, out.servo10_raw, out.servo11_raw, out.servo12_raw,
+                          out.servo13_raw, out.servo14_raw, out.servo15_raw, out.servo16_raw };
+    int offset = out.port * 16;
+    for (int i=0; i<16 && (offset + i) < 32; ++i) {
         Fact* fact = getFact(QString("servo%1").arg(offset + i + 1));
         if (fact) {
             uint16_t v = values[i];
