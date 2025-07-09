@@ -946,5 +946,6 @@ Item {
         anchors.margins: _toolsMargin
         anchors.left: parent.left
         anchors.top: parent.top
+        anchors.fill: parent.fill
     }
 }
