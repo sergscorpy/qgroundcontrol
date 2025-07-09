@@ -98,12 +98,13 @@ Item {
     }
 
     Connections {
-        target: _activeJoystick
-        onRawButtonPressedChanged: {
+        target:                 _activeJoystick
+        ignoreUnknownSignals:   true
+        function showBtnMessage(btnIndex, pressed) {
             if (pressed) {
-                var name = index
-                if (_activeJoystick && _activeJoystick.buttonActions && index < _activeJoystick.buttonActions.length) {
-                    var action = _activeJoystick.buttonActions[index]
+                var name = btnIndex
+                if (_activeJoystick && _activeJoystick.buttonActions && btnIndex < _activeJoystick.buttonActions.length) {
+                    var action = _activeJoystick.buttonActions[btnIndex]
                     if (action && action !== _activeJoystick.disabledActionName) {
                         name = action
                     }
@@ -111,6 +112,9 @@ Item {
                 mainWindow.showMessageDialog(qsTr("Joystick Button"), qsTr("%1 pressed").arg(name))
             }
         }
+
+        onRawButtonPressedChanged: showBtnMessage(index, pressed)
+        onButtonPressed:            showBtnMessage(buttonId, pressed)
     }
 
 
