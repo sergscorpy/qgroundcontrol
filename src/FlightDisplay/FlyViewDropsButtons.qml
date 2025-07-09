@@ -26,6 +26,7 @@ import QGroundControl.GimbalTools   1.0
 
 Item {
     id: dropsButtons
+    anchors.fill: parent
     anchors.margins: _toolsMargin
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
@@ -36,14 +37,14 @@ Item {
     property int _pwmClose: 2350
     property int _pwmTrimm: 1900
     property int _pwmOpen: 1000
-    property int _btn_setservo1: 12
-    property int _btn_setservo2: 11
-    property int _btn_setservo3: 13
-    property int _btn_setservo4: 14
-    property var _servo_btn1: _activeVehicle ? _servoOutput.servo12 : null
-    property var _servo_btn2: _activeVehicle ? _servoOutput.servo11 : null
-    property var _servo_btn3: _activeVehicle ? _servoOutput.servo13 : null
-    property var _servo_btn4: _activeVehicle ? _servoOutput.servo14 : null
+    property int _btn_setservo1: 1
+    property int _btn_setservo2: 2
+    property int _btn_setservo3: 3
+    property int _btn_setservo4: 4
+    property var _servo_btn1: _activeVehicle ? _servoOutput.servo1 : null
+    property var _servo_btn2: _activeVehicle ? _servoOutput.servo2 : null
+    property var _servo_btn3: _activeVehicle ? _servoOutput.servo3 : null
+    property var _servo_btn4: _activeVehicle ? _servoOutput.servo4 : null
     property bool fuseEnabled: true
     property int  _activeBtnIndex: 0
     property bool _commandInProgress: false
@@ -361,9 +362,8 @@ Item {
     Rectangle {
         id: resetButton
         anchors.top: parent.top
-        anchors.left: parent.right
+        anchors.right: parent.right
         anchors.topMargin: _scrToolsUnit * 20
-        //anchors.rightMargin: _scrToolsUnit * 1
         width: _scrToolsUnit * 10
         height: _scrToolsUnit * 4
         radius: 4
