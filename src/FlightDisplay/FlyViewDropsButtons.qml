@@ -112,8 +112,6 @@ Item {
                 mainWindow.showMessageDialog(qsTr("Joystick Button"), qsTr("%1 pressed").arg(name))
             }
         }
-
-        onRawButtonPressedChanged: showBtnMessage(index, pressed)
         onButtonPressed:            showBtnMessage(buttonId, pressed)
     }
 
