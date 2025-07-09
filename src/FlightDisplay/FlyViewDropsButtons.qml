@@ -26,7 +26,7 @@ import QGroundControl.GimbalTools   1.0
 
 Item {
     id: dropsButtons
-    anchors.topMargin: _scrToolsUnit * 26
+    anchors.topMargin: _scrToolsUnit * 10
     anchors.rightMargin: _scrToolsUnit * 1
 
 
@@ -40,22 +40,37 @@ Item {
     property int _btn_setservo2: 11
     property int _btn_setservo3: 13
     property int _btn_setservo4: 14
-    property var _servo_btn1: _servoOutput.servo12
-    property var _servo_btn2: _servoOutput.servo11
-    property var _servo_btn3: _servoOutput.servo13
-    property var _servo_btn4: _servoOutput.servo14
+    property var _servo_btn1: _activeVehicle ? _servoOutput.servo12 : null
+    property var _servo_btn2: _activeVehicle ? _servoOutput.servo11 : null
+    property var _servo_btn3: _activeVehicle ? _servoOutput.servo13 : null
+    property var _servo_btn4: _activeVehicle ? _servoOutput.servo14 : null
     property bool fuseEnabled: true
+
+    property var _trimServos: []
+    property int _trimIndex: 0
+    property bool _trimInProgress: false
+
+    function _sendNextTrim() {
+        if (_trimIndex < _trimServos.length) {
+            var servo = _trimServos[_trimIndex]
+            _trimIndex += 1
+            _activeVehicle.sendCommand(1, 183, false, servo, _pwmTrimm)
+        } else {
+            _trimInProgress = false
+        }
+    }
+
 
     Timer {
         id: trimTimer
         interval: 5000
         repeat: false
         onTriggered: {
-            if (_activeVehicle && !_activeVehicle.armed) {
-                _activeVehicle.sendCommand(1, 183, false, _btn_setservo1, _pwmTrimm)
-                _activeVehicle.sendCommand(1, 183, false, _btn_setservo2, _pwmTrimm)
-                _activeVehicle.sendCommand(1, 183, false, _btn_setservo3, _pwmTrimm)
-                _activeVehicle.sendCommand(1, 183, false, _btn_setservo4, _pwmTrimm)
+            if (_activeVehicle && !_activeVehicle.armed && !_trimInProgress) {
+                _trimServos = [_btn_setservo1, _btn_setservo2, _btn_setservo3, _btn_setservo4]
+                _trimIndex = 0
+                _trimInProgress = true
+                _sendNextTrim()
             }
         }
     }
@@ -68,6 +83,16 @@ Item {
             } else {
                 trimTimer.stop()
             }
+            _trimInProgress = false
+        }
+    }
+
+    Connections {
+        target: _activeVehicle
+        onMavCommandResult: {
+            if (_trimInProgress && command === 183 && ackResult !== 5) {
+                _sendNextTrim()
+            }
         }
     }
 
@@ -76,13 +101,15 @@ Item {
         id: buttonColumn
         spacing: _scrToolsUnit * 2
         anchors.top: parent.top
-        anchors.right: parent.right
+        anchors.left: parent.left
 
         Rectangle {
             id: fuseButton
             width: _scrToolsUnit * 10
             height: _scrToolsUnit * 4
             radius: 4
+            border.color: "red"
+            border.width: 2
             color: fuseEnabled ? "green" : "red"
 
             Text {
@@ -100,9 +127,11 @@ Item {
         Rectangle {
             id: button01
             enabled: _activeVehicle ? true : false
-            width: _scrToolsUnit * 8
+            width: _scrToolsUnit * 10
             height: _scrToolsUnit * 4
             radius: 4
+            border.color: "white"
+            border.width: 2
             property real servoVal: _servoOutput && !isNaN(_servo_btn1.rawValue) ? _servo_btn1.rawValue : 0
             color: !enabled ? "gray" : (servoVal > _pwmClose - 50 ? "green" : (servoVal > _pwmTrimm - 50 && servoVal < _pwmTrimm + 50 ? "orange" : (servoVal < _pwmOpen + 50 ? "red" : "orange")))
 
@@ -131,9 +160,11 @@ Item {
         Rectangle {
             id: button02
             enabled: _activeVehicle ? true : false
-            width: _scrToolsUnit * 8
+            width: _scrToolsUnit * 10
             height: _scrToolsUnit * 4
             radius: 4
+            border.color: "white"
+            border.width: 2
             property real servoVal: _servoOutput && !isNaN(_servo_btn2.rawValue) ? _servo_btn2.rawValue : 0
             color: !enabled ? "gray" : (servoVal > _pwmClose - 50 ? "green" : (servoVal > _pwmTrimm - 50 && servoVal < _pwmTrimm + 50 ? "orange" : (servoVal < _pwmOpen + 50 ? "red" : "orange")))
 
@@ -162,9 +193,11 @@ Item {
         Rectangle {
             id: button03
             enabled: _activeVehicle ? true : false
-            width: _scrToolsUnit * 8
+            width: _scrToolsUnit * 10
             height: _scrToolsUnit * 4
             radius: 4
+            border.color: "white"
+            border.width: 2
             property real servoVal: _servoOutput && !isNaN(_servo_btn3.rawValue) ? _servo_btn3.rawValue : 0
             color: !enabled ? "gray" : (servoVal > _pwmClose - 50 ? "green" : (servoVal > _pwmTrimm - 50 && servoVal < _pwmTrimm + 50 ? "orange" : (servoVal < _pwmOpen + 50 ? "red" : "orange")))
 
@@ -193,9 +226,11 @@ Item {
         Rectangle {
             id: button04
             enabled: _activeVehicle ? true : false
-            width: _scrToolsUnit * 8
+            width: _scrToolsUnit * 10
             height: _scrToolsUnit * 4
             radius: 4
+            border.color: "white"
+            border.width: 2
             property real servoVal: _servoOutput && !isNaN(_servo_btn4.rawValue) ? _servo_btn4.rawValue : 0
             color: !enabled ? "gray" : (servoVal > _pwmClose - 50 ? "green" : (servoVal > _pwmTrimm - 50 && servoVal < _pwmTrimm + 50 ? "orange" : (servoVal < _pwmOpen + 50 ? "red" : "orange")))
 

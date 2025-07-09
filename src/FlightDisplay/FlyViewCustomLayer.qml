@@ -943,8 +943,8 @@ Item {
 
     FlyViewDropsButtons {
         id: dropsButtons
-        anchors.margins: 10
-        anchors.right: parent.right
+        anchors.margins: _toolsMargin
+        anchors.left: parent.left
         anchors.top: parent.top
     }
 }
