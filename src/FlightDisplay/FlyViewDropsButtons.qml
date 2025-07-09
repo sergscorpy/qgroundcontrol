@@ -32,6 +32,7 @@ Item {
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
     property var _servoOutput:  _activeVehicle ? _activeVehicle.servoOutput : null
+    property var _activeJoystick: joystickManager.activeJoystick
     property real _scrToolsUnit: ScreenTools.defaultFontPixelWidth
     property int _pwmClose: 2350
     property int _pwmTrimm: 1900
@@ -96,6 +97,22 @@ Item {
         }
     }
 
+    Connections {
+        target: _activeJoystick
+        onRawButtonPressedChanged: {
+            if (pressed) {
+                var name = index
+                if (_activeJoystick && _activeJoystick.buttonActions && index < _activeJoystick.buttonActions.length) {
+                    var action = _activeJoystick.buttonActions[index]
+                    if (action && action !== _activeJoystick.disabledActionName) {
+                        name = action
+                    }
+                }
+                mainWindow.showMessageDialog(qsTr("Joystick Button"), qsTr("%1 pressed").arg(name))
+            }
+        }
+    }
+
 
     Column {
         id: buttonColumn
@@ -120,7 +137,10 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: fuseEnabled = !fuseEnabled
+                onClicked: {
+                    fuseEnabled = !fuseEnabled
+                    console.log("Safety Button pressed")
+                }
             }
         }
 
