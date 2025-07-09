@@ -33,10 +33,44 @@ Item {
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
     property var _servoOutput:  _activeVehicle ? _activeVehicle.servoOutput : null
     property real _scrToolsUnit: ScreenTools.defaultFontPixelWidth
-    property int pwmClose: 2350
-    property int pwmTrimm: 1900
-    property int pwmOpen: 1000
+    property int _pwmClose: 2350
+    property int _pwmTrimm: 1900
+    property int _pwmOpen: 1000
+    property int _btn_setservo1: 12
+    property int _btn_setservo2: 11
+    property int _btn_setservo3: 13
+    property int _btn_setservo4: 14
+    property var _servo_btn1: _servoOutput.servo12
+    property var _servo_btn2: _servoOutput.servo11
+    property var _servo_btn3: _servoOutput.servo13
+    property var _servo_btn4: _servoOutput.servo14
     property bool fuseEnabled: true
+
+    Timer {
+        id: trimTimer
+        interval: 5000
+        repeat: false
+        onTriggered: {
+            if (_activeVehicle && !_activeVehicle.armed) {
+                _activeVehicle.sendCommand(1, 183, false, _btn_setservo1, _pwmTrimm)
+                _activeVehicle.sendCommand(1, 183, false, _btn_setservo2, _pwmTrimm)
+                _activeVehicle.sendCommand(1, 183, false, _btn_setservo3, _pwmTrimm)
+                _activeVehicle.sendCommand(1, 183, false, _btn_setservo4, _pwmTrimm)
+            }
+        }
+    }
+
+    Connections {
+        target: QGroundControl.multiVehicleManager
+        onActiveVehicleChanged: {
+            if (_activeVehicle && !_activeVehicle.armed) {
+                trimTimer.restart()
+            } else {
+                trimTimer.stop()
+            }
+        }
+    }
+
 
     Column {
         id: buttonColumn
@@ -69,12 +103,12 @@ Item {
             width: _scrToolsUnit * 8
             height: _scrToolsUnit * 4
             radius: 4
-            property real servoVal: _servoOutput && !isNaN(_servoOutput.servo1.rawValue) ? _servoOutput.servo1.rawValue : 0
-            color: !enabled ? "gray" : (servoVal > pwmClose - 50 ? "green" : (servoVal > pwmTrimm - 50 && servoVal < pwmTrimm + 50 ? "orange" : (servoVal < pwmOpen + 50 ? "red" : "orange")))
+            property real servoVal: _servoOutput && !isNaN(_servo_btn1.rawValue) ? _servo_btn1.rawValue : 0
+            color: !enabled ? "gray" : (servoVal > _pwmClose - 50 ? "green" : (servoVal > _pwmTrimm - 50 && servoVal < _pwmTrimm + 50 ? "orange" : (servoVal < _pwmOpen + 50 ? "red" : "orange")))
 
             Text {
                 anchors.centerIn: parent
-                text: "Ch1"
+                text: "Drop1"
                 color: "white"
             }
 
@@ -84,11 +118,11 @@ Item {
                     if (_activeVehicle) {
                         var pwm
                         if (fuseEnabled) {
-                            pwm = button01.servoVal > pwmClose - 50 ? pwmTrimm : pwmClose
+                            pwm = button01.servoVal > _pwmClose - 50 ? _pwmTrimm : _pwmClose
                         } else {
-                            pwm = button01.servoVal < pwmOpen + 50 ? pwmTrimm : pwmOpen
+                            pwm = button01.servoVal < _pwmOpen + 50 ? _pwmTrimm : _pwmOpen
                         }
-                        _activeVehicle.sendCommand(1, 183, false, 1, pwm)
+                        _activeVehicle.sendCommand(1, 183, false, _btn_setservo1, pwm)
                     }
                 }
             }
@@ -100,12 +134,12 @@ Item {
             width: _scrToolsUnit * 8
             height: _scrToolsUnit * 4
             radius: 4
-            property real servoVal: _servoOutput && !isNaN(_servoOutput.servo2.rawValue) ? _servoOutput.servo2.rawValue : 0
-            color: !enabled ? "gray" : (servoVal > pwmClose - 50 ? "green" : (servoVal > pwmTrimm - 50 && servoVal < pwmTrimm + 50 ? "orange" : (servoVal < pwmOpen + 50 ? "red" : "orange")))
+            property real servoVal: _servoOutput && !isNaN(_servo_btn2.rawValue) ? _servo_btn2.rawValue : 0
+            color: !enabled ? "gray" : (servoVal > _pwmClose - 50 ? "green" : (servoVal > _pwmTrimm - 50 && servoVal < _pwmTrimm + 50 ? "orange" : (servoVal < _pwmOpen + 50 ? "red" : "orange")))
 
             Text {
                 anchors.centerIn: parent
-                text: "Ch2"
+                text: "Drop2"
                 color: "white"
             }
 
@@ -115,11 +149,11 @@ Item {
                     if (_activeVehicle) {
                         var pwm
                         if (fuseEnabled) {
-                            pwm = button02.servoVal > pwmClose - 50 ? pwmTrimm : pwmClose
+                            pwm = button02.servoVal > _pwmClose - 50 ? _pwmTrimm : _pwmClose
                         } else {
-                            pwm = button02.servoVal < pwmOpen + 50 ? pwmTrimm : pwmOpen
+                            pwm = button02.servoVal < _pwmOpen + 50 ? _pwmTrimm : _pwmOpen
                         }
-                        _activeVehicle.sendCommand(1, 183, false, 2, pwm)
+                        _activeVehicle.sendCommand(1, 183, false, _btn_setservo2, pwm)
                     }
                 }
             }
@@ -131,12 +165,12 @@ Item {
             width: _scrToolsUnit * 8
             height: _scrToolsUnit * 4
             radius: 4
-            property real servoVal: _servoOutput && !isNaN(_servoOutput.servo3.rawValue) ? _servoOutput.servo3.rawValue : 0
-            color: !enabled ? "gray" : (servoVal > pwmClose - 50 ? "green" : (servoVal > pwmTrimm - 50 && servoVal < pwmTrimm + 50 ? "orange" : (servoVal < pwmOpen + 50 ? "red" : "orange")))
+            property real servoVal: _servoOutput && !isNaN(_servo_btn3.rawValue) ? _servo_btn3.rawValue : 0
+            color: !enabled ? "gray" : (servoVal > _pwmClose - 50 ? "green" : (servoVal > _pwmTrimm - 50 && servoVal < _pwmTrimm + 50 ? "orange" : (servoVal < _pwmOpen + 50 ? "red" : "orange")))
 
             Text {
                 anchors.centerIn: parent
-                text: "Ch3"
+                text: "Drop3"
                 color: "white"
             }
 
@@ -146,11 +180,11 @@ Item {
                     if (_activeVehicle) {
                         var pwm
                         if (fuseEnabled) {
-                            pwm = button03.servoVal > pwmClose - 50 ? pwmTrimm : pwmClose
+                            pwm = button03.servoVal > _pwmClose - 50 ? _pwmTrimm : _pwmClose
                         } else {
-                            pwm = button03.servoVal < pwmOpen + 50 ? pwmTrimm : pwmOpen
+                            pwm = button03.servoVal < _pwmOpen + 50 ? _pwmTrimm : _pwmOpen
                         }
-                        _activeVehicle.sendCommand(1, 183, false, 3, pwm)
+                        _activeVehicle.sendCommand(1, 183, false, _btn_setservo3, pwm)
                     }
                 }
             }
@@ -162,12 +196,12 @@ Item {
             width: _scrToolsUnit * 8
             height: _scrToolsUnit * 4
             radius: 4
-            property real servoVal: _servoOutput && !isNaN(_servoOutput.servo4.rawValue) ? _servoOutput.servo4.rawValue : 0
-            color: !enabled ? "gray" : (servoVal > pwmClose - 50 ? "green" : (servoVal > pwmTrimm - 50 && servoVal < pwmTrimm + 50 ? "orange" : (servoVal < pwmOpen + 50 ? "red" : "orange")))
+            property real servoVal: _servoOutput && !isNaN(_servo_btn4.rawValue) ? _servo_btn4.rawValue : 0
+            color: !enabled ? "gray" : (servoVal > _pwmClose - 50 ? "green" : (servoVal > _pwmTrimm - 50 && servoVal < _pwmTrimm + 50 ? "orange" : (servoVal < _pwmOpen + 50 ? "red" : "orange")))
 
             Text {
                 anchors.centerIn: parent
-                text: "Ch4"
+                text: "Drop4"
                 color: "white"
             }
 
@@ -177,11 +211,11 @@ Item {
                     if (_activeVehicle) {
                         var pwm
                         if (fuseEnabled) {
-                            pwm = button04.servoVal > pwmClose - 50 ? pwmTrimm : pwmClose
+                            pwm = button04.servoVal > _pwmClose - 50 ? _pwmTrimm : _pwmClose
                         } else {
-                            pwm = button04.servoVal < pwmOpen + 50 ? pwmTrimm : pwmOpen
+                            pwm = button04.servoVal < _pwmOpen + 50 ? _pwmTrimm : _pwmOpen
                         }
-                        _activeVehicle.sendCommand(1, 183, false, 4, pwm)
+                        _activeVehicle.sendCommand(1, 183, false, _btn_setservo4, pwm)
                     }
                 }
             }
