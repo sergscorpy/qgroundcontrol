@@ -69,7 +69,7 @@ Item {
 
     Timer {
         id: disableTimer
-        interval: 2000
+        interval: 500
         repeat: false
         onTriggered: {
             if (_commandBtnIndex > 0 && _buttons.length >= _commandBtnIndex) {
@@ -108,6 +108,13 @@ Item {
         }
     }
 
+    Timer {
+        id: trimDelayTimer
+        interval: 1500
+        repeat: false
+        onTriggered: _sendNextTrim()
+    }
+
     Connections {
         target: QGroundControl.multiVehicleManager
         onActiveVehicleChanged: {
@@ -124,7 +131,7 @@ Item {
         target: _activeVehicle
         onMavCommandResult: {
             if (_trimInProgress && command === 183 && ackResult !== 5) {
-                _sendNextTrim()
+                trimDelayTimer.restart()
             }
             if (_commandInProgress && command === 183) {
                 _commandInProgress = false
@@ -385,6 +392,13 @@ Item {
                     _buttons[i].openInProgress = false
                 }
                 _setActiveButton(0)
+                fuseEnabled = true
+                if (_activeVehicle && !_activeVehicle.armed) {
+                    _trimServos = [_btn_setservo1, _btn_setservo2, _btn_setservo3, _btn_setservo4]
+                    _trimIndex = 0
+                    _trimInProgress = true
+                    _sendNextTrim()
+                }
             }
         }
     }
