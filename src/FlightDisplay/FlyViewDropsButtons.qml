@@ -201,9 +201,9 @@ Item {
             width: _scrToolsUnit * 10
             height: _scrToolsUnit * 4
             radius: 4
-            border.color: "red"
+            border.color: "#990000"
             border.width: 3
-            color: fuseEnabled ? "green" : "red"
+            color: fuseEnabled ? "green" : "#990000"
 
             Text {
                 anchors.centerIn: parent
@@ -241,8 +241,8 @@ Item {
             border.width: 3
             property real servoVal: _servoOutput && !isNaN(_servo_btn1.rawValue) ? _servo_btn1.rawValue : 0
             color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-                    (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "yellow" : (servoVal < _pwmOpen + 50 ? "red" : "orange"))) :
-                    (openInProgress ? "red" : (activated ? "orange" : "green")))
+                    (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "#cc9900" : (servoVal < _pwmOpen + 50 ? "#990000" : "#b34d00"))) :
+                    (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
 
             Text {
                 anchors.centerIn: parent
@@ -278,8 +278,8 @@ Item {
             border.width: 3
             property real servoVal: _servoOutput && !isNaN(_servo_btn2.rawValue) ? _servo_btn2.rawValue : 0
             color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-                    (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "yellow" : (servoVal < _pwmOpen + 50 ? "red" : "orange"))) :
-                    (openInProgress ? "red" : (activated ? "orange" : "green")))
+                    (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "#cc9900" : (servoVal < _pwmOpen + 50 ? "#990000" : "#b34d00"))) :
+                    (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
 
             Text {
                 anchors.centerIn: parent
@@ -315,8 +315,8 @@ Item {
             border.width: 3
             property real servoVal: _servoOutput && !isNaN(_servo_btn3.rawValue) ? _servo_btn3.rawValue : 0
             color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-                    (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "yellow" : (servoVal < _pwmOpen + 50 ? "red" : "orange"))) :
-                    (openInProgress ? "red" : (activated ? "orange" : "green")))
+                    (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "#cc9900" : (servoVal < _pwmOpen + 50 ? "#990000" : "#b34d00"))) :
+                    (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
 
             Text {
                 anchors.centerIn: parent
@@ -352,8 +352,8 @@ Item {
             border.width: 3
             property real servoVal: _servoOutput && !isNaN(_servo_btn4.rawValue) ? _servo_btn4.rawValue : 0
             color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-                    (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "yellow" : (servoVal < _pwmOpen + 50 ? "red" : "orange"))) :
-                    (openInProgress ? "red" : (activated ? "orange" : "green")))
+                    (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "#cc9900" : (servoVal < _pwmOpen + 50 ? "#990000" : "#b34d00"))) :
+                    (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
 
             Text {
                 anchors.centerIn: parent
@@ -387,7 +387,7 @@ Item {
         radius: 4
         border.color: "white"
         border.width: 3
-        color: "blue"
+        color: "#1a4dcc"
 
         Text {
             anchors.centerIn: parent
