@@ -84,6 +84,10 @@ Item {
     }
 
     function _sendNextTrim() {
+        if (!_activeVehicle) {
+            _trimInProgress = false
+            return
+        }
         if (_trimIndex < _trimServos.length) {
             var servo = _trimServos[_trimIndex]
             _trimIndex += 1
@@ -110,7 +114,7 @@ Item {
 
     Timer {
         id: trimDelayTimer
-        interval: 1500
+        interval: 1000
         repeat: false
         onTriggered: _sendNextTrim()
     }
@@ -122,6 +126,7 @@ Item {
                 trimTimer.restart()
             } else {
                 trimTimer.stop()
+                trimDelayTimer.stop()
             }
             _trimInProgress = false
         }
