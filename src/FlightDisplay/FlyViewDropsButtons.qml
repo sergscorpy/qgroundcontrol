@@ -202,7 +202,7 @@ Item {
             height: _scrToolsUnit * 4
             radius: 4
             border.color: "red"
-            border.width: 2
+            border.width: 3
             color: fuseEnabled ? "green" : "red"
 
             Text {
@@ -223,6 +223,12 @@ Item {
         }
 
         Rectangle {
+            height: _scrToolsUnit * 1
+            width: _scrToolsUnit * 10
+            color: "transparent"
+        }
+
+        Rectangle {
             id: button01
             property bool disabled: false
             property bool activated: false
@@ -232,7 +238,7 @@ Item {
             height: _scrToolsUnit * 4
             radius: 4
             border.color: "white"
-            border.width: 2
+            border.width: 3
             property real servoVal: _servoOutput && !isNaN(_servo_btn1.rawValue) ? _servo_btn1.rawValue : 0
             color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
                     (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "yellow" : (servoVal < _pwmOpen + 50 ? "red" : "orange"))) :
@@ -269,7 +275,7 @@ Item {
             height: _scrToolsUnit * 4
             radius: 4
             border.color: "white"
-            border.width: 2
+            border.width: 3
             property real servoVal: _servoOutput && !isNaN(_servo_btn2.rawValue) ? _servo_btn2.rawValue : 0
             color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
                     (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "yellow" : (servoVal < _pwmOpen + 50 ? "red" : "orange"))) :
@@ -306,7 +312,7 @@ Item {
             height: _scrToolsUnit * 4
             radius: 4
             border.color: "white"
-            border.width: 2
+            border.width: 3
             property real servoVal: _servoOutput && !isNaN(_servo_btn3.rawValue) ? _servo_btn3.rawValue : 0
             color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
                     (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "yellow" : (servoVal < _pwmOpen + 50 ? "red" : "orange"))) :
@@ -343,7 +349,7 @@ Item {
             height: _scrToolsUnit * 4
             radius: 4
             border.color: "white"
-            border.width: 2
+            border.width: 3
             property real servoVal: _servoOutput && !isNaN(_servo_btn4.rawValue) ? _servo_btn4.rawValue : 0
             color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
                     (servoVal > _pwmClose - 25 ? "green" : (servoVal > _pwmTrimm - 25 && servoVal < _pwmTrimm + 25 ? "yellow" : (servoVal < _pwmOpen + 50 ? "red" : "orange"))) :
@@ -380,7 +386,7 @@ Item {
         height: _scrToolsUnit * 4
         radius: 4
         border.color: "white"
-        border.width: 2
+        border.width: 3
         color: "blue"
 
         Text {
