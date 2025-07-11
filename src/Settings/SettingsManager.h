@@ -21,6 +21,7 @@
 #include "FlyViewSettings.h"
 #include "PlanViewSettings.h"
 #include "BrandImageSettings.h"
+#include "ButtonsSettings.h"
 #include "OfflineMapsSettings.h"
 #include "APMMavlinkStreamRateSettings.h"
 #include "FirmwareUpgradeSettings.h"
@@ -52,6 +53,7 @@ public:
     Q_PROPERTY(QObject* cameraSettings                  READ cameraSettings                 CONSTANT)
     Q_PROPERTY(QObject* planViewSettings                READ planViewSettings               CONSTANT)
     Q_PROPERTY(QObject* brandImageSettings              READ brandImageSettings             CONSTANT)
+    Q_PROPERTY(QObject* buttonsSettings                 READ buttonsSettings                CONSTANT)
     Q_PROPERTY(QObject* offlineMapsSettings             READ offlineMapsSettings            CONSTANT)
     Q_PROPERTY(QObject* firmwareUpgradeSettings         READ firmwareUpgradeSettings        CONSTANT)
     Q_PROPERTY(QObject* adsbVehicleManagerSettings      READ adsbVehicleManagerSettings     CONSTANT)
@@ -74,6 +76,7 @@ public:
     CameraSettings*                 cameraSettings              (void) { return _cameraSettings; }
     PlanViewSettings*               planViewSettings            (void) { return _planViewSettings; }
     BrandImageSettings*             brandImageSettings          (void) { return _brandImageSettings; }
+    ButtonsSettings*                buttonsSettings             (void) { return _buttonsSettings; }
     OfflineMapsSettings*            offlineMapsSettings         (void) { return _offlineMapsSettings; }
     FirmwareUpgradeSettings*        firmwareUpgradeSettings     (void) { return _firmwareUpgradeSettings; }
     ADSBVehicleManagerSettings*     adsbVehicleManagerSettings  (void) { return _adsbVehicleManagerSettings; }
@@ -94,6 +97,7 @@ private:
     CameraSettings*                 _cameraSettings;
     PlanViewSettings*               _planViewSettings;
     BrandImageSettings*             _brandImageSettings;
+    ButtonsSettings*                _buttonsSettings;
     OfflineMapsSettings*            _offlineMapsSettings;
     FirmwareUpgradeSettings*        _firmwareUpgradeSettings;
     ADSBVehicleManagerSettings*     _adsbVehicleManagerSettings;

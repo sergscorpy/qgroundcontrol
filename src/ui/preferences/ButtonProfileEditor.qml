@@ -1,0 +1,101 @@
+import QtQuick          2.3
+import QtQuick.Controls 1.2
+import QtQuick.Layouts  1.2
+
+import QGroundControl               1.0
+import QGroundControl.Controls      1.0
+import QGroundControl.ScreenTools   1.0
+import QGroundControl.Palette       1.0
+
+Rectangle {
+    id: editorRoot
+    color: qgcPal.window
+    anchors.fill: parent
+
+    property string profileName
+    property var    profileModel
+
+    signal done()
+    signal profileChanged()
+
+    QGCPalette { id: qgcPal; colorGroupEnabled: true }
+
+    Column {
+        id: mainColumn
+        anchors.margins: ScreenTools.defaultFontPixelWidth
+        anchors.fill: parent
+        spacing: ScreenTools.defaultFontPixelHeight / 2
+
+        QGCLabel { text: qsTr("Profile: %1").arg(profileName); font.bold: true }
+
+        Repeater {
+            id: itemRepeater
+            model: profileModel
+            delegate: Row {
+                spacing: ScreenTools.defaultFontPixelWidth
+                property int idx: index
+
+                QGCButton {
+                    text: model.buttonName
+                    enabled: false
+                }
+                QGCComboBox {
+                    id: servoCombo
+                    model: 16
+                    onActivated: {
+                        profileModel.setProperty(idx, "servo", index + 1)
+                        editorRoot.profileChanged()
+                    }
+                    Component.onCompleted: currentIndex = model.servo - 1
+                    delegate: Text { text: index + 1 }
+                }
+                QGCTextField {
+                    width: ScreenTools.defaultFontPixelWidth * 8
+                    text: model.pwmOpen
+                    onEditingFinished: {
+                        profileModel.setProperty(idx, "pwmOpen", parseInt(text))
+                        editorRoot.profileChanged()
+                    }
+                }
+                QGCTextField {
+                    width: ScreenTools.defaultFontPixelWidth * 8
+                    text: model.pwmTrimm
+                    onEditingFinished: {
+                        profileModel.setProperty(idx, "pwmTrimm", parseInt(text))
+                        editorRoot.profileChanged()
+                    }
+                }
+                QGCTextField {
+                    width: ScreenTools.defaultFontPixelWidth * 8
+                    text: model.pwmClose
+                    onEditingFinished: {
+                        profileModel.setProperty(idx, "pwmClose", parseInt(text))
+                        editorRoot.profileChanged()
+                    }
+                }
+                QGCButton {
+                    text: qsTr("Delete")
+                    onClicked: {
+                        profileModel.remove(idx)
+                        editorRoot.profileChanged()
+                    }
+                }
+            }
+        }
+
+        QGCButton {
+            text: qsTr("Create")
+            width: ScreenTools.defaultFontPixelWidth * 10
+            onClicked: {
+                profileModel.append({ buttonName: "Drop" + (profileModel.count + 1), servo: 1, pwmOpen: 1000, pwmTrimm: 1500, pwmClose: 2000 })
+                editorRoot.profileChanged()
+            }
+        }
+
+        QGCButton {
+            text: qsTr("Close")
+            width: ScreenTools.defaultFontPixelWidth * 10
+            onClicked: done()
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "version": 1,
+    "fileType": "FactMetaData",
+    "QGC.MetaData.Facts": [
+        {
+            "name": "profiles",
+            "shortDesc": "Serialized button profiles",
+            "type": "string",
+            "default": "[]"
+        }
+    ]
+}

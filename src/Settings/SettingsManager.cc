@@ -27,6 +27,7 @@ SettingsManager::SettingsManager(QGCApplication* app, QGCToolbox* toolbox)
     , _cameraSettings               (nullptr)
     , _planViewSettings             (nullptr)
     , _brandImageSettings           (nullptr)
+    , _buttonsSettings              (nullptr)
     , _offlineMapsSettings          (nullptr)
     , _firmwareUpgradeSettings      (nullptr)
     , _adsbVehicleManagerSettings   (nullptr)
@@ -53,6 +54,7 @@ void SettingsManager::setToolbox(QGCToolbox *toolbox)
     _cameraSettings =               new CameraSettings              (this);
     _planViewSettings =             new PlanViewSettings            (this);
     _brandImageSettings =           new BrandImageSettings          (this);
+    _buttonsSettings =              new ButtonsSettings             (this);
     _offlineMapsSettings =          new OfflineMapsSettings         (this);
     _firmwareUpgradeSettings =      new FirmwareUpgradeSettings     (this);
     _adsbVehicleManagerSettings =   new ADSBVehicleManagerSettings  (this);
