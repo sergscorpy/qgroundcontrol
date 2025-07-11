@@ -32,6 +32,7 @@ Rectangle {
             id: itemRepeater
             model: profileModel
             delegate: Row {
+                id: rowItem
                 spacing: ScreenTools.defaultFontPixelWidth
                 property int idx: index
 
@@ -43,10 +44,10 @@ Rectangle {
                     id: servoCombo
                     model: 16
                     onActivated: {
-                        profileModel.setProperty(idx, "servo", index + 1)
-                        editorRoot.profileChanged()
+                        profileModel.setProperty(rowItem.idx, "servo", index + 1)
+                        profileChanged()
                     }
-                    Component.onCompleted: currentIndex = model.servo - 1
+                    Component.onCompleted: currentIndex = rowItem.model.servo - 1
                     delegate: Text { text: index + 1 }
                 }
                 QGCTextField {
@@ -54,7 +55,7 @@ Rectangle {
                     text: model.pwmOpen
                     onEditingFinished: {
                         profileModel.setProperty(idx, "pwmOpen", parseInt(text))
-                        editorRoot.profileChanged()
+                        profileChanged()
                     }
                 }
                 QGCTextField {
@@ -62,7 +63,7 @@ Rectangle {
                     text: model.pwmTrimm
                     onEditingFinished: {
                         profileModel.setProperty(idx, "pwmTrimm", parseInt(text))
-                        editorRoot.profileChanged()
+                        profileChanged()
                     }
                 }
                 QGCTextField {
@@ -70,14 +71,14 @@ Rectangle {
                     text: model.pwmClose
                     onEditingFinished: {
                         profileModel.setProperty(idx, "pwmClose", parseInt(text))
-                        editorRoot.profileChanged()
+                        profileChanged()
                     }
                 }
                 QGCButton {
                     text: qsTr("Delete")
                     onClicked: {
                         profileModel.remove(idx)
-                        editorRoot.profileChanged()
+                        profileChanged()
                     }
                 }
             }
@@ -88,7 +89,7 @@ Rectangle {
             width: ScreenTools.defaultFontPixelWidth * 10
             onClicked: {
                 profileModel.append({ buttonName: "Drop" + (profileModel.count + 1), servo: 1, pwmOpen: 1000, pwmTrimm: 1500, pwmClose: 2000 })
-                editorRoot.profileChanged()
+                profileChanged()
             }
         }
 
