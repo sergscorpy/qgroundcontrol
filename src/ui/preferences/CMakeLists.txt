@@ -9,6 +9,7 @@ add_custom_target(UiPreferencesQml
 		MavlinkSettings.qml
 		MockLink.qml
 		MockLinkSettings.qml
+		ButtonSettings.qml
 		SerialSettings.qml
 		TcpSettings.qml
 		UdpSettings.qml
