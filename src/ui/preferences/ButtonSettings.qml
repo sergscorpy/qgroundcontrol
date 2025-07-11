@@ -17,6 +17,7 @@ Rectangle {
     property int _currentSelection: -1
     property var  _profileModels: []
     property Fact _profilesFact: QGroundControl.settingsManager.buttonsSettings.profiles
+    property Fact _activeProfileFact: QGroundControl.settingsManager.buttonsSettings.activeProfile
 
     QGCPalette {
         id:                 qgcPal
@@ -68,6 +69,9 @@ Rectangle {
         } else {
             loadProfiles()
         }
+        if (_activeProfileFact.rawValue >= 0 && _activeProfileFact.rawValue < buttonModel.count) {
+                    _currentSelection = _activeProfileFact.rawValue
+        }
     }
 
     QGCFlickable {
@@ -92,6 +96,7 @@ Rectangle {
                     width:                      buttonRoot.width * 0.5
                     text:                       name
                     autoExclusive:              true
+                    checked:                    index === _activeProfileFact.rawValue
                     onClicked: {
                         checked = true
                         _currentSelection = index
@@ -137,11 +142,17 @@ Rectangle {
         }
         QGCButton {
             text:       qsTr("Activate")
-            enabled: false
+            enabled:    _currentSelection >= 0
+            onClicked: {
+                if(_currentSelection >= 0) {
+                    _activeProfileFact.rawValue = _currentSelection
+                }
+            }
         }
         QGCButton {
             text:       qsTr("Deactivate")
-            enabled: false
+            enabled:    _activeProfileFact.rawValue >= 0
+            onClicked: _activeProfileFact.rawValue = -1
         }
     }
 

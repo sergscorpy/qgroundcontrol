@@ -8,4 +8,5 @@ public:
     ButtonsSettings(QObject* parent = nullptr);
     DEFINE_SETTING_NAME_GROUP()
     DEFINE_SETTINGFACT(profiles)
+    DEFINE_SETTINGFACT(activeProfile)
 };

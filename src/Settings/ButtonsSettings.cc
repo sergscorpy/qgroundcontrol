@@ -8,3 +8,4 @@ DECLARE_SETTINGGROUP(Buttons, "Buttons")
 }
 
 DECLARE_SETTINGSFACT(ButtonsSettings, profiles)
+DECLARE_SETTINGSFACT(ButtonsSettings, activeProfile)
