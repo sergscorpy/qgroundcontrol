@@ -157,18 +157,18 @@ Item {
     Connections {
         target:                 _activeJoystick
         ignoreUnknownSignals:   true
-        function showBtnMessage(btnIndex, pressed) {
-            if (pressed) {
-                var name = btnIndex
-                if (_activeJoystick && _activeJoystick.buttonActions && btnIndex < _activeJoystick.buttonActions.length) {
-                    var action = _activeJoystick.buttonActions[btnIndex]
-                    if (action && action !== _activeJoystick.disabledActionName) {
-                        name = action
-                    }
-                }
-                mainWindow.showMessageDialog(qsTr("Joystick Button"), qsTr("%1 pressed").arg(name))
-            }
-        }
+        // function showBtnMessage(btnIndex, pressed) {
+        //     if (pressed) {
+        //         var name = btnIndex
+        //         if (_activeJoystick && _activeJoystick.buttonActions && btnIndex < _activeJoystick.buttonActions.length) {
+        //             var action = _activeJoystick.buttonActions[btnIndex]
+        //             if (action && action !== _activeJoystick.disabledActionName) {
+        //                 name = action
+        //             }
+        //         }
+        //         mainWindow.showMessageDialog(qsTr("Joystick Button"), qsTr("%1 pressed").arg(name))
+        //     }
+        // }
         onButtonPressed: {
             if (buttonId === _activationButtonId && pressed) {
                 if (!fuseEnabled && _activeBtnIndex > 0 && !_commandInProgress && _activeVehicle) {
