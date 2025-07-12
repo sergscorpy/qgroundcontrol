@@ -11,21 +11,26 @@ QtObject {
     property var activeProfile: []
 
     function loadProfiles() {
+        console.log("ButtonProfileManager: loading profiles", profilesFact ? profilesFact.rawValue : "<undefined>")
         try {
             profiles = JSON.parse(profilesFact.rawValue)
         } catch(e) {
+            console.warn("ButtonProfileManager: failed to parse profiles", e)
             profiles = []
         }
         updateActiveProfile()
     }
 
     function saveProfiles() {
-        profilesFact.rawValue = JSON.stringify(profiles)
+        var json = JSON.stringify(profiles)
+        console.log("ButtonProfileManager: saving profiles", json)
+        profilesFact.rawValue = json
         updateActiveProfile()
     }
 
     function updateActiveProfile() {
         var idx = parseInt(activeProfileFact.rawValue)
+        console.log("ButtonProfileManager: update active profile index", idx)
         if (idx >= 0 && idx < profiles.length) {
             activeProfile = profiles[idx].items
         } else {
@@ -33,13 +38,18 @@ QtObject {
         }
     }
 
-    Connections {
-        target: profilesFact
-        onValueChanged: loadProfiles()
+    QtObject {
+        id: _dummy
     }
     Connections {
-        target: activeProfileFact
-        onValueChanged: updateActiveProfile()
+        target: profilesFact ? profilesFact : _dummy
+        ignoreUnknownSignals: true
+        function onRawValueChanged() { loadProfiles() }
+    }
+    Connections {
+        target: activeProfileFact ? activeProfileFact : _dummy
+        ignoreUnknownSignals: true
+        function onRawValueChanged() { updateActiveProfile() }
     }
 
     Component.onCompleted: loadProfiles()
