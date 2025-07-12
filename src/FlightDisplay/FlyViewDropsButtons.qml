@@ -37,9 +37,7 @@ Item {
     property int _pwmClose: 2350
     property int _pwmTrimm: 1900
     property int _pwmOpen: 1000
-    property Fact _profilesFact: QGroundControl.settingsManager.buttonsSettings.profiles
-    property Fact _activeProfileFact: QGroundControl.settingsManager.buttonsSettings.activeProfile
-    property var _buttonConfig: []
+    property var _buttonConfig: ButtonProfileManager.activeProfile
     property bool fuseEnabled: true
     property int  _activeBtnIndex: 0
     property bool _commandInProgress: false
@@ -50,23 +48,8 @@ Item {
     property int _trimIndex: 0
     property bool _trimInProgress: false
 
-    function loadActiveProfile() {
-        try {
-            var profiles = JSON.parse(_profilesFact.rawValue)
-            var idx = parseInt(_activeProfileFact.rawValue)
-            if (idx >= 0 && idx < profiles.length) {
-                _buttonConfig = profiles[idx].items
-            } else {
-                _buttonConfig = []
-            }
-        } catch(e) {
-            _buttonConfig = []
-        }
-    }
-
     Component.onCompleted: {
-        _buttons = [button01, button02, button03, button04]
-        loadActiveProfile()
+        _setActiveButton(0)
     }
 
     function _setActiveButton(index) {
@@ -113,7 +96,7 @@ Item {
         interval: 5000
         repeat: false
         onTriggered: {
-            if (_activeVehicle && !_activeVehicle.armed && !_trimInProgress) {
+            if (_activeVehicle && !_activeVehicle.armed && !_trimInProgress && _buttonConfig.length > 0) {
                 _trimServos = _buttonConfig
                 _trimIndex = 0
                 _trimInProgress = true
@@ -132,7 +115,7 @@ Item {
     Connections {
         target: QGroundControl.multiVehicleManager
         onActiveVehicleChanged: {
-            if (_activeVehicle && !_activeVehicle.armed) {
+            if (_activeVehicle && !_activeVehicle.armed && _buttonConfig.length > 0) {
                 trimTimer.restart()
             } else {
                 trimTimer.stop()
@@ -143,13 +126,11 @@ Item {
     }
 
     Connections {
-        target: _profilesFact
-        onValueChanged: loadActiveProfile()
-    }
-
-    Connections {
-        target: _activeProfileFact
-        onValueChanged: loadActiveProfile()
+        target: ButtonProfileManager
+        onActiveProfileChanged: {
+            _buttonConfig = ButtonProfileManager.activeProfile
+            _setActiveButton(0)
+        }
     }
 
     Connections {
@@ -246,164 +227,23 @@ Item {
             color: "transparent"
         }
 
-        Rectangle {
-            id: button01
-            property bool disabled: false
-            property bool activated: false
-            property bool openInProgress: false
-            visible: _buttonConfig.length >= 1
-            property var  config: _buttonConfig.length > 0
-                                  ? _buttonConfig[0] : {
-                                        servo:1,
-                                        pwmOpen:_pwmOpen,
-                                        pwmTrimm:_pwmTrimm,
-                                        pwmClose:_pwmClose
-                                    }
-            enabled: (_activeVehicle ? true : false) && !disabled
-            width: _scrToolsUnit * 10
-            height: _scrToolsUnit * 4
-            radius: 4
-            border.color: "white"
-            border.width: 3
-            property real servoVal: _servoOutput && config ? _servoOutput["servo" + config.servo].rawValue : 0
-            color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-                    (servoVal > config.pwmClose - 25 ? "green" : (servoVal > config.pwmTrimm - 25 && servoVal < config.pwmTrimm + 25 ? "#cc9900" : (servoVal < config.pwmOpen + 50 ? "#990000" : "#b34d00"))) :
-                    (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
-            Text {
-                anchors.centerIn: parent
-                text: config.buttonName ? config.buttonName : "Drop1"
-                color: "white"
+        Repeater {
+            id: buttonRepeater
+            model: _buttonConfig
+            onItemAdded: {
+                _buttons.splice(index, 0, item)
             }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (_activeVehicle) {
-                        if (fuseEnabled) {
-                            var pwm = button01.servoVal > config.pwmClose - 25 ? config.pwmTrimm : config.pwmClose
-                            _activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
-                        } else if (!button01.disabled && !button01.openInProgress) {
-                            _setActiveButton(1)
-                        }
-                    }
-                }
+            onItemRemoved: {
+                _buttons.splice(index, 1)
             }
-        }
-
-        Rectangle {
-            id: button02
-            property bool disabled: false
-            property bool activated: false
-            property bool openInProgress: false
-            visible: _buttonConfig.length >= 2
-            property var  config: _buttonConfig.length > 1 ? _buttonConfig[1] : {servo:2, pwmOpen:_pwmOpen, pwmTrimm:_pwmTrimm, pwmClose:_pwmClose}
-            enabled: (_activeVehicle ? true : false) && !disabled
-            width: _scrToolsUnit * 10
-            height: _scrToolsUnit * 4
-            radius: 4
-            border.color: "white"
-            border.width: 3
-            property real servoVal: _servoOutput && config ? _servoOutput["servo" + config.servo].rawValue : 0
-            color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-                    (servoVal > config.pwmClose - 25 ? "green" : (servoVal > config.pwmTrimm - 25 && servoVal < config.pwmTrimm + 25 ? "#cc9900" : (servoVal < config.pwmOpen + 50 ? "#990000" : "#b34d00"))) :
-                    (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
-
-            Text {
-                anchors.centerIn: parent
-                text: config.buttonName ? config.buttonName : "Drop2"
-                color: "white"
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (_activeVehicle) {
-                        if (fuseEnabled) {
-                            var pwm = button02.servoVal > config.pwmClose - 25 ? config.pwmTrimm : config.pwmClose
-                            _activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
-                        } else if (!button02.disabled && !button02.openInProgress) {
-                            _setActiveButton(2)
-                        }
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            id: button03
-            property bool disabled: false
-            property bool activated: false
-            property bool openInProgress: false
-            visible: _buttonConfig.length >= 3
-            property var  config: _buttonConfig.length > 2 ? _buttonConfig[2] : {servo:3, pwmOpen:_pwmOpen, pwmTrimm:_pwmTrimm, pwmClose:_pwmClose}
-            enabled: (_activeVehicle ? true : false) && !disabled
-            width: _scrToolsUnit * 10
-            height: _scrToolsUnit * 4
-            radius: 4
-            border.color: "white"
-            border.width: 3
-            property real servoVal: _servoOutput && config ? _servoOutput["servo" + config.servo].rawValue : 0
-            color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-                    (servoVal > config.pwmClose - 25 ? "green" : (servoVal > config.pwmTrimm - 25 && servoVal < config.pwmTrimm + 25 ? "#cc9900" : (servoVal < config.pwmOpen + 50 ? "#990000" : "#b34d00"))) :
-                    (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
-
-            Text {
-                anchors.centerIn: parent
-                text: config.buttonName ? config.buttonName : "Drop3"
-                color: "white"
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (_activeVehicle) {
-                        if (fuseEnabled) {
-                            var pwm = button03.servoVal > config.pwmClose - 25 ? config.pwmTrimm : config.pwmClose
-                            _activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
-                        } else if (!button03.disabled && !button03.openInProgress) {
-                            _setActiveButton(3)
-                        }
-                    }
-                }
-            }
-        }
-
-        Rectangle {
-            id: button04
-            property bool disabled: false
-            property bool activated: false
-            property bool openInProgress: false
-            visible: _buttonConfig.length >= 4
-            property var  config: _buttonConfig.length > 3 ? _buttonConfig[3] : {servo:4, pwmOpen:_pwmOpen, pwmTrimm:_pwmTrimm, pwmClose:_pwmClose}
-            enabled: (_activeVehicle ? true : false) && !disabled
-            width: _scrToolsUnit * 10
-            height: _scrToolsUnit * 4
-            radius: 4
-            border.color: "white"
-            border.width: 3
-            property real servoVal: _servoOutput && config ? _servoOutput["servo" + config.servo].rawValue : 0
-            color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-                    (servoVal > config.pwmClose - 25 ? "green" : (servoVal > config.pwmTrimm - 25 && servoVal < config.pwmTrimm + 25 ? "#cc9900" : (servoVal < config.pwmOpen + 50 ? "#990000" : "#b34d00"))) :
-                    (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
-
-            Text {
-                anchors.centerIn: parent
-                text: config.buttonName ? config.buttonName : "Drop4"
-                color: "white"
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    if (_activeVehicle) {
-                        if (fuseEnabled) {
-                            var pwm = button04.servoVal > config.pwmClose - 25 ? config.pwmTrimm : config.pwmClose
-                            _activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
-                        } else if (!button04.disabled && !button04.openInProgress) {
-                            _setActiveButton(4)
-                        }
-                    }
-                }
+            delegate: DropCommandButton {
+                index: index + 1
+                config: modelData
+                activeVehicle: _activeVehicle
+                servoOutput: _servoOutput
+                fuseEnabled: fuseEnabled
+                scrToolsUnit: _scrToolsUnit
+                setActiveButtonCallback: function(i) { _setActiveButton(i) }
             }
         }
     }

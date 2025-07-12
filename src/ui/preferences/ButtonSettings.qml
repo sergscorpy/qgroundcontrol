@@ -7,6 +7,7 @@ import QGroundControl.Controls      1.0
 import QGroundControl.ScreenTools   1.0
 import QGroundControl.Palette       1.0
 import QGroundControl.FactSystem    1.0
+import QGroundControl.FlightDisplay 1.0
 
 Rectangle {
     id:                 buttonRoot
@@ -16,8 +17,8 @@ Rectangle {
 
     property int _currentSelection: -1
     property var  _profileModels: []
-    property Fact _profilesFact: QGroundControl.settingsManager.buttonsSettings.profiles
-    property Fact _activeProfileFact: QGroundControl.settingsManager.buttonsSettings.activeProfile
+    property Fact _profilesFact: ButtonProfileManager.profilesFact
+    property Fact _activeProfileFact: ButtonProfileManager.activeProfileFact
 
     QGCPalette {
         id:                 qgcPal
@@ -43,34 +44,30 @@ Rectangle {
             }
             profiles.push({ name: buttonModel.get(i).name, items: items })
         }
-        _profilesFact.rawValue = JSON.stringify(profiles)
+        ButtonProfileManager.profiles = profiles
+        ButtonProfileManager.saveProfiles()
     }
 
     function loadProfiles() {
-        try {
-            var data = JSON.parse(_profilesFact.rawValue)
+        var data = ButtonProfileManager.profiles
+        if (data.length === 0) {
+            addProfile(qsTr("Button 1"))
+            addProfile(qsTr("Button 2"))
+            saveProfiles()
+        } else {
             for (var i=0; i<data.length; i++) {
                 addProfile(data[i].name)
                 for (var j=0; j<data[i].items.length; j++) {
                     _profileModels[i].append(data[i].items[j])
                 }
             }
-        } catch(e) {
-            addProfile(qsTr("Button 1"))
-            addProfile(qsTr("Button 2"))
         }
     }
 
     Component.onCompleted: {
-        if(_profilesFact.rawValue === "" || _profilesFact.rawValue === undefined) {
-            addProfile(qsTr("Button 1"))
-            addProfile(qsTr("Button 2"))
-            saveProfiles()
-        } else {
-            loadProfiles()
-        }
+        loadProfiles()
         if (_activeProfileFact.rawValue >= 0 && _activeProfileFact.rawValue < buttonModel.count) {
-                    _currentSelection = _activeProfileFact.rawValue
+            _currentSelection = _activeProfileFact.rawValue
         }
     }
 

@@ -39,3 +39,5 @@ ObstacleDistanceOverlayMap      1.0 ObstacleDistanceOverlayMap.qml
 ObstacleDistanceOverlayVideo    1.0 ObstacleDistanceOverlayVideo.qml
 FlyViewSpinBox                  1.0 FlyViewSpinBox.qml
 FlyViewDropsButtons             1.0 FlyViewDropsButtons.qml
+DropCommandButton               1.0 DropCommandButton.qml
+singleton ButtonProfileManager  1.0 ButtonProfileManager.qml

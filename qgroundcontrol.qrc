@@ -290,6 +290,8 @@
         <file alias="QGroundControl/FlightDisplay/FlyViewCrosshair.qml">src/FlightDisplay/FlyViewCrosshair.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewSpinBox.qml">src/FlightDisplay/FlyViewSpinBox.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewDropsButtons.qml">src/FlightDisplay/FlyViewDropsButtons.qml</file>
+        <file alias="QGroundControl/FlightDisplay/DropCommandButton.qml">src/FlightDisplay/DropCommandButton.qml</file>
+        <file alias="QGroundControl/FlightDisplay/ButtonProfileManager.qml">src/FlightDisplay/ButtonProfileManager.qml</file>
     </qresource>
     <qresource prefix="/FirstRunPromptDialogs">
         <file alias="UnitsFirstRunPrompt.qml">src/FirstRunPromptDialogs/UnitsFirstRunPrompt.qml</file>
