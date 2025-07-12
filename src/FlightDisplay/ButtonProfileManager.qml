@@ -11,6 +11,10 @@ QtObject {
     property var activeProfile: []
 
     function loadProfiles() {
+        if (profilesFact === undefined || activeProfileFact === undefined) {
+            // Such checks prevent errors during early load when settings are not ready
+            return
+        }
         console.log("ButtonProfileManager: loading profiles", profilesFact ? profilesFact.rawValue : "<undefined>")
         try {
             profiles = JSON.parse(profilesFact.rawValue)
@@ -29,6 +33,10 @@ QtObject {
     }
 
     function updateActiveProfile() {
+        if (activeProfileFact === undefined) {
+            // Such checks prevent errors during early load when settings are not ready
+            return
+        }
         var idx = parseInt(activeProfileFact.rawValue)
         console.log("ButtonProfileManager: update active profile index", idx)
         if (idx >= 0 && idx < profiles.length) {
