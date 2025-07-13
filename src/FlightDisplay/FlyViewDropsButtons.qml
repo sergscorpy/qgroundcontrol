@@ -28,6 +28,7 @@ Item {
     id: dropsButtons
     anchors.fill: parent
     anchors.margins: _toolsMargin
+    visible: ButtonProfileManager.activeProfileFact && ButtonProfileManager.activeProfileFact.rawValue >= 0
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
     property var _servoOutput:  _activeVehicle ? _activeVehicle.servoOutput : null
