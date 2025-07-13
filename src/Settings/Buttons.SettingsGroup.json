@@ -3,12 +3,6 @@
     "fileType": "FactMetaData",
     "QGC.MetaData.Facts": [
         {
-            "name": "profiles",
-            "shortDesc": "Serialized button profiles",
-            "type": "string",
-            "default": "[]"
-        },
-        {
             "name": "activeProfile",
             "shortDesc": "Active button profile index",
             "type": "int32",

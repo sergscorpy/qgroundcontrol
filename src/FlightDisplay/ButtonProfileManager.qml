@@ -4,31 +4,22 @@ import QGroundControl 1.0
 import QGroundControl.FactSystem 1.0
 
 QtObject {
-    property Fact profilesFact: QGroundControl.settingsManager.buttonsSettings.profiles
     property Fact activeProfileFact: QGroundControl.settingsManager.buttonsSettings.activeProfile
 
     property var profiles: []
     property var activeProfile: []
 
     function loadProfiles() {
-        if (profilesFact === undefined || activeProfileFact === undefined) {
+        if (activeProfileFact === undefined) {
             // Such checks prevent errors during early load when settings are not ready
             return
         }
-        console.log("ButtonProfileManager: loading profiles", profilesFact ? profilesFact.rawValue : "<undefined>")
-        try {
-            profiles = JSON.parse(profilesFact.rawValue)
-        } catch(e) {
-            console.warn("ButtonProfileManager: failed to parse profiles", e)
-            profiles = []
-        }
+        profiles = QGroundControl.settingsManager.buttonsSettings.loadButtonProfiles()
         updateActiveProfile()
     }
 
     function saveProfiles() {
-        var json = JSON.stringify(profiles)
-        console.log("ButtonProfileManager: saving profiles", json)
-        profilesFact.rawValue = json
+        QGroundControl.settingsManager.buttonsSettings.saveButtonProfiles(profiles)
         updateActiveProfile()
     }
 
@@ -50,12 +41,7 @@ QtObject {
         id: _dummy
     }
     Connections {
-        target: profilesFact ? profilesFact : _dummy
-        ignoreUnknownSignals: true
-        function onRawValueChanged() { loadProfiles() }
-    }
-    Connections {
-        target: activeProfileFact ? activeProfileFact : _dummy
+        target: activeProfileFact ? activeProfileFact : s_dummy
         ignoreUnknownSignals: true
         function onRawValueChanged() { updateActiveProfile() }
     }

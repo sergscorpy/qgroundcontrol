@@ -7,6 +7,10 @@ class ButtonsSettings : public SettingsGroup
 public:
     ButtonsSettings(QObject* parent = nullptr);
     DEFINE_SETTING_NAME_GROUP()
-    DEFINE_SETTINGFACT(profiles)
     DEFINE_SETTINGFACT(activeProfile)
+
+    Q_INVOKABLE QVariantList loadButtonProfiles();
+    Q_INVOKABLE void saveButtonProfiles(const QVariantList& profiles);
+
+    static const QString profilesSettingsRoot();
 };

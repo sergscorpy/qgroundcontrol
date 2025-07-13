@@ -17,7 +17,6 @@ Rectangle {
 
     property int _currentSelection: -1
     property var  _profileModels: []
-    property Fact _profilesFact: ButtonProfileManager.profilesFact
     property Fact _activeProfileFact: ButtonProfileManager.activeProfileFact
 
     QGCPalette {
