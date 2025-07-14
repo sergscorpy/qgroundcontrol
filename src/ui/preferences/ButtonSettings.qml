@@ -138,16 +138,16 @@ Rectangle {
         }
         QGCButton {
             text:       qsTr("Activate")
-            enabled:    _currentSelection >= 0
+            enabled:    _currentSelection >= 0 && _currentSelection !== _activeProfileFact.rawValue
             onClicked: {
-                if(_currentSelection >= 0) {
+                if (_currentSelection >= 0) {
                     _activeProfileFact.rawValue = _currentSelection
                 }
             }
         }
         QGCButton {
             text:       qsTr("Deactivate")
-            enabled:    _activeProfileFact.rawValue >= 0
+            enabled:    _currentSelection >= 0 && _currentSelection === _activeProfileFact.rawValue
             onClicked: _activeProfileFact.rawValue = -1
         }
     }

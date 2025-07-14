@@ -20,7 +20,9 @@ QVariantList ButtonsSettings::loadButtonProfiles()
 {
     QVariantList profiles;
     QSettings settings;
+    settings.beginGroup(_settingsGroup);
     QString root = profilesSettingsRoot();
+
     if (settings.contains(root + "/count")) {
         int count = settings.value(root + "/count").toInt();
         for (int i = 0; i < count; ++i) {
@@ -37,13 +39,39 @@ QVariantList ButtonsSettings::loadButtonProfiles()
             profile["items"] = items;
             profiles.append(profile);
         }
+    } else {
+        // Create default profile if none stored
+        QVariantList items;
+        for (int i = 1; i <= 4; ++i) {
+            QVariantMap item;
+            item["buttonName"] = QStringLiteral("Drop%1").arg(i);
+            item["servo"]      = i;
+            item["pwmOpen"]   = 1000;
+            item["pwmTrimm"]  = 1900;
+            item["pwmClose"]  = 2350;
+            items.append(item);
+        }
+
+        QVariantMap profile;
+        profile["name"]  = QStringLiteral("Vampir");
+        profile["items"] = items;
+        profiles.append(profile);
+
+        // Save default profile and activate it
+        saveButtonProfiles(profiles);
+        if (activeProfile()) {
+            activeProfile()->setRawValue(0);
+        }
     }
+
+    settings.endGroup();
     return profiles;
 }
 
 void ButtonsSettings::saveButtonProfiles(const QVariantList& profiles)
 {
     QSettings settings;
+    settings.beginGroup(_settingsGroup);
     QString root = profilesSettingsRoot();
     settings.remove(root);
     int idx = 0;
@@ -56,4 +84,5 @@ void ButtonsSettings::saveButtonProfiles(const QVariantList& profiles)
         settings.setValue(pRoot + "/items", doc.toJson(QJsonDocument::Compact));
     }
     settings.setValue(root + "/count", idx);
+    settings.endGroup();
 }
