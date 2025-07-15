@@ -38,11 +38,11 @@ QtObject {
         }
     }
 
-    // QtObject {
-    //     id: _dummy
-    // }
+    QtObject {
+        id: _dummy
+    }
     Connections {
-        target: false //activeProfileFact && _activeVehicle ? activeProfileFact : _dummy
+        target: activeProfileFact && _activeVehicle ? activeProfileFact : _dummy
         ignoreUnknownSignals: true
         function onRawValueChanged() { updateActiveProfile() }
     }
