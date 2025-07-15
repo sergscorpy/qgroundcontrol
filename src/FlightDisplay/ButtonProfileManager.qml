@@ -8,6 +8,7 @@ QtObject {
 
     property var profiles: []
     property var activeProfile: []
+    property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
 
     function loadProfiles() {
         if (activeProfileFact === undefined) {
@@ -37,11 +38,11 @@ QtObject {
         }
     }
 
-    QtObject {
-        id: _dummy
-    }
+    // QtObject {
+    //     id: _dummy
+    // }
     Connections {
-        target: activeProfileFact ? activeProfileFact : s_dummy
+        target: false //activeProfileFact && _activeVehicle ? activeProfileFact : _dummy
         ignoreUnknownSignals: true
         function onRawValueChanged() { updateActiveProfile() }
     }
