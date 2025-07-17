@@ -38,13 +38,12 @@ QtObject {
         }
     }
 
-    QtObject {
-        id: _dummy
-    }
     Connections {
-        target: activeProfileFact && _activeVehicle ? activeProfileFact : _dummy
+        target: null //activeProfileFact && _activeVehicle ? activeProfileFact : null
         ignoreUnknownSignals: true
-        function onRawValueChanged() { updateActiveProfile() }
+        onRawValueChanged: {
+            //updateActiveProfile()
+        }
     }
 
     Component.onCompleted: loadProfiles()
