@@ -39,10 +39,10 @@ QtObject {
     }
 
     Connections {
-        target: null //activeProfileFact && _activeVehicle ? activeProfileFact : null
+        target: activeProfileFact && _activeVehicle ? activeProfileFact : null
         ignoreUnknownSignals: true
         onRawValueChanged: {
-            //updateActiveProfile()
+            updateActiveProfile()
         }
     }
 
