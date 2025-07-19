@@ -5,22 +5,25 @@ import QGroundControl.FactSystem 1.0
 
 QtObject {
     property Fact activeProfileFact: QGroundControl.settingsManager.buttonsSettings.activeProfile
+    property Fact profilesFact:      QGroundControl.settingsManager.buttonsSettings.profiles
 
     property var profiles: []
     property var activeProfile: []
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
 
     function loadProfiles() {
-        if (activeProfileFact === undefined) {
+        if (activeProfileFact === undefined || profilesFact === undefined) {
             // Such checks prevent errors during early load when settings are not ready
             return
         }
         profiles = QGroundControl.settingsManager.buttonsSettings.loadButtonProfiles()
+        console.log("ButtonProfileManager: load buttonsprofile")
         updateActiveProfile()
     }
 
     function saveProfiles() {
         QGroundControl.settingsManager.buttonsSettings.saveButtonProfiles(profiles)
+        console.log("ButtonProfileManager: save buttonsprofile")
         updateActiveProfile()
     }
 
@@ -39,4 +42,5 @@ QtObject {
     }
 
     Component.onCompleted: loadProfiles()
+
 }

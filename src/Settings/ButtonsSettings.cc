@@ -10,6 +10,7 @@ DECLARE_SETTINGGROUP(Buttons, "Buttons")
 }
 
 DECLARE_SETTINGSFACT(ButtonsSettings, activeProfile)
+DECLARE_SETTINGSFACT(ButtonsSettings, profiles)
 
 const QString ButtonsSettings::profilesSettingsRoot()
 {
@@ -18,7 +19,19 @@ const QString ButtonsSettings::profilesSettingsRoot()
 
 QVariantList ButtonsSettings::loadButtonProfiles()
 {
-    QVariantList profiles;
+    QVariantList profileList;
+    if (profiles()) {
+        QString json = profiles()->rawValue().toString();
+        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+        if (doc.isArray()) {
+            profileList = doc.toVariant().toList();
+        }
+    }
+
+    if (!profileList.isEmpty()) {
+        return profileList;
+    }
+
     QSettings settings;
     settings.beginGroup(_settingsGroup);
     QString root = profilesSettingsRoot();
@@ -37,7 +50,7 @@ QVariantList ButtonsSettings::loadButtonProfiles()
             QVariantMap profile;
             profile["name"] = name;
             profile["items"] = items;
-            profiles.append(profile);
+            profileList.append(profile);
         }
     } else {
         // Create default profile if none stored
@@ -55,27 +68,31 @@ QVariantList ButtonsSettings::loadButtonProfiles()
         QVariantMap profile;
         profile["name"]  = QStringLiteral("Vampir");
         profile["items"] = items;
-        profiles.append(profile);
+        profileList.append(profile);
 
         // Save default profile and activate it
-        saveButtonProfiles(profiles);
+        saveButtonProfiles(profileList);
         if (activeProfile()) {
             activeProfile()->setRawValue(0);
         }
     }
 
     settings.endGroup();
-    return profiles;
+    if (profiles()) {
+        QJsonDocument doc = QJsonDocument::fromVariant(profileList);
+        profiles()->setRawValue(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+    }
+    return profileList;
 }
 
-void ButtonsSettings::saveButtonProfiles(const QVariantList& profiles)
+void ButtonsSettings::saveButtonProfiles(const QVariantList& profileList)
 {
     QSettings settings;
     settings.beginGroup(_settingsGroup);
     QString root = profilesSettingsRoot();
     settings.remove(root);
     int idx = 0;
-    for (const QVariant& profileVar : profiles) {
+    for (const QVariant& profileVar : profileList) {
         QVariantMap profile = profileVar.toMap();
         QString pRoot = root + QString("/Profile%1").arg(idx++);
         settings.setValue(pRoot + "/name", profile.value("name"));
@@ -85,4 +102,9 @@ void ButtonsSettings::saveButtonProfiles(const QVariantList& profiles)
     }
     settings.setValue(root + "/count", idx);
     settings.endGroup();
+
+    if (profiles()) {
+        QJsonDocument doc = QJsonDocument::fromVariant(profileList);
+        profiles()->setRawValue(QString::fromUtf8(doc.toJson(QJsonDocument::Compact)));
+    }
 }

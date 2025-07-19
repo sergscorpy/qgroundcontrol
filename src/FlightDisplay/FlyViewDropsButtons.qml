@@ -29,6 +29,8 @@ Item {
     anchors.fill: parent
     anchors.margins: _toolsMargin
     visible: ButtonProfileManager.activeProfileFact && ButtonProfileManager.activeProfileFact.rawValue >= 0
+    property Fact activeProfileFact: QGroundControl.settingsManager.buttonsSettings.activeProfile
+    property Fact profilesFact:      QGroundControl.settingsManager.buttonsSettings.profiles
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
     property var _servoOutput:  _activeVehicle ? _activeVehicle.servoOutput : null
@@ -156,10 +158,12 @@ Item {
     }
 
     Connections {
-        target: QGroundControl.settingsManager.buttonsSettings.activeProfile
-        onRawValueChanged: {
-            ButtonProfileManager.updateActiveProfile()
-        }
+        target: activeProfileFact
+        onRawValueChanged: ButtonProfileManager.updateActiveProfile()
+    }
+    Connections {
+        target: profilesFact
+        onRawValueChanged: ButtonProfileManager.loadProfiles()
     }
 
     Connections {
