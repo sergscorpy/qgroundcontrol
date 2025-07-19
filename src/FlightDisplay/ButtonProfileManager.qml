@@ -38,13 +38,5 @@ QtObject {
         }
     }
 
-    Connections {
-        target: activeProfileFact && _activeVehicle ? activeProfileFact : null
-        ignoreUnknownSignals: true
-        onRawValueChanged: {
-            updateActiveProfile()
-        }
-    }
-
     Component.onCompleted: loadProfiles()
 }
