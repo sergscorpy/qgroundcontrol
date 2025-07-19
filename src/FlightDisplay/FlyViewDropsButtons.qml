@@ -237,7 +237,7 @@ Item {
                 _buttons.splice(index, 1)
             }
             delegate: DropCommandButton {
-                index: index + 1
+                buttonIndex: index + 1
                 config: modelData
                 activeVehicle: _activeVehicle
                 servoOutput: _servoOutput

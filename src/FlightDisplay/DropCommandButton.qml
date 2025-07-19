@@ -2,8 +2,8 @@ import QtQuick 2.12
 
 Rectangle {
     id: button
-    property int index: 1
-    property var config: ({servo:index, pwmOpen:pwmOpenDefault, pwmTrimm:pwmTrimmDefault, pwmClose:pwmCloseDefault})
+    property int buttonIndex: 1
+    property var config: ({servo:buttonIndex, pwmOpen:pwmOpenDefault, pwmTrimm:pwmTrimmDefault, pwmClose:pwmCloseDefault})
     property var activeVehicle
     property var servoOutput
     property bool fuseEnabled: true
@@ -31,7 +31,7 @@ Rectangle {
 
     Text {
         anchors.centerIn: parent
-        text: config.buttonName ? config.buttonName : ("Drop" + index)
+        text: config.buttonName ? config.buttonName : ("Drop" + buttonIndex)
         color: "white"
     }
 
@@ -43,7 +43,7 @@ Rectangle {
                     var pwm = servoVal > config.pwmClose - 25 ? config.pwmTrimm : config.pwmClose
                     activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
                 } else if (!button.disabled && !button.openInProgress) {
-                    if (setActiveButtonCallback) setActiveButtonCallback(index)
+                    if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex)
                 }
             }
         }
