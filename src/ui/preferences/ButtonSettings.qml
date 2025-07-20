@@ -49,16 +49,10 @@ Rectangle {
 
     function loadProfiles() {
         var data = ButtonProfileManager.profiles
-        if (data.length === 0) {
-            addProfile(qsTr("Button 1"))
-            addProfile(qsTr("Button 2"))
-            saveProfiles()
-        } else {
-            for (var i=0; i<data.length; i++) {
-                addProfile(data[i].name)
-                for (var j=0; j<data[i].items.length; j++) {
-                    _profileModels[i].append(data[i].items[j])
-                }
+        for (var i=0; i<data.length; i++) {
+            addProfile(data[i].name)
+            for (var j=0; j<data[i].items.length; j++) {
+                _profileModels[i].append(data[i].items[j])
             }
         }
     }
