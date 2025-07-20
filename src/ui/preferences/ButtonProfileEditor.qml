@@ -42,13 +42,12 @@ Rectangle {
                 }
                 QGCComboBox {
                     id: servoCombo
-                    model: 16
+                    model: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] //servo index 1..16
                     onActivated: {
                         profileModel.setProperty(rowItem.idx, "servo", index + 1)
                         profileChanged()
                     }
                     Component.onCompleted: currentIndex = rowItem.model.servo - 1
-                    delegate: Text { text: index + 1 }
                 }
                 QGCTextField {
                     width: ScreenTools.defaultFontPixelWidth * 8
