@@ -241,7 +241,7 @@ Item {
                 config: modelData
                 activeVehicle: _activeVehicle
                 servoOutput: _servoOutput
-                fuseEnabled: fuseEnabled
+                fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
                 setActiveButtonCallback: function(i) { _setActiveButton(i) }
             }
