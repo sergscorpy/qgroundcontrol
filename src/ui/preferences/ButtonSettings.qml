@@ -39,7 +39,14 @@ Rectangle {
             var items = []
             var model = _profileModels[i]
             for (var j=0; j<model.count; j++) {
-                items.push(model.get(j))
+                var src = model.get(j)
+                items.push({
+                    buttonName: src.buttonName,
+                    servo:      src.servo,
+                    pwmOpen:    src.pwmOpen,
+                    pwmTrimm:   src.pwmTrimm,
+                    pwmClose:   src.pwmClose
+                })
             }
             profiles.push({ name: buttonModel.get(i).name, items: items })
         }

@@ -47,7 +47,7 @@ Rectangle {
                         profileModel.setProperty(rowItem.idx, "servo", index + 1)
                         profileChanged()
                     }
-                    Component.onCompleted: currentIndex = rowItem.model.servo - 1
+                    Component.onCompleted: currentIndex = servo - 1
                 }
                 QGCTextField {
                     width: ScreenTools.defaultFontPixelWidth * 8
