@@ -12,6 +12,4 @@ public:
 
     Q_INVOKABLE QVariantList loadButtonProfiles();
     Q_INVOKABLE void saveButtonProfiles(const QVariantList& profileList);
-
-    static const QString profilesSettingsRoot();
 };
