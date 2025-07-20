@@ -42,9 +42,6 @@ QVariantList ButtonsSettings::loadButtonProfiles()
 
         // Save default profile and activate it
         saveButtonProfiles(profileList);
-        if (activeProfile()) {
-            activeProfile()->setRawValue(0);
-        }
     }
     return profileList;
 }
