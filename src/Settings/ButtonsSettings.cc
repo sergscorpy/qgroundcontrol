@@ -22,27 +22,6 @@ QVariantList ButtonsSettings::loadButtonProfiles()
         }
     }
 
-    if (profileList.isEmpty()) {
-        // Create default profile if none stored
-        QVariantList items;
-        for (int i = 1; i <= 4; ++i) {
-            QVariantMap item;
-            item["buttonName"] = QStringLiteral("Drop%1").arg(i);
-            item["servo"]      = i;
-            item["pwmOpen"]   = 1000;
-            item["pwmTrimm"]  = 1900;
-            item["pwmClose"]  = 2350;
-            items.append(item);
-        }
-
-        QVariantMap profile;
-        profile["name"]  = QStringLiteral("Vampir");
-        profile["items"] = items;
-        profileList.append(profile);
-
-        // Save default profile and activate it
-        saveButtonProfiles(profileList);
-    }
     return profileList;
 }
 
