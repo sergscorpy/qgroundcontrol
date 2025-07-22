@@ -187,6 +187,7 @@ void TemplateManager::parseJson(const QJsonObject& obj)
     _isActive = obj.value("is_active").toBool();
     _ip = obj.value("ip").toString("127.0.0.1");
     _port = static_cast<quint16>(obj.value("port").toInt(14550));
+    _cameraName = obj.value("name").toString("");
 
     _controls.clear();
     const QJsonArray controlsArray = obj.value("controls").toArray();
@@ -237,6 +238,7 @@ void TemplateManager::sendActionPacket(const QString& actionName)
 }
 
 bool TemplateManager::isActive() const { return _isActive; }
+QString TemplateManager::getTemplateName() const { return _cameraName; }
 QList<Control> TemplateManager::controls() const { return _controls; }
 QStringList TemplateManager::ignoredControls() const { return _ignoredControls; }
 QList<Action> TemplateManager::actions() const { return _actions; }

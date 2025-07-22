@@ -1,6 +1,8 @@
 #include "InputActionDispatcher.h"
 #include "TemplateManager.h"
 #include "QGCApplication.h"
+#include "Settings/SettingsManager.h"
+#include "VideoSettings.h"
 #include <QHostAddress>
 
 InputActionDispatcher::InputActionDispatcher(QObject* parent)
@@ -25,6 +27,12 @@ void InputActionDispatcher::handleInput(const QString& name, int value, bool isR
     QMutexLocker locker(&_mutex);
 
     TemplateManager* tmpl = qgcApp()->toolbox()->templateManager();
+    QString videoSource = qgcApp()->toolbox()->settingsManager()->videoSettings()->videoSource()->rawValue().toString();
+
+    if (tmpl->getTemplateName() == TemplateManager::SKYDROID && videoSource == VideoSettings::videoSourceHerelinkAirUnit)
+    {
+        return;
+    }
 
     if (!tmpl || !tmpl->isActive()) return;
     if (tmpl->ignoredControls().contains(name)) return;
@@ -81,7 +89,6 @@ void InputActionDispatcher::handleInput(const QString& name, int value, bool isR
                 if (a.name == actionName) {
                     QByteArray payload = QByteArray::fromHex(a.body.toUtf8());
                     _udpSocket.writeDatagram(payload, QHostAddress(tmpl->ip()), tmpl->port());
-                    qDebug() << "AXIS SEND: " << payload;
                     return;
                 }
             }
@@ -100,7 +107,6 @@ void InputActionDispatcher::handleInput(const QString& name, int value, bool isR
                 if (a.name == actionName) {
                     QByteArray payload = QByteArray::fromHex(a.body.toUtf8());
                     _udpSocket.writeDatagram(payload, QHostAddress(tmpl->ip()), tmpl->port());
-                    qDebug() << "BUTTON SEND: " << payload;
                     return;
                 }
             }

@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QMap>
 #include <QHash>
+#include <VideoSettings.h>
 
 class InputActionDispatcher : public QObject
 {

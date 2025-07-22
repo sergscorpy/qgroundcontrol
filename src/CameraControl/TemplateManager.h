@@ -35,6 +35,10 @@ public:
     quint16 port() const { return _port; }
     QByteArray getActionPayload(const QString &actionName) const;
     Q_INVOKABLE void sendActionPacket(const QString& actionName);
+    QString getTemplateName() const;
+
+    inline static const QString SKYDROID = "SkydroidC12";
+    inline static const QString KAZHAN = "Kazhan";
 signals:
     void templateChanged();
 
@@ -46,6 +50,7 @@ private:
     QString _templateName;
     QString _baseTemplatePath;
     QString _templatePath;
+    QString _cameraName;
     qint16 _lastCameraType;
 
     QTimer _keepaliveTimer;
