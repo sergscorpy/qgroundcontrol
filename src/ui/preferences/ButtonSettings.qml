@@ -178,10 +178,10 @@ Rectangle {
         QGCPopupDialog {
             id: popupDialog
             title: qsTr("New Profile")
-            buttons: StandardButton.Ok | StandardButton.Cancel
+            buttons: 0    // Use custom buttons below
 
-            function accept() {
-                if(nameField.text.trim() !== "") {
+            function acceptProfile() {
+                if (nameField.text.trim() !== "") {
                     buttonRoot.addProfile(nameField.text.trim())
                     saveProfiles()
                     hideDialog()
@@ -197,6 +197,22 @@ Rectangle {
                     id: nameField
                     Layout.fillWidth: true
                     placeholderText: qsTr("Enter name")
+                }
+
+                RowLayout {
+                    Layout.alignment: Qt.AlignRight
+                    spacing: ScreenTools.defaultFontPixelWidth
+
+                    QGCButton {
+                        text: qsTr("Esc")
+                        onClicked: hideDialog()
+                    }
+
+                    QGCButton {
+                        text: qsTr("Ok")
+                        primary: true
+                        onClicked: acceptProfile()
+                    }
                 }
             }
         }

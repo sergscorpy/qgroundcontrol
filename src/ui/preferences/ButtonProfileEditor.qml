@@ -38,7 +38,7 @@ Rectangle {
 
                 QGCButton {
                     text: model.buttonName
-                    enabled: false
+                    enabled: true
                 }
                 QGCComboBox {
                     id: servoCombo
