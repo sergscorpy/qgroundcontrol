@@ -88,6 +88,7 @@ Item {
             var cfg = _trimServos[_trimIndex]
             _trimIndex += 1
             _activeVehicle.sendCommand(1, 183, false, cfg.servo, cfg.pwmTrimm)
+            console.log("sendNextTrim: servo = ", cfg.servo, "   PWM = ", cfg.pwmTrimm)
         } else {
             _trimInProgress = false
         }
@@ -181,6 +182,7 @@ Item {
                     var btn = _buttons[_activeBtnIndex - 1]
                     btn.openInProgress = true
                     _activeVehicle.sendCommand(1, 183, false, servo, pwm)
+                    console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
                 }
             }
         }
@@ -316,6 +318,7 @@ Item {
                     var btn = _buttons[_activeBtnIndex - 1]
                     btn.openInProgress = true
                     _activeVehicle.sendCommand(1, 183, false, servo, pwm)
+                    console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
                 }
             }
         }

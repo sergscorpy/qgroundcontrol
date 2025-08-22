@@ -42,6 +42,7 @@ Rectangle {
                 if (fuseEnabled) {
                     var pwm = servoVal > config.pwmClose - 25 ? config.pwmTrimm : config.pwmClose
                     activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
+                    console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, "   Btn%N = ", buttonIndex)
                 } else if (!button.disabled && !button.openInProgress) {
                     if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex)
                 }
