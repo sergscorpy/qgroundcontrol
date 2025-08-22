@@ -284,4 +284,40 @@ Item {
             }
         }
     }
+
+    Rectangle {
+        id: openServoButton
+        anchors.top: resetButton.bottom
+        anchors.right: parent.right
+        anchors.topMargin: _scrToolsUnit * 2
+        width: _scrToolsUnit * 10
+        height: _scrToolsUnit * 4
+        radius: 4
+        border.color: "white"
+        border.width: 3
+        color: "red"
+
+        Text {
+            anchors.centerIn: parent
+            text: "DROP"
+            color: "white"
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                if (!fuseEnabled && _activeBtnIndex > 0 && !_commandInProgress && _activeVehicle) {
+                    _commandInProgress = true
+                    _commandBtnIndex = _activeBtnIndex
+                    var cfg = _buttonConfig[_activeBtnIndex - 1]
+                    var servo = cfg ? cfg.servo : _activeBtnIndex
+                    var pwm = cfg ? cfg.pwmOpen : _pwmOpen
+
+                    var btn = _buttons[_activeBtnIndex - 1]
+                    btn.openInProgress = true
+                    _activeVehicle.sendCommand(1, 183, false, servo, pwm)
+                }
+            }
+        }
+    }
 }
