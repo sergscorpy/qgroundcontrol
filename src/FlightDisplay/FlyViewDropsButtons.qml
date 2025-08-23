@@ -48,10 +48,6 @@ Item {
     property int  _commandBtnIndex: 0
     property var _buttons: []
 
-    property var _trimServos: []
-    property int _trimIndex: 0
-    property bool _trimInProgress: false
-
     Component.onCompleted: {
         _setActiveButton(0)
     }
@@ -80,56 +76,6 @@ Item {
         }
     }
 
-    function _sendNextTrim() {
-        if (!_activeVehicle) {
-            _trimInProgress = false
-            return
-        }
-        if (_trimIndex < _trimServos.length) {
-            var cfg = _trimServos[_trimIndex]
-            _trimIndex += 1
-            _activeVehicle.sendCommand(1, 183, false, cfg.servo, cfg.pwmTrimm)
-            console.log("sendNextTrim: servo = ", cfg.servo, "   PWM = ", cfg.pwmTrimm)
-        } else {
-            _trimInProgress = false
-        }
-    }
-
-
-    Timer {
-        id: trimTimer
-        interval: 5000
-        repeat: false
-        onTriggered: {
-            if (_activeVehicle && !_activeVehicle.armed && !_trimInProgress && _buttonConfig.length > 0) {
-                _trimServos = _buttonConfig
-                _trimIndex = 0
-                _trimInProgress = true
-                _sendNextTrim()
-            }
-        }
-    }
-
-    Timer {
-        id: trimDelayTimer
-        interval: 1000
-        repeat: false
-        onTriggered: _sendNextTrim()
-    }
-
-    Connections {
-        target: QGroundControl.multiVehicleManager
-        onActiveVehicleChanged: {
-            if (_activeVehicle && !_activeVehicle.armed && _buttonConfig.length > 0) {
-                trimTimer.restart()
-            } else {
-                trimTimer.stop()
-                trimDelayTimer.stop()
-            }
-            _trimInProgress = false
-        }
-    }
-
     Connections {
         target: ButtonProfileManager
         onActiveProfileChanged: {
@@ -141,9 +87,6 @@ Item {
     Connections {
         target: _activeVehicle
         onMavCommandResult: {
-            if (_trimInProgress && command === 183 && ackResult !== 5) {
-                trimDelayTimer.restart()
-            }
             if (_commandInProgress && command === 183) {
                 _commandInProgress = false
                 if (ackResult === 0) {
@@ -253,7 +196,7 @@ Item {
     }
 
     Rectangle {
-        id: resetButton
+        id: openServoButton
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.topMargin: _scrToolsUnit * 20
@@ -262,43 +205,7 @@ Item {
         radius: 4
         border.color: "white"
         border.width: 3
-        color: "#1a4dcc"
 
-        Text {
-            anchors.centerIn: parent
-            text: "Reset"
-            color: "white"
-        }
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                for (var i = 0; i < _buttons.length; i++) {
-                    _buttons[i].disabled = false
-                    _buttons[i].openInProgress = false
-                }
-                _setActiveButton(0)
-                fuseEnabled = true
-                if (_activeVehicle && !_activeVehicle.armed) {
-                    _trimServos = _buttonConfig
-                    _trimIndex = 0
-                    _trimInProgress = true
-                    _sendNextTrim()
-                }
-            }
-        }
-    }
-
-    Rectangle {
-        id: openServoButton
-        anchors.top: resetButton.bottom
-        anchors.right: parent.right
-        anchors.topMargin: _scrToolsUnit * 2
-        width: _scrToolsUnit * 10
-        height: _scrToolsUnit * 4
-        radius: 4
-        border.color: "white"
-        border.width: 3
         color: "red"
 
         Text {
