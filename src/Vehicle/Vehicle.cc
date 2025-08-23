@@ -108,6 +108,7 @@ const char* Vehicle::_localPositionFactGroupName =      "localPosition";
 const char* Vehicle::_localPositionSetpointFactGroupName ="localPositionSetpoint";
 const char* Vehicle::_escStatusFactGroupName =          "escStatus";
 const char* Vehicle::_servoOutputFactGroupName =        "servoOutput";
+const char* Vehicle::_lockStatusFactGroupName =         "lockStatus";
 const char* Vehicle::_estimatorStatusFactGroupName =    "estimatorStatus";
 const char* Vehicle::_terrainFactGroupName =            "terrain";
 const char* Vehicle::_hygrometerFactGroupName =         "hygrometer";
@@ -169,6 +170,7 @@ Vehicle::Vehicle(LinkInterface*             link,
     , _localPositionSetpointFactGroup(this)
     , _escStatusFactGroup           (this)
     , _servoOutputFactGroup         (this)
+    , _lockStatusFactGroup          (this)
     , _estimatorStatusFactGroup     (this)
     , _hygrometerFactGroup          (this)
     , _terrainFactGroup             (this)
@@ -450,6 +452,7 @@ void Vehicle::_commonInit()
     _addFactGroup(&_escStatusFactGroup,         _escStatusFactGroupName);
     _addFactGroup(&_servoOutputFactGroup,         _servoOutputFactGroupName);
     _addFactGroup(&_estimatorStatusFactGroup,   _estimatorStatusFactGroupName);
+    _addFactGroup(&_lockStatusFactGroup,        _lockStatusFactGroupName);
     _addFactGroup(&_hygrometerFactGroup,        _hygrometerFactGroupName);
     _addFactGroup(&_terrainFactGroup,           _terrainFactGroupName);
 

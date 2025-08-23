@@ -34,6 +34,7 @@ Item {
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
     property var _servoOutput:  _activeVehicle ? _activeVehicle.servoOutput : null
+    property var _lockStatus:   _activeVehicle ? _activeVehicle.lockStatus  : null
     property var _activeJoystick: joystickManager.activeJoystick
     property int _activationButtonId: 5
     property real _scrToolsUnit: ScreenTools.defaultFontPixelWidth
@@ -243,6 +244,7 @@ Item {
                 config: modelData
                 activeVehicle: _activeVehicle
                 servoOutput: _servoOutput
+                lockStatus: _lockStatus
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
                 setActiveButtonCallback: function(i) { _setActiveButton(i) }

@@ -438,6 +438,7 @@ HEADERS += \
     src/Settings/CameraSettings.h \
     src/Vehicle/VehicleEscStatusFactGroup.h \
     src/Vehicle/VehicleServoOutputFactGroup.h \
+    src/Vehicle/VehicleLockStatusFactGroup.h \
     src/api/QGCCorePlugin.h \
     src/api/QGCOptions.h \
     src/api/QGCSettings.h \
@@ -457,6 +458,7 @@ SOURCES += \
     src/Settings/CameraSettings.cpp \
     src/Vehicle/VehicleEscStatusFactGroup.cc \
     src/Vehicle/VehicleServoOutputFactGroup.cc \
+    src/Vehicle/VehicleLockStatusFactGroup.cc \
     src/api/QGCCorePlugin.cc \
     src/api/QGCOptions.cc \
     src/api/QGCSettings.cc \

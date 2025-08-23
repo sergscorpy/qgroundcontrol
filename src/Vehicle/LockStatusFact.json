@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "fileType": "FactMetaData",
+    "QGC.MetaData.Facts": [
+        { "name": "chan1", "shortDesc": "Lock status channel 1", "type": "bool" },
+        { "name": "chan2", "shortDesc": "Lock status channel 2", "type": "bool" },
+        { "name": "chan3", "shortDesc": "Lock status channel 3", "type": "bool" },
+        { "name": "chan4", "shortDesc": "Lock status channel 4", "type": "bool" },
+        { "name": "chan5", "shortDesc": "Lock status channel 5", "type": "bool" },
+        { "name": "chan6", "shortDesc": "Lock status channel 6", "type": "bool" },
+        { "name": "chan7", "shortDesc": "Lock status channel 7", "type": "bool" },
+        { "name": "chan8", "shortDesc": "Lock status channel 8", "type": "bool" }
+    ]
+}

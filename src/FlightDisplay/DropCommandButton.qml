@@ -6,6 +6,7 @@ Rectangle {
     property var config: ({servo:buttonIndex, pwmOpen:pwmOpenDefault, pwmTrimm:pwmTrimmDefault, pwmClose:pwmCloseDefault})
     property var activeVehicle
     property var servoOutput
+    property var lockStatus
     property bool fuseEnabled: true
     property real scrToolsUnit: 1
     property bool disabled: false
@@ -24,6 +25,7 @@ Rectangle {
     enabled: (activeVehicle ? true : false) && !disabled
 
     property real servoVal: servoOutput && config ? servoOutput["servo" + config.servo].rawValue : 0
+    property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
 
     color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
             (servoVal > config.pwmClose - 25 ? "green" : (servoVal > config.pwmTrimm - 25 && servoVal < config.pwmTrimm + 25 ? "#cc9900" : (servoVal < config.pwmOpen + 50 ? "#990000" : "#b34d00"))) :
@@ -35,18 +37,22 @@ Rectangle {
         color: "white"
     }
 
+    Connections {
+        target: lockFact
+        onRawValueChanged: {
+            if (activeVehicle) {
+                var pwm = lockFact.rawValue ? config.pwmClose : config.pwmTrimm
+                activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
+                console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, "   Btn%N = ", buttonIndex)
+            }
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            if (activeVehicle) {
-                if (fuseEnabled) {
-                    var pwm = servoVal > config.pwmClose - 25 ? config.pwmTrimm : config.pwmClose
-                    activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
-                    console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, "   Btn%N = ", buttonIndex)
-                } else if (!button.disabled && !button.openInProgress) {
-                    if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex)
-                }
-            }
+            if (!fuseEnabled && activeVehicle && !button.disabled && !button.openInProgress)
+                if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex)
         }
     }
 }
