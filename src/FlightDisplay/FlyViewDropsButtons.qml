@@ -68,7 +68,7 @@ Item {
             if (_commandBtnIndex > 0 && _buttons.length >= _commandBtnIndex) {
                 var btn = _buttons[_commandBtnIndex - 1]
                 btn.disabled = true
-                console.log("disableTimer: ", btn.text, btn.disabled)
+                console.log("disableTimer: ", btn.text.text, btn.disabled)
                 btn.activated = false
                 btn.openInProgress = false
             }

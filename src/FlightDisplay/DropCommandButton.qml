@@ -3,7 +3,7 @@ import QtQuick 2.12
 Rectangle {
     id: button
     property int buttonIndex: 1
-    property var config: ({servo:buttonIndex, pwmOpen:pwmOpenDefault, pwmTrimm:pwmTrimmDefault, pwmClose:pwmCloseDefault})
+    property var config: ({servo:buttonIndex, pwmOpen:pwmOpenDefault, pwmTrimm:pwmTrimDefault, pwmClose:pwmCloseDefault})
     property var activeVehicle
     property var lockStatus
     property bool fuseEnabled: true
@@ -12,7 +12,7 @@ Rectangle {
     property bool activated: false
     property bool openInProgress: false
     property int pwmOpenDefault: 1000
-    property int pwmTrimmDefault: 1900
+    property int pwmTrimDefault: 1900
     property int pwmCloseDefault: 2350
     property var setActiveButtonCallback
 
@@ -33,6 +33,7 @@ Rectangle {
                     : Qt.rgba(0,0,0,0)))
 
     Text {
+        id: text
         anchors.centerIn: parent
         text: config.buttonName ? config.buttonName : ("Drop" + buttonIndex)
         color: "white"
