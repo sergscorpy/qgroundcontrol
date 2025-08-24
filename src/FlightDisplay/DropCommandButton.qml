@@ -5,7 +5,6 @@ Rectangle {
     property int buttonIndex: 1
     property var config: ({servo:buttonIndex, pwmOpen:pwmOpenDefault, pwmTrimm:pwmTrimmDefault, pwmClose:pwmCloseDefault})
     property var activeVehicle
-    property var servoOutput
     property var lockStatus
     property bool fuseEnabled: true
     property real scrToolsUnit: 1
@@ -22,14 +21,16 @@ Rectangle {
     radius: 4
     border.color: "white"
     border.width: 3
-    enabled: (activeVehicle ? true : false) && !disabled
-
-    property real servoVal: servoOutput && config ? servoOutput["servo" + config.servo].rawValue : 0
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
+    property bool locked: lockFact ? lockFact.rawValue : false
+    enabled: (activeVehicle ? true : false) && !disabled && (fuseEnabled || locked)
 
-    color: disabled ? Qt.rgba(0,0,0,0) : (fuseEnabled ?
-            (servoVal > config.pwmClose - 25 ? "green" : (servoVal > config.pwmTrimm - 25 && servoVal < config.pwmTrimm + 25 ? "#cc9900" : (servoVal < config.pwmOpen + 50 ? "#990000" : "#b34d00"))) :
-            (openInProgress ? "#990000" : (activated ? "#b34d00" : "green")))
+    color: disabled ? Qt.rgba(0,0,0,0) :
+            (fuseEnabled
+                ? (locked ? "green" : Qt.rgba(0,0,0,0))
+                : (locked
+                    ? (openInProgress ? "#990000" : (activated ? "#b34d00" : "green"))
+                    : Qt.rgba(0,0,0,0)))
 
     Text {
         anchors.centerIn: parent
@@ -50,9 +51,9 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
+        enabled: !fuseEnabled && activeVehicle && !button.disabled && !button.openInProgress && locked
         onClicked: {
-            if (!fuseEnabled && activeVehicle && !button.disabled && !button.openInProgress)
-                if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex)
+            if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex)
         }
     }
 }

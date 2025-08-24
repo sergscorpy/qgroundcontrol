@@ -33,7 +33,6 @@ Item {
     property Fact profilesFact:      QGroundControl.settingsManager.buttonsSettings.profiles
 
     property var _activeVehicle: QGroundControl.multiVehicleManager.activeVehicle
-    property var _servoOutput:  _activeVehicle ? _activeVehicle.servoOutput : null
     property var _lockStatus:   _activeVehicle ? _activeVehicle.lockStatus  : null
     property var _activeJoystick: joystickManager.activeJoystick
     property int _activationButtonId: 5
@@ -65,9 +64,11 @@ Item {
         interval: 500
         repeat: false
         onTriggered: {
+            console.log("disableTimer: start")
             if (_commandBtnIndex > 0 && _buttons.length >= _commandBtnIndex) {
                 var btn = _buttons[_commandBtnIndex - 1]
                 btn.disabled = true
+                console.log("disableTimer: ", btn.text, btn.disabled)
                 btn.activated = false
                 btn.openInProgress = false
             }
@@ -186,7 +187,6 @@ Item {
                 buttonIndex: index + 1
                 config: modelData
                 activeVehicle: _activeVehicle
-                servoOutput: _servoOutput
                 lockStatus: _lockStatus
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
