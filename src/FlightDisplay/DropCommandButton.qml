@@ -47,6 +47,10 @@ Rectangle {
                 activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
                 console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, "   Btn%N = ", buttonIndex)
             }
+            if (lockFact.rawValue) {
+                button.disabled = false
+                button.openInProgress = false
+            }
         }
     }
 
