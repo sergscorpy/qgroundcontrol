@@ -43,11 +43,11 @@ Rectangle {
         target: lockFact
         onRawValueChanged: {
             if (activeVehicle) {
-                var pwm = lockFact.rawValue ? config.pwmClose : config.pwmTrimm
+                var pwm = locked ? config.pwmClose : config.pwmTrimm
                 activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
                 console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, "   Btn%N = ", buttonIndex)
             }
-            if (lockFact.rawValue) {
+            if (locked) {
                 button.disabled = false
                 button.openInProgress = false
             }
