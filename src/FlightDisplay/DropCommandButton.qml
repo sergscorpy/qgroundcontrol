@@ -50,6 +50,13 @@ Rectangle {
             if (lockFact.rawValue) {
                 button.disabled = false
                 button.openInProgress = false
+            } else {
+                button.disabled = true
+                button.activated = false
+                button.openInProgress = false
+                if (setActiveButtonCallback) {
+                    setActiveButtonCallback(0)
+                }
             }
         }
     }

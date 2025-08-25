@@ -59,24 +59,6 @@ Item {
         }
     }
 
-    Timer {
-        id: disableTimer
-        interval: 500
-        repeat: false
-        onTriggered: {
-            console.log("disableTimer: start")
-            if (_commandBtnIndex > 0 && _buttons.length >= _commandBtnIndex) {
-                var btn = _buttons[_commandBtnIndex - 1]
-                btn.disabled = true
-                console.log("disableTimer: ", btn.labelText, btn.disabled)
-                btn.activated = false
-                btn.openInProgress = false
-            }
-            _activeBtnIndex = 0
-            _commandBtnIndex = 0
-        }
-    }
-
     Connections {
         target: ButtonProfileManager
         onActiveProfileChanged: {
@@ -90,15 +72,11 @@ Item {
         onMavCommandResult: {
             if (_commandInProgress && command === 183) {
                 _commandInProgress = false
-                if (ackResult === 0) {
-                    disableTimer.restart()
-                } else {
-                    if (_commandBtnIndex > 0 && _buttons.length >= _commandBtnIndex) {
-                        var btn = _buttons[_commandBtnIndex - 1]
-                        btn.openInProgress = false
-                    }
-                    _commandBtnIndex = 0
+                if (ackResult !== 0 && _commandBtnIndex > 0 && _buttons.length >= _commandBtnIndex) {
+                    var btn = _buttons[_commandBtnIndex - 1]
+                    btn.openInProgress = false
                 }
+                _commandBtnIndex = 0
             }
         }
     }
