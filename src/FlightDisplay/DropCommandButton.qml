@@ -15,6 +15,7 @@ Rectangle {
     property int pwmTrimDefault: 1900
     property int pwmCloseDefault: 2350
     property var setActiveButtonCallback
+    property var commandFinishedCallback
 
     width: scrToolsUnit * 10
     height: scrToolsUnit * 4
@@ -57,6 +58,9 @@ Rectangle {
                 if (setActiveButtonCallback) {
                     setActiveButtonCallback(0)
                 }
+            }
+            if (commandFinishedCallback) {
+                commandFinishedCallback(buttonIndex)
             }
         }
     }

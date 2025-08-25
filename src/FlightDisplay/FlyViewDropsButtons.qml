@@ -59,6 +59,13 @@ Item {
         }
     }
 
+    function _commandFinished(buttonIndex) {
+        if (buttonIndex === _commandBtnIndex) {
+            _commandInProgress = false
+            _commandBtnIndex = 0
+        }
+    }
+
     Connections {
         target: ButtonProfileManager
         onActiveProfileChanged: {
@@ -169,6 +176,7 @@ Item {
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
                 setActiveButtonCallback: function(i) { _setActiveButton(i) }
+                commandFinishedCallback: _commandFinished
             }
         }
     }
