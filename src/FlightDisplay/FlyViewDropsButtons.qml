@@ -42,27 +42,42 @@ Item {
     property int _pwmOpen: 1000
     property var _buttonConfig: ButtonProfileManager.activeProfile
     property bool fuseEnabled: true
-    property int  _activeBtnIndex: 0
+    property var _activeBtnIndices: []
     property bool _commandInProgress: false
-    property int  _commandBtnIndex: 0
+    property var _pendingCommandIndices: []
     property var _buttons: []
 
     Component.onCompleted: {
-        _setActiveButton(0)
+        _clearActiveButtons()
     }
 
-    function _setActiveButton(index) {
-        _activeBtnIndex = index
+    function _clearActiveButtons() {
+        _activeBtnIndices = []
         for (var i = 0; i < _buttons.length; i++) {
-            var b = _buttons[i]
-            b.activated = (i === index - 1)
+            _buttons[i].activated = false
+        }
+    }
+
+    function _toggleButton(index, active) {
+        if (active) {
+            if (_activeBtnIndices.indexOf(index) === -1) {
+                _activeBtnIndices.push(index)
+            }
+        } else {
+            var idx = _activeBtnIndices.indexOf(index)
+            if (idx !== -1) {
+                _activeBtnIndices.splice(idx, 1)
+            }
         }
     }
 
     function _commandFinished(buttonIndex) {
-        if (buttonIndex === _commandBtnIndex) {
-            _commandInProgress = false
-            _commandBtnIndex = 0
+        var idx = _pendingCommandIndices.indexOf(buttonIndex)
+        if (idx !== -1) {
+            _pendingCommandIndices.splice(idx, 1)
+            if (_pendingCommandIndices.length === 0) {
+                _commandInProgress = false
+            }
         }
     }
 
@@ -70,7 +85,7 @@ Item {
         target: ButtonProfileManager
         onActiveProfileChanged: {
             _buttonConfig = ButtonProfileManager.activeProfile
-            _setActiveButton(0)
+            _clearActiveButtons()
         }
     }
 
@@ -78,12 +93,14 @@ Item {
         target: _activeVehicle
         onMavCommandResult: {
             if (_commandInProgress && command === 183) {
-                _commandInProgress = false
-                if (ackResult !== 0 && _commandBtnIndex > 0 && _buttons.length >= _commandBtnIndex) {
-                    var btn = _buttons[_commandBtnIndex - 1]
+                var idx = _pendingCommandIndices.shift()
+                if (ackResult !== 0 && idx > 0 && _buttons.length >= idx) {
+                    var btn = _buttons[idx - 1]
                     btn.openInProgress = false
                 }
-                _commandBtnIndex = 0
+                if (_pendingCommandIndices.length === 0) {
+                    _commandInProgress = false
+                }
             }
         }
     }
@@ -102,17 +119,20 @@ Item {
         ignoreUnknownSignals:   true
         onButtonPressed: {
             if (buttonId === _activationButtonId && pressed) {
-                if (!fuseEnabled && _activeBtnIndex > 0 && !_commandInProgress && _activeVehicle) {
+                if (!fuseEnabled && _activeBtnIndices.length > 0 && !_commandInProgress && _activeVehicle) {
                     _commandInProgress = true
-                    _commandBtnIndex = _activeBtnIndex
-                    var cfg = _buttonConfig[_activeBtnIndex - 1]
-                    var servo = cfg ? cfg.servo : _activeBtnIndex
-                    var pwm = cfg ? cfg.pwmOpen : _pwmOpen
+                    _pendingCommandIndices = _activeBtnIndices.slice()
+                    for (var j = 0; j < _activeBtnIndices.length; j++) {
+                        var idx = _activeBtnIndices[j]
+                        var cfg = _buttonConfig[idx - 1]
+                        var servo = cfg ? cfg.servo : idx
+                        var pwm = cfg ? cfg.pwmOpen : _pwmOpen
 
-                    var btn = _buttons[_activeBtnIndex - 1]
-                    btn.openInProgress = true
-                    _activeVehicle.sendCommand(1, 183, false, servo, pwm)
-                    console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
+                        var btn = _buttons[idx - 1]
+                        btn.openInProgress = true
+                        _activeVehicle.sendCommand(1, 183, false, servo, pwm)
+                        console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
+                    }
                 }
             }
         }
@@ -147,7 +167,7 @@ Item {
                 onClicked: {
                     fuseEnabled = !fuseEnabled
                     if (!fuseEnabled) {
-                        _setActiveButton(0)
+                        _clearActiveButtons()
                     }
                 }
             }
@@ -175,7 +195,7 @@ Item {
                 lockStatus: _lockStatus
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
-                setActiveButtonCallback: function(i) { _setActiveButton(i) }
+                setActiveButtonCallback: function(i, active) { _toggleButton(i, active) }
                 commandFinishedCallback: _commandFinished
             }
         }
@@ -203,17 +223,20 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                if (!fuseEnabled && _activeBtnIndex > 0 && !_commandInProgress && _activeVehicle) {
+                if (!fuseEnabled && _activeBtnIndices.length > 0 && !_commandInProgress && _activeVehicle) {
                     _commandInProgress = true
-                    _commandBtnIndex = _activeBtnIndex
-                    var cfg = _buttonConfig[_activeBtnIndex - 1]
-                    var servo = cfg ? cfg.servo : _activeBtnIndex
-                    var pwm = cfg ? cfg.pwmOpen : _pwmOpen
+                    _pendingCommandIndices = _activeBtnIndices.slice()
+                    for (var j = 0; j < _activeBtnIndices.length; j++) {
+                        var idx = _activeBtnIndices[j]
+                        var cfg = _buttonConfig[idx - 1]
+                        var servo = cfg ? cfg.servo : idx
+                        var pwm = cfg ? cfg.pwmOpen : _pwmOpen
 
-                    var btn = _buttons[_activeBtnIndex - 1]
-                    btn.openInProgress = true
-                    _activeVehicle.sendCommand(1, 183, false, servo, pwm)
-                    console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
+                        var btn = _buttons[idx - 1]
+                        btn.openInProgress = true
+                        _activeVehicle.sendCommand(1, 183, false, servo, pwm)
+                        console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
+                    }
                 }
             }
         }

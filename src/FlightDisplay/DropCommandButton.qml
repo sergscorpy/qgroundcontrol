@@ -56,7 +56,7 @@ Rectangle {
                 button.activated = false
                 button.openInProgress = false
                 if (setActiveButtonCallback) {
-                    setActiveButtonCallback(0)
+                    setActiveButtonCallback(buttonIndex, false)
                 }
             }
             if (commandFinishedCallback) {
@@ -69,7 +69,8 @@ Rectangle {
         anchors.fill: parent
         enabled: !fuseEnabled && activeVehicle && !button.disabled && !button.openInProgress && locked
         onClicked: {
-            if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex)
+            button.activated = !button.activated
+            if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex, button.activated)
         }
     }
 }
