@@ -8,7 +8,6 @@ Rectangle {
     property var lockStatus
     property bool fuseEnabled: true
     property real scrToolsUnit: 1
-    property bool disabled: false
     property bool activated: false
     property bool openInProgress: false
     property int pwmOpenDefault: 1000
@@ -24,14 +23,17 @@ Rectangle {
     border.width: 3
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
     property bool locked: lockFact ? lockFact.rawValue : false
-    enabled: (activeVehicle ? true : false) && !disabled && (fuseEnabled || locked)
+    enabled: activeVehicle
 
-    color: disabled ? Qt.rgba(0,0,0,0) :
-            (fuseEnabled
-                ? (locked ? "green" : Qt.rgba(0,0,0,0))
-                : (locked
-                    ? (openInProgress ? "#990000" : (activated ? "#b34d00" : "green"))
-                    : Qt.rgba(0,0,0,0)))
+    color: !locked
+           ? Qt.rgba(0,0,0,0)
+           : fuseEnabled
+                ? "green"
+                : openInProgress
+                    ? "#990000"
+                    : activated
+                        ? "#b34d00"
+                        : "green"
 
     Text {
         id: text
@@ -49,10 +51,8 @@ Rectangle {
                 console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, lockFact.rawValue, "   Btn%N = ", buttonIndex)
             }
             if (lockFact.rawValue) {
-                button.disabled = false
                 button.openInProgress = false
             } else {
-                button.disabled = true
                 button.activated = false
                 button.openInProgress = false
                 if (setActiveButtonCallback) {
@@ -67,7 +67,7 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        enabled: !fuseEnabled && activeVehicle && !button.disabled && !button.openInProgress && locked
+        enabled: !fuseEnabled && activeVehicle && !openInProgress && locked
         onClicked: {
             button.activated = !button.activated
             if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex, button.activated)
