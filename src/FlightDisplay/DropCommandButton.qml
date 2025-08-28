@@ -42,6 +42,10 @@ Rectangle {
         color: "white"
     }
 
+    onOpenInProgressChanged: {
+        console.log("Кнопка", buttonIndex, "openInProgress =", openInProgress)
+    }
+
     Connections {
         target: lockFact
         onRawValueChanged: {

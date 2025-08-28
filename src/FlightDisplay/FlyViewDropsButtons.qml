@@ -224,16 +224,24 @@ Item {
             anchors.fill: parent
             onClicked: {
                 if (!fuseEnabled && _activeBtnIndices.length > 0 && !_commandInProgress && _activeVehicle) {
+                    console.log("commandInProgress = ", _commandInProgress)
                     _commandInProgress = true
                     _pendingCommandIndices = _activeBtnIndices.slice()
+                    console.log(_pendingCommandIndices)
                     for (var j = 0; j < _activeBtnIndices.length; j++) {
+                        console.log("j = ", j)
                         var idx = _activeBtnIndices[j]
+                        console.log("idx = ", idx)
                         var cfg = _buttonConfig[idx - 1]
                         var servo = cfg ? cfg.servo : idx
+                        console.log("servo = ", servo)
                         var pwm = cfg ? cfg.pwmOpen : _pwmOpen
+                        console.log("pwm = ", pwm)
 
                         var btn = _buttons[idx - 1]
+                        console.log("buttonIndex = ", btn.buttonIndex)
                         btn.openInProgress = true
+                        console.log("openInProgress = ", btn.openInProgress)
                         _activeVehicle.sendCommand(1, 183, false, servo, pwm)
                         console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
                     }
