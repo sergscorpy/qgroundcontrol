@@ -13,7 +13,6 @@ Rectangle {
     property int pwmOpenDefault: 1000
     property int pwmTrimDefault: 1900
     property int pwmCloseDefault: 2350
-    property var setActiveButtonCallback
     property var commandFinishedCallback
 
     width: scrToolsUnit * 10
@@ -22,7 +21,7 @@ Rectangle {
     border.color: "white"
     border.width: 3
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
-    property bool locked: lockFact ? lockFact.rawValue : false
+    property bool locked: false
     enabled: activeVehicle
 
     color: !locked
@@ -42,6 +41,12 @@ Rectangle {
         color: "white"
     }
 
+    Component.onCompleted: {
+        if (lockFact) {
+            button.locked = lockFact.rawValue
+        }
+    }
+
     onOpenInProgressChanged: {
         console.log("Кнопка", buttonIndex, "openInProgress =", openInProgress)
     }
@@ -54,14 +59,12 @@ Rectangle {
                 activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
                 console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, lockFact.rawValue, "   Btn%N = ", buttonIndex)
             }
+            button.locked = lockFact.rawValue
             if (lockFact.rawValue) {
                 button.openInProgress = false
             } else {
                 button.activated = false
                 button.openInProgress = false
-                if (setActiveButtonCallback) {
-                    setActiveButtonCallback(buttonIndex, false)
-                }
             }
             if (commandFinishedCallback) {
                 commandFinishedCallback(buttonIndex)
@@ -74,7 +77,6 @@ Rectangle {
         enabled: !fuseEnabled && activeVehicle && !openInProgress && locked
         onClicked: {
             button.activated = !button.activated
-            if (setActiveButtonCallback) setActiveButtonCallback(buttonIndex, button.activated)
         }
     }
 }

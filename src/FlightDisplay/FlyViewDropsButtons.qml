@@ -42,36 +42,53 @@ Item {
     property int _pwmOpen: 1000
     property var _buttonConfig: ButtonProfileManager.activeProfile
     property bool fuseEnabled: true
-    property var _activeBtnIndices: []
     property bool _commandInProgress: false
     property var _pendingCommandIndices: []
-    property var _buttons: []
+
+    ListModel {
+        id: buttonModel
+    }
 
     Component.onCompleted: {
-        _clearActiveButtons()
+        _populateButtonModel()
+    }
+
+    function _populateButtonModel() {
+        buttonModel.clear()
+        if (_buttonConfig) {
+            for (var i = 0; i < _buttonConfig.length; i++) {
+                buttonModel.append({ activated: false, openInProgress: false, locked: false })
+            }
+        }
     }
 
     function _clearActiveButtons() {
-        _activeBtnIndices = []
-        for (var i = 0; i < _buttons.length; i++) {
-            _buttons[i].activated = false
+        for (var i = 0; i < buttonModel.count; i++) {
+            buttonModel.setProperty(i, "activated", false)
         }
     }
 
-    function _toggleButton(index, active) {
-        if (active) {
-            if (_activeBtnIndices.indexOf(index) === -1) {
-                _activeBtnIndices.push(index)
-            }
-        } else {
-            var idx = _activeBtnIndices.indexOf(index)
-            if (idx !== -1) {
-                _activeBtnIndices.splice(idx, 1)
+    function _logOpenInProgress() {
+        var statuses = []
+        for (var i = 0; i < buttonModel.count; i++) {
+            statuses.push("Btn" + (i + 1) + "=" + buttonModel.get(i).openInProgress)
+        }
+        console.log("openInProgress statuses:", statuses.join(", "))
+    }
+
+    function _getActiveButtonIndices() {
+        var active = []
+        for (var i = 0; i < buttonModel.count; i++) {
+            if (buttonModel.get(i).activated) {
+                active.push(i + 1)
             }
         }
+        return active
     }
 
     function _commandFinished(buttonIndex) {
+        buttonModel.setProperty(buttonIndex - 1, "openInProgress", false)
+        _logOpenInProgress()
         var idx = _pendingCommandIndices.indexOf(buttonIndex)
         if (idx !== -1) {
             _pendingCommandIndices.splice(idx, 1)
@@ -85,7 +102,7 @@ Item {
         target: ButtonProfileManager
         onActiveProfileChanged: {
             _buttonConfig = ButtonProfileManager.activeProfile
-            _clearActiveButtons()
+            _populateButtonModel()
         }
     }
 
@@ -103,17 +120,18 @@ Item {
         ignoreUnknownSignals:   true
         onButtonPressed: {
             if (buttonId === _activationButtonId && pressed) {
-                if (!fuseEnabled && _activeBtnIndices.length > 0 && !_commandInProgress && _activeVehicle) {
+                var activeIndices = _getActiveButtonIndices()
+                if (!fuseEnabled && activeIndices.length > 0 && !_commandInProgress && _activeVehicle) {
                     _commandInProgress = true
-                    _pendingCommandIndices = _activeBtnIndices.slice()
-                    for (var j = 0; j < _activeBtnIndices.length; j++) {
-                        var idx = _activeBtnIndices[j]
+                    _pendingCommandIndices = activeIndices.slice()
+                    for (var j = 0; j < activeIndices.length; j++) {
+                        var idx = activeIndices[j]
                         var cfg = _buttonConfig[idx - 1]
                         var servo = cfg ? cfg.servo : idx
                         var pwm = cfg ? cfg.pwmOpen : _pwmOpen
 
-                        var btn = _buttons[idx - 1]
-                        btn.openInProgress = true
+                        buttonModel.setProperty(idx - 1, "openInProgress", true)
+                        _logOpenInProgress()
                         _activeVehicle.sendCommand(1, 183, false, servo, pwm)
                         console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
                     }
@@ -165,21 +183,23 @@ Item {
 
         Repeater {
             id: buttonRepeater
-            model: _buttonConfig
-            onItemAdded: {
-                _buttons.splice(index, 0, item)
-            }
-            onItemRemoved: {
-                _buttons.splice(index, 1)
-            }
+            model: buttonModel
             delegate: DropCommandButton {
                 buttonIndex: index + 1
-                config: modelData
+                config: _buttonConfig[index]
                 activeVehicle: _activeVehicle
                 lockStatus: _lockStatus
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
-                setActiveButtonCallback: function(i, active) { _toggleButton(i, active) }
+                activated: model.activated
+                openInProgress: model.openInProgress
+                locked: model.locked
+                onActivatedChanged: buttonModel.setProperty(index, "activated", activated)
+                onOpenInProgressChanged: {
+                    buttonModel.setProperty(index, "openInProgress", openInProgress)
+                    dropsButtons._logOpenInProgress()
+                }
+                onLockedChanged: buttonModel.setProperty(index, "locked", locked)
                 commandFinishedCallback: _commandFinished
             }
         }
@@ -207,17 +227,18 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                if (!fuseEnabled && _activeBtnIndices.length > 0 && !_commandInProgress && _activeVehicle) {
+                var activeIndices = _getActiveButtonIndices()
+                if (!fuseEnabled && activeIndices.length > 0 && !_commandInProgress && _activeVehicle) {
                     console.log("commandInProgress = ", _commandInProgress)
                     _commandInProgress = true
-                    _pendingCommandIndices = _activeBtnIndices.slice()
+                    _pendingCommandIndices = activeIndices.slice()
                     console.log(_pendingCommandIndices)
                     var sendNext = function(j) {
-                        if (j >= _activeBtnIndices.length) {
+                        if (j >= activeIndices.length) {
                             return
                         }
                         console.log("j = ", j)
-                        var idx = _activeBtnIndices[j]
+                        var idx = activeIndices[j]
                         console.log("idx = ", idx)
                         var cfg = _buttonConfig[idx - 1]
                         var servo = cfg ? cfg.servo : idx
@@ -225,10 +246,8 @@ Item {
                         var pwm = cfg ? cfg.pwmOpen : _pwmOpen
                         console.log("pwm = ", pwm)
 
-                        var btn = _buttons[idx - 1]
-                        console.log("buttonIndex = ", btn.buttonIndex)
-                        btn.openInProgress = true
-                        console.log("openInProgress = ", btn.openInProgress)
+                        buttonModel.setProperty(idx - 1, "openInProgress", true)
+                        _logOpenInProgress()
                         _activeVehicle.sendCommand(1, 183, false, servo, pwm)
                         console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
 
