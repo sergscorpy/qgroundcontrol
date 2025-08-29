@@ -228,7 +228,10 @@ Item {
                     _commandInProgress = true
                     _pendingCommandIndices = _activeBtnIndices.slice()
                     console.log(_pendingCommandIndices)
-                    for (var j = 0; j < _activeBtnIndices.length; j++) {
+                    var sendNext = function(j) {
+                        if (j >= _activeBtnIndices.length) {
+                            return
+                        }
                         console.log("j = ", j)
                         var idx = _activeBtnIndices[j]
                         console.log("idx = ", idx)
@@ -244,7 +247,16 @@ Item {
                         console.log("openInProgress = ", btn.openInProgress)
                         _activeVehicle.sendCommand(1, 183, false, servo, pwm)
                         console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
+
+                        var delayTimer = Qt.createQmlObject(
+                            'import QtQuick 2.0; Timer { interval: 50; running: true; repeat: false }',
+                            dropsButtons)
+                        delayTimer.triggered.connect(function() {
+                            delayTimer.destroy()
+                            sendNext(j + 1)
+                        })
                     }
+                    sendNext(0)
                 }
             }
         }
