@@ -90,22 +90,6 @@ Item {
     }
 
     Connections {
-        target: _activeVehicle
-        onMavCommandResult: {
-            if (_commandInProgress && command === 183) {
-                var idx = _pendingCommandIndices.shift()
-                if (ackResult !== 0 && idx > 0 && _buttons.length >= idx) {
-                    var btn = _buttons[idx - 1]
-                    btn.openInProgress = false
-                }
-                if (_pendingCommandIndices.length === 0) {
-                    _commandInProgress = false
-                }
-            }
-        }
-    }
-
-    Connections {
         target: activeProfileFact
         onRawValueChanged: ButtonProfileManager.updateActiveProfile()
     }
