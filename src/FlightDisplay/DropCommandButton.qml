@@ -36,7 +36,6 @@ Rectangle {
     border.width: 3
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
     property bool locked: lockFact ? lockFact.rawValue : false
-    Component.onCompleted: locked = lockFact ? lockFact.rawValue : false
     enabled: activeVehicle
 
     color: !locked
@@ -73,7 +72,6 @@ Rectangle {
                 activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
                 console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, lockFact.rawValue, "   Btn%N = ", buttonIndex)
             }
-            button.locked = lockFact.rawValue
             openProgressResetTimer.stop()
             if (lockFact.rawValue) {
                 resetOpenInProgress()

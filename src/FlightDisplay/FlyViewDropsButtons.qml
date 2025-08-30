@@ -51,26 +51,13 @@ Item {
 
     Component.onCompleted: {
         _populateButtonModel()
-        _syncLockedStates()
     }
 
     function _populateButtonModel() {
         buttonModel.clear()
         if (_buttonConfig) {
             for (var i = 0; i < _buttonConfig.length; i++) {
-                buttonModel.append({ activated: false, openInProgress: false, locked: false })
-            }
-        }
-    }
-
-    function _syncLockedStates() {
-        if (!_lockStatus) {
-            return
-        }
-        for (var i = 0; i < buttonModel.count && i < 8; i++) {
-            var lockFact = _lockStatus["chan" + (i + 1)]
-            if (lockFact) {
-                buttonModel.setProperty(i, "locked", lockFact.rawValue)
+                buttonModel.append({ activated: false, openInProgress: false })
             }
         }
     }
@@ -116,7 +103,6 @@ Item {
         onActiveProfileChanged: {
             _buttonConfig = ButtonProfileManager.activeProfile
             _populateButtonModel()
-            _syncLockedStates()
         }
     }
 
@@ -133,7 +119,6 @@ Item {
         target: QGroundControl.multiVehicleManager
         onActiveVehicleChanged: {
             _populateButtonModel()
-            _syncLockedStates()
             if (_activeVehicle) {
                 _activeVehicle.sendCommand(1, 512, false, 252)
             }
@@ -145,7 +130,6 @@ Item {
         ignoreUnknownSignals:   true
         onLockStatusChanged: {
             _populateButtonModel()
-            _syncLockedStates()
         }
     }
 
@@ -227,9 +211,7 @@ Item {
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
                 activated: model.activated
-                locked: model.locked
                 onActivatedChanged: buttonModel.setProperty(index, "activated", activated)
-                onLockedChanged: buttonModel.setProperty(index, "locked", locked)
                 onResetOpenInProgress: {
                     buttonModel.setProperty(index, "openInProgress", false)
                     dropsButtons._logOpenInProgress()
