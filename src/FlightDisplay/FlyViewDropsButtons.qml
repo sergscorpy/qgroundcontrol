@@ -58,7 +58,8 @@ Item {
     function _populateButtonModel() {
         buttonModel.clear()
         if (_buttonConfig) {
-            for (var i = 0; i < _buttonConfig.length; i++) {
+            var count = Math.min(_buttonConfig.length, 8)
+            for (var i = 0; i < count; i++) {
                 var lockFact = _lockStatus && _lockStatus["chan" + (i + 1)]
                                ? _lockStatus["chan" + (i + 1)].rawValue
                                : false
@@ -238,29 +239,37 @@ Item {
             color: "transparent"
         }
 
-        Repeater {
-            id: buttonRepeater
-            model: buttonModel
-            delegate: DropCommandButton {
-                id: button
-                buttonIndex: index + 1
-                config: _buttonConfig[index]
-                activeVehicle: _activeVehicle
-                lockStatus: _lockStatus
-                fuseEnabled: dropsButtons.fuseEnabled
-                scrToolsUnit: _scrToolsUnit
-                commandFinishedCallback: _commandFinished
-                autoCommandEnabled: dropsButtons._autoCommandEnabled
-                Binding { target: button; property: "activated"; value: model.activated }
-                Binding { target: button; property: "openInProgress"; value: model.openInProgress }
-                Binding { target: button; property: "locked"; value: model.locked }
-                onToggleActivated: buttonModel.setProperty(index, "activated", !model.activated)
-                onResetActivated: buttonModel.setProperty(index, "activated", false)
-                onResetOpenInProgress: {
-                    buttonModel.setProperty(index, "openInProgress", false)
-                    dropsButtons._logOpenInProgress()
+        Grid {
+            id: buttonGrid
+            columns: 2
+            rows: 4
+            columnSpacing: _scrToolsUnit * 2
+            rowSpacing: _scrToolsUnit * 2
+            flow: Grid.TopToBottom
+            Repeater {
+                id: buttonRepeater
+                model: buttonModel
+                delegate: DropCommandButton {
+                    id: button
+                    buttonIndex: index + 1
+                    config: _buttonConfig[index]
+                    activeVehicle: _activeVehicle
+                    lockStatus: _lockStatus
+                    fuseEnabled: dropsButtons.fuseEnabled
+                    scrToolsUnit: _scrToolsUnit
+                    commandFinishedCallback: _commandFinished
+                    autoCommandEnabled: dropsButtons._autoCommandEnabled
+                    Binding { target: button; property: "activated"; value: model.activated }
+                    Binding { target: button; property: "openInProgress"; value: model.openInProgress }
+                    Binding { target: button; property: "locked"; value: model.locked }
+                    onToggleActivated: buttonModel.setProperty(index, "activated", !model.activated)
+                    onResetActivated: buttonModel.setProperty(index, "activated", false)
+                    onResetOpenInProgress: {
+                        buttonModel.setProperty(index, "openInProgress", false)
+                        dropsButtons._logOpenInProgress()
+                    }
+                    onLockChanged: buttonModel.setProperty(index, "locked", locked)
                 }
-                onLockChanged: buttonModel.setProperty(index, "locked", locked)
             }
         }
     }

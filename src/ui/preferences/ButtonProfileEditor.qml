@@ -86,7 +86,11 @@ Rectangle {
         QGCButton {
             text: qsTr("Create")
             width: ScreenTools.defaultFontPixelWidth * 10
+            enabled: profileModel.count < 8
             onClicked: {
+                if (profileModel.count >= 8) {
+                    return
+                }
                 profileModel.append({ buttonName: "Drop" + (profileModel.count + 1), servo: 1, pwmOpen: 1000, pwmTrimm: 1500, pwmClose: 2000 })
                 profileChanged()
             }

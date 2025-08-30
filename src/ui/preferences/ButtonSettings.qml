@@ -113,7 +113,7 @@ Rectangle {
         QGCButton {
             width:      ScreenTools.defaultFontPixelWidth * 10
             text:       qsTr("Delete")
-            enabled:    _currentSelection >= 0
+            enabled:    _currentSelection >= 0 && _currentSelection !== _activeProfileFact.rawValue
             onClicked: {
                 if(_currentSelection >= 0) {
                     buttonModel.remove(_currentSelection)
@@ -125,7 +125,7 @@ Rectangle {
         }
         QGCButton {
             text:       qsTr("Edit")
-            enabled:    _currentSelection >= 0
+            enabled:    _currentSelection >= 0 && _currentSelection !== _activeProfileFact.rawValue
             onClicked: {
                 if(_currentSelection >= 0) {
                     editorLoader.profileIndex = _currentSelection
