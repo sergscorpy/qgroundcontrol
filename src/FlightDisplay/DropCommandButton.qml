@@ -35,7 +35,7 @@ Rectangle {
     border.color: "white"
     border.width: 3
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
-    property bool locked: false
+    property bool locked: lockFact ? lockFact.rawValue : false
     enabled: activeVehicle
 
     color: !locked
@@ -53,12 +53,6 @@ Rectangle {
         anchors.centerIn: parent
         text: config.buttonName ? config.buttonName : ("Drop" + buttonIndex)
         color: "white"
-    }
-
-    Component.onCompleted: {
-        if (lockFact) {
-            button.locked = lockFact.rawValue
-        }
     }
 
     onOpenInProgressChanged: {
