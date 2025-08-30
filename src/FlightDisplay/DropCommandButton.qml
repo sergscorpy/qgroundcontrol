@@ -16,6 +16,19 @@ Rectangle {
     property int pwmCloseDefault: 2350
     property var commandFinishedCallback
 
+    Timer {
+        id: openProgressResetTimer
+        interval: 3000
+        running: false
+        repeat: false
+        onTriggered: {
+            resetOpenInProgress()
+            if (commandFinishedCallback) {
+                commandFinishedCallback(buttonIndex)
+            }
+        }
+    }
+
     width: scrToolsUnit * 10
     height: scrToolsUnit * 4
     radius: 4
@@ -50,6 +63,11 @@ Rectangle {
 
     onOpenInProgressChanged: {
         console.log("Кнопка", buttonIndex, "openInProgress =", openInProgress)
+        if (openInProgress) {
+            openProgressResetTimer.restart()
+        } else {
+            openProgressResetTimer.stop()
+        }
     }
 
     Connections {
@@ -61,6 +79,7 @@ Rectangle {
                 console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, lockFact.rawValue, "   Btn%N = ", buttonIndex)
             }
             button.locked = lockFact.rawValue
+            openProgressResetTimer.stop()
             if (lockFact.rawValue) {
                 resetOpenInProgress()
             } else {
