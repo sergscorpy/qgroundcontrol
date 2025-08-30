@@ -180,19 +180,37 @@ Item {
             if (buttonId === _activationButtonId && pressed) {
                 var activeIndices = _getActiveButtonIndices()
                 if (!fuseEnabled && activeIndices.length > 0 && !_commandInProgress && _activeVehicle) {
+                    console.log("commandInProgress = ", _commandInProgress)
                     _commandInProgress = true
                     _pendingCommandIndices = activeIndices.slice()
-                    for (var j = 0; j < activeIndices.length; j++) {
+                    console.log(_pendingCommandIndices)
+                    var sendNext = function(j) {
+                        if (j >= activeIndices.length) {
+                            return
+                        }
+                        console.log("j = ", j)
                         var idx = activeIndices[j]
+                        console.log("idx = ", idx)
                         var cfg = _buttonConfig[idx - 1]
                         var servo = cfg ? cfg.servo : idx
+                        console.log("servo = ", servo)
                         var pwm = cfg ? cfg.pwmOpen : _pwmOpen
+                        console.log("pwm = ", pwm)
 
                         buttonModel.setProperty(idx - 1, "openInProgress", true)
                         _logOpenInProgress()
                         _activeVehicle.sendCommand(1, 183, false, servo, pwm)
                         console.log("onButtonPressed: servo = ", servo, "   PWM = ", pwm)
+
+                        var delayTimer = Qt.createQmlObject(
+                            'import QtQuick 2.0; Timer { interval: 50; running: true; repeat: false }',
+                            dropsButtons)
+                        delayTimer.triggered.connect(function() {
+                            delayTimer.destroy()
+                            sendNext(j + 1)
+                        })
                     }
+                    sendNext(0)
                 }
             }
         }
@@ -284,7 +302,7 @@ Item {
         radius: 4
         border.color: "white"
         border.width: 3
-
+        visible: ScreenTools.isWindows
         color: "red"
 
         Text {
