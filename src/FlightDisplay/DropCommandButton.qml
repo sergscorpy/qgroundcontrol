@@ -11,6 +11,9 @@ Rectangle {
     property bool activated: false
     property bool openInProgress: false
     signal resetOpenInProgress()
+    signal toggleActivated()
+    signal resetActivated()
+    signal lockChanged(bool locked)
     property int pwmOpenDefault: 1000
     property int pwmTrimDefault: 1900
     property int pwmCloseDefault: 2350
@@ -35,7 +38,7 @@ Rectangle {
     border.color: "white"
     border.width: 3
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
-    property bool locked: lockFact ? lockFact.rawValue : false
+    property bool locked: false
     enabled: activeVehicle
 
     color: !locked
@@ -73,10 +76,11 @@ Rectangle {
                 console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, lockFact.rawValue, "   Btn%N = ", buttonIndex)
             }
             openProgressResetTimer.stop()
+            lockChanged(lockFact.rawValue)
             if (lockFact.rawValue) {
                 resetOpenInProgress()
             } else {
-                button.activated = false
+                resetActivated()
                 resetOpenInProgress()
             }
             if (commandFinishedCallback) {
@@ -88,8 +92,6 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         enabled: !fuseEnabled && activeVehicle && !openInProgress && locked
-        onClicked: {
-            button.activated = !button.activated
-        }
+        onClicked: toggleActivated()
     }
 }

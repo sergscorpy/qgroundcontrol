@@ -57,7 +57,10 @@ Item {
         buttonModel.clear()
         if (_buttonConfig) {
             for (var i = 0; i < _buttonConfig.length; i++) {
-                buttonModel.append({ activated: false, openInProgress: false })
+                var lockFact = _lockStatus && _lockStatus["chan" + (i + 1)]
+                               ? _lockStatus["chan" + (i + 1)].rawValue
+                               : false
+                buttonModel.append({ activated: false, openInProgress: false, locked: lockFact })
             }
         }
     }
@@ -210,14 +213,17 @@ Item {
                 lockStatus: _lockStatus
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
-                activated: model.activated
-                onActivatedChanged: buttonModel.setProperty(index, "activated", activated)
+                commandFinishedCallback: _commandFinished
+                Binding { target: button; property: "activated"; value: model.activated }
+                Binding { target: button; property: "openInProgress"; value: model.openInProgress }
+                Binding { target: button; property: "locked"; value: model.locked }
+                onToggleActivated: buttonModel.setProperty(index, "activated", !model.activated)
+                onResetActivated: buttonModel.setProperty(index, "activated", false)
                 onResetOpenInProgress: {
                     buttonModel.setProperty(index, "openInProgress", false)
                     dropsButtons._logOpenInProgress()
                 }
-                commandFinishedCallback: _commandFinished
-                Binding { target: button; property: "openInProgress"; value: model.openInProgress }
+                onLockChanged: buttonModel.setProperty(index, "locked", locked)
             }
         }
     }
