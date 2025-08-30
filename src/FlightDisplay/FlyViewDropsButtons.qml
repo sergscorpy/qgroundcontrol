@@ -51,6 +51,7 @@ Item {
 
     Component.onCompleted: {
         _populateButtonModel()
+        _syncLockedStates()
     }
 
     function _populateButtonModel() {
@@ -58,6 +59,18 @@ Item {
         if (_buttonConfig) {
             for (var i = 0; i < _buttonConfig.length; i++) {
                 buttonModel.append({ activated: false, openInProgress: false, locked: false })
+            }
+        }
+    }
+
+    function _syncLockedStates() {
+        if (!_lockStatus) {
+            return
+        }
+        for (var i = 0; i < buttonModel.count && i < 8; i++) {
+            var lockFact = _lockStatus["chan" + (i + 1)]
+            if (lockFact) {
+                buttonModel.setProperty(i, "locked", lockFact.rawValue)
             }
         }
     }
@@ -103,6 +116,7 @@ Item {
         onActiveProfileChanged: {
             _buttonConfig = ButtonProfileManager.activeProfile
             _populateButtonModel()
+            _syncLockedStates()
         }
     }
 
@@ -113,6 +127,26 @@ Item {
     Connections {
         target: profilesFact
         onRawValueChanged: ButtonProfileManager.loadProfiles()
+    }
+
+    Connections {
+        target: QGroundControl.multiVehicleManager
+        onActiveVehicleChanged: {
+            _populateButtonModel()
+            _syncLockedStates()
+            if (_activeVehicle) {
+                _activeVehicle.sendCommand(1, 512, false, 252)
+            }
+        }
+    }
+
+    Connections {
+        target:                 _activeVehicle
+        ignoreUnknownSignals:   true
+        onLockStatusChanged: {
+            _populateButtonModel()
+            _syncLockedStates()
+        }
     }
 
     Connections {

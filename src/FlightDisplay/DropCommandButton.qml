@@ -36,6 +36,7 @@ Rectangle {
     border.width: 3
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
     property bool locked: lockFact ? lockFact.rawValue : false
+    Component.onCompleted: locked = lockFact ? lockFact.rawValue : false
     enabled: activeVehicle
 
     color: !locked
