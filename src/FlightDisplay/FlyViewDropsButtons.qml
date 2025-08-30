@@ -43,6 +43,7 @@ Item {
     property var _buttonConfig: ButtonProfileManager.activeProfile
     property bool fuseEnabled: true
     property bool _commandInProgress: false
+    property bool _autoCommandEnabled: false
     property var _pendingCommandIndices: []
 
     ListModel {
@@ -51,6 +52,7 @@ Item {
 
     Component.onCompleted: {
         _populateButtonModel()
+        _syncServoStates()
     }
 
     function _populateButtonModel() {
@@ -101,6 +103,39 @@ Item {
         }
     }
 
+    function _syncServoStates() {
+        _autoCommandEnabled = false
+        if (!_activeVehicle) {
+            _autoCommandEnabled = true
+            return
+        }
+        var idx = 0
+        var sendNext = function() {
+            if (idx >= buttonModel.count) {
+                _autoCommandEnabled = true
+                return
+            }
+            var cfg = _buttonConfig[idx]
+            var lockFact = _lockStatus && _lockStatus["chan" + (idx + 1)]
+            if (cfg && lockFact) {
+                var pwm = lockFact.rawValue ? cfg.pwmClose : cfg.pwmTrimm
+                _activeVehicle.sendCommand(1, 183, false, cfg.servo, pwm)
+                console.log("syncCommand: servo = ", cfg.servo, "   PWM = ", pwm, lockFact.rawValue, "   Btn%N = ", idx + 1)
+            }
+            idx++
+            var delayTimer = Qt.createQmlObject('import QtQuick 2.0; Timer { interval: 1500; running: true; repeat: false }', dropsButtons)
+            delayTimer.triggered.connect(function() {
+                delayTimer.destroy()
+                sendNext()
+            })
+        }
+        var startTimer = Qt.createQmlObject('import QtQuick 2.0; Timer { interval: 5000; running: true; repeat: false }', dropsButtons)
+        startTimer.triggered.connect(function() {
+            startTimer.destroy()
+            sendNext()
+        })
+    }
+
     Connections {
         target: ButtonProfileManager
         onActiveProfileChanged: {
@@ -125,6 +160,7 @@ Item {
             if (_activeVehicle) {
                 _activeVehicle.sendCommand(1, 512, false, 252)
             }
+            _syncServoStates()
         }
     }
 
@@ -214,6 +250,7 @@ Item {
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
                 commandFinishedCallback: _commandFinished
+                autoCommandEnabled: dropsButtons._autoCommandEnabled
                 Binding { target: button; property: "activated"; value: model.activated }
                 Binding { target: button; property: "openInProgress"; value: model.openInProgress }
                 Binding { target: button; property: "locked"; value: model.locked }

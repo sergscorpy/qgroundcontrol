@@ -10,6 +10,7 @@ Rectangle {
     property real scrToolsUnit: 1
     property bool activated: false
     property bool openInProgress: false
+    property bool autoCommandEnabled: false
     signal resetOpenInProgress()
     signal toggleActivated()
     signal resetActivated()
@@ -70,7 +71,7 @@ Rectangle {
     Connections {
         target: lockFact
         onRawValueChanged: {
-            if (activeVehicle) {
+            if (activeVehicle && autoCommandEnabled) {
                 var pwm = lockFact.rawValue ? config.pwmClose : config.pwmTrimm
                 activeVehicle.sendCommand(1, 183, false, config.servo, pwm)
                 console.log("sendCommand: servo = ", config.servo, "   PWM = ", pwm, lockFact.rawValue, "   Btn%N = ", buttonIndex)
