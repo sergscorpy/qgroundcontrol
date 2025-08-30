@@ -185,6 +185,7 @@ Item {
             id: buttonRepeater
             model: buttonModel
             delegate: DropCommandButton {
+                id: button
                 buttonIndex: index + 1
                 config: _buttonConfig[index]
                 activeVehicle: _activeVehicle
@@ -192,15 +193,15 @@ Item {
                 fuseEnabled: dropsButtons.fuseEnabled
                 scrToolsUnit: _scrToolsUnit
                 activated: model.activated
-                openInProgress: model.openInProgress
                 locked: model.locked
                 onActivatedChanged: buttonModel.setProperty(index, "activated", activated)
-                onOpenInProgressChanged: {
-                    buttonModel.setProperty(index, "openInProgress", openInProgress)
+                onLockedChanged: buttonModel.setProperty(index, "locked", locked)
+                onResetOpenInProgress: {
+                    buttonModel.setProperty(index, "openInProgress", false)
                     dropsButtons._logOpenInProgress()
                 }
-                onLockedChanged: buttonModel.setProperty(index, "locked", locked)
                 commandFinishedCallback: _commandFinished
+                Binding { target: button; property: "openInProgress"; value: model.openInProgress }
             }
         }
     }

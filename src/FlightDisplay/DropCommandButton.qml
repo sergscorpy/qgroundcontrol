@@ -10,6 +10,7 @@ Rectangle {
     property real scrToolsUnit: 1
     property bool activated: false
     property bool openInProgress: false
+    signal resetOpenInProgress()
     property int pwmOpenDefault: 1000
     property int pwmTrimDefault: 1900
     property int pwmCloseDefault: 2350
@@ -61,10 +62,10 @@ Rectangle {
             }
             button.locked = lockFact.rawValue
             if (lockFact.rawValue) {
-                button.openInProgress = false
+                resetOpenInProgress()
             } else {
                 button.activated = false
-                button.openInProgress = false
+                resetOpenInProgress()
             }
             if (commandFinishedCallback) {
                 commandFinishedCallback(buttonIndex)
