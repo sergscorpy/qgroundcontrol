@@ -35,9 +35,6 @@ Rectangle {
 
     width: scrToolsUnit * 10
     height: scrToolsUnit * 4
-    radius: 4
-    //border.color: "white"
-    //border.width: 3
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
     property bool locked: false
     enabled: activeVehicle

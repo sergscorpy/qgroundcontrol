@@ -229,16 +229,22 @@ Item {
             id: fuseButton
             width: _scrToolsUnit * 10
             height: _scrToolsUnit * 4
-            radius: 4
-            border.color: "#990000"
-            border.width: 3
-            color: fuseEnabled ? "green" : "#990000"
+            //radius: 4
+            //border.color: "#990000"
+            //border.width: 3
+            color: "transparent"
 
-            Text {
-                anchors.centerIn: parent
-                text: "Safety"
-                color: "white"
+            Image {
+                anchors.fill: parent
+                source: fuseEnabled ? "qrc:/qmlimages/Safe_On.svg" : "qrc:/qmlimages/Safe_Off.svg"
+                fillMode: Image.PreserveAspectFit
             }
+
+            // Text {
+            //     anchors.centerIn: parent
+            //     text: "Safety"
+            //     color: "white"
+            // }
 
             MouseArea {
                 anchors.fill: parent

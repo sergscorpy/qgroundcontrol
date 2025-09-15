@@ -225,5 +225,7 @@
         <file alias="Drops_Green.svg">src/FlightDisplay/Image/Drops_Green.svg</file>
         <file alias="Drops_Orange.svg">src/FlightDisplay/Image/Drops_Orange.svg</file>
         <file alias="Drops_Red.svg">src/FlightDisplay/Image/Drops_Red.svg</file>
+        <file alias="Safe_Off.svg">src/FlightDisplay/Image/Safe_Off.svg</file>
+        <file alias="Safe_On.svg">src/FlightDisplay/Image/Safe_On.svg</file>
     </qresource>
 </RCC>
