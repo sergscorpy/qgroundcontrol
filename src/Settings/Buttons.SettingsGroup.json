@@ -13,7 +13,7 @@
             "shortDesc": "JSON list of button profiles",
             "longDesc": "Serialized button profiles list stored as JSON array.",
             "type": "string",
-            "default": "[{\"name\":\"Vampir\",\"items\":[{\"buttonName\":\"Drop1\",\"servo\":1,\"pwmOpen\":1000,\"pwmTrimm\":1900,\"pwmClose\":2350},{\"buttonName\":\"Drop2\",\"servo\":2,\"pwmOpen\":1000,\"pwmTrimm\":1900,\"pwmClose\":2350},{\"buttonName\":\"Drop3\",\"servo\":3,\"pwmOpen\":1000,\"pwmTrimm\":1900,\"pwmClose\":2350},{\"buttonName\":\"Drop4\",\"servo\":4,\"pwmOpen\":1000,\"pwmTrimm\":1900,\"pwmClose\":2350}]}]"
+            "default": "[{\"name\":\"Vampir\",\"items\":[{\"buttonName\":\"Drop1\",\"servo\":11,\"pwmOpen\":1000,\"pwmTrimm\":1900,\"pwmClose\":2350},{\"buttonName\":\"Drop2\",\"servo\":12,\"pwmOpen\":1000,\"pwmTrimm\":1900,\"pwmClose\":2350},{\"buttonName\":\"Drop3\",\"servo\":13,\"pwmOpen\":1000,\"pwmTrimm\":1900,\"pwmClose\":2350},{\"buttonName\":\"Drop4\",\"servo\":14,\"pwmOpen\":1000,\"pwmTrimm\":1900,\"pwmClose\":2350}]}]"
         }
     ]
 }
