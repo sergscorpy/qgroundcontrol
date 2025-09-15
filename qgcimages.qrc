@@ -221,5 +221,9 @@
         <file alias="barShow.svg">src/FlightMap/Images/barShow.svg</file>
         <file alias="DropsOff.svg">src/FlightDisplay/Image/DropsOff.svg</file>
         <file alias="DropsOn.svg">src/FlightDisplay/Image/DropsOn.svg</file>
+        <file alias="Drops_Empty.svg">src/FlightDisplay/Image/Drops_Empty.svg</file>
+        <file alias="Drops_Green.svg">src/FlightDisplay/Image/Drops_Green.svg</file>
+        <file alias="Drops_Orange.svg">src/FlightDisplay/Image/Drops_Orange.svg</file>
+        <file alias="Drops_Red.svg">src/FlightDisplay/Image/Drops_Red.svg</file>
     </qresource>
 </RCC>

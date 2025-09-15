@@ -36,26 +36,32 @@ Rectangle {
     width: scrToolsUnit * 10
     height: scrToolsUnit * 4
     radius: 4
-    border.color: "white"
-    border.width: 3
+    //border.color: "white"
+    //border.width: 3
     property var lockFact: lockStatus && config ? lockStatus["chan" + buttonIndex] : null
     property bool locked: false
     enabled: activeVehicle
 
-    color: !locked
-           ? Qt.rgba(0,0,0,0)
-           : fuseEnabled
-                ? "green"
-                : openInProgress
-                    ? "#990000"
-                    : activated
-                        ? "#b34d00"
-                        : "green"
+    color: Qt.rgba(0,0,0,0)
+
+    Image {
+        anchors.fill: parent
+        source: !locked
+               ? "qrc:/qmlimages/Drops_Empty.svg"
+               : fuseEnabled
+                    ? "qrc:/qmlimages/Drops_Green.svg"
+                    : openInProgress
+                        ? "qrc:/qmlimages/Drops_Red.svg"
+                        : activated
+                            ? "qrc:/qmlimages/Drops_Orange.svg"
+                            : "qrc:/qmlimages/Drops_Green.svg"
+        fillMode: Image.PreserveAspectFit
+    }
 
     Text {
         id: text
         anchors.centerIn: parent
-        text: config.buttonName ? config.buttonName : ("Drop" + buttonIndex)
+        text: "         " + buttonIndex
         color: "white"
     }
 
