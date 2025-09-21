@@ -43,7 +43,8 @@ QGCLabel {
             "Altitude Hold",
             "Loiter",
             "RTL",
-            "Guided No GPS"
+            "Guided No GPS",
+            "Position Hold"
         ]
 
         if (currentVehicle && currentVehicle.flightModeSetAvailable) {
