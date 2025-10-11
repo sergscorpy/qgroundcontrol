@@ -81,14 +81,14 @@ void VehicleLinkManager::_commRegainedOnLink(LinkInterface* link)
 
     // Check recovery from total communication loss
     if (_communicationLost) {
-        bool noCommunicationLoss = true;
+        bool totalCommunicationLoss = true;
         for (const LinkInfo_t& linkInfo: _rgLinkInfo) {
-            if (linkInfo.commLost) {
-                noCommunicationLoss = false;
+            if (!linkInfo.commLost) {
+                totalCommunicationLoss = false;
                 break;
             }
         }
-        if (noCommunicationLoss) {
+        if (!totalCommunicationLoss) {
             _communicationLost = false;
             emit communicationLostChanged(false);
         }
