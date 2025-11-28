@@ -1130,7 +1130,7 @@ Rectangle {
                         anchors.right:      parent.right
                         font.pointSize:     ScreenTools.smallFontPointSize
                         wrapMode:           Text.WordWrap
-                        text:               qsTr("Note: These setting are not meant for use with an ADSB transponder which is situated on the vehicle.")
+                        text:               qsTr("Note: These setting are not meant for use with an ADSB transponder which is situated on the vehicle.");
                     }
 
                     GridLayout {
