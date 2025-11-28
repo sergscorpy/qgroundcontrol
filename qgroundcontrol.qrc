@@ -206,6 +206,7 @@
         <file alias="QGroundControl/FlightDisplay/FlightDisplayViewWidgets.qml">src/FlightDisplay/FlightDisplayViewWidgets.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewAirspaceIndicator.qml">src/FlightDisplay/FlyViewAirspaceIndicator.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyView.qml">src/FlightDisplay/FlyView.qml</file>
+		<file alias="QGroundControl/FlightDisplay/FlyViewAimOverlay.qml">src/FlightDisplay/FlyViewAimOverlay.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewCustomLayer.qml">src/FlightDisplay/FlyViewCustomLayer.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewKazhan.qml">src/FlightDisplay/FlyViewKazhan.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewInstrumentPanel.qml">src/FlightDisplay/FlyViewInstrumentPanel.qml</file>
@@ -285,7 +286,6 @@
         <file alias="VibrationPage.qml">src/AnalyzeView/VibrationPage.qml</file>
         <file alias="VirtualJoystick.qml">src/FlightDisplay/VirtualJoystick.qml</file>
         <file alias="VTOLLandingPatternEditor.qml">src/PlanView/VTOLLandingPatternEditor.qml</file>
-        <file alias="QGroundControl/FlightDisplay/FlyViewCrosshair.qml">src/FlightDisplay/FlyViewCrosshair.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewSpinBox.qml">src/FlightDisplay/FlyViewSpinBox.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewDropsButtons.qml">src/FlightDisplay/FlyViewDropsButtons.qml</file>
     </qresource>

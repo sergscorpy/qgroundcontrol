@@ -43,6 +43,9 @@ Item {
     property real stepValue: 0.05
     property real value: 1.0
 
+    // параметр масштабування відносно ширини екрану
+    property real _scrUnit: crosshairRoot.width / 65
+
     Rectangle {
         id: background
         anchors.fill: parent
