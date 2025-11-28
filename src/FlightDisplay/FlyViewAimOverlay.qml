@@ -20,8 +20,9 @@ Item {
     property bool showCorrectionControls: QGroundControl.settingsManager.flyViewSettings.showCorrectionControls.value
     property real screenUnit: ScreenTools.defaultFontPixelWidth
     property real screenMargin: ScreenTools.defaultFontPixelWidth / 2
-    property real platformScale: crosshairRoot.isAndroid ? customScale : 0.66 * customScale
-    property real customScale: 1
+    property real platformScale: crosshairRoot.isAndroid ? customScale : 0.75 * customScale
+    property Fact aimOverlayScale: QGroundControl.settingsManager.flyViewSettings.aimOverlayScale
+    property real customScale: aimOverlayScale ? aimOverlayScale.value : 1
 
     property int  xc: width / 2
     property int  yc: height / 2

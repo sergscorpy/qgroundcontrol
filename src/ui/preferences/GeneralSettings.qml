@@ -213,6 +213,60 @@ Rectangle {
                                 fact: QGroundControl.settingsManager.flyViewSettings.maxCorrectionAngle
                                 visible: fact.visible
                             }
+
+                            QGCLabel {
+                                text: qsTr("Aim UI Scaling")
+                                visible: aimOverlayScaleControl.visible
+                                Layout.alignment: Qt.AlignVCenter
+                            }
+                            Item {
+                                id: aimOverlayScaleControl
+                                width: _comboFieldWidth
+                                height: aimOverlayScaleValue.height * 1.5
+                                visible: QGroundControl.settingsManager.flyViewSettings.aimOverlayScale.visible
+                                Layout.alignment: Qt.AlignVCenter
+
+                                Row {
+                                    spacing: ScreenTools.defaultFontPixelWidth
+                                    anchors.verticalCenter: parent.verticalCenter
+
+                                    QGCButton {
+                                        width: height
+                                        height: aimOverlayScaleValue.height * 1.5
+                                        text: "-"
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: {
+                                            const aimScale = QGroundControl.settingsManager.flyViewSettings.aimOverlayScale
+                                            if (aimScale.value > aimScale.min) {
+                                                aimScale.value = aimScale.value - 0.05
+                                            }
+                                        }
+                                    }
+
+                                    QGCLabel {
+                                        id: aimOverlayScaleValue
+                                        width: ScreenTools.defaultFontPixelWidth * 6
+                                        text: (QGroundControl.settingsManager.flyViewSettings.aimOverlayScale.value * 100).toFixed(0) + "%"
+                                        horizontalAlignment: Text.AlignHCenter
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+
+                                    Text { }
+
+                                    QGCButton {
+                                        width: height
+                                        height: aimOverlayScaleValue.height * 1.5
+                                        text: "+"
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        onClicked: {
+                                            const aimScale = QGroundControl.settingsManager.flyViewSettings.aimOverlayScale
+                                            if (aimScale.value < aimScale.max) {
+                                                aimScale.value = aimScale.value + 0.05
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         GridLayout {

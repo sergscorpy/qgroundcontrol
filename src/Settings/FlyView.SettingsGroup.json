@@ -82,6 +82,14 @@
     "units":            "deg"
 },
 {
+    "name":             "aimOverlayScale",
+    "shortDesc":        "Scale factor for the aim overlay UI.",
+    "type":             "double",
+    "default":          1,
+    "min":              0.5,
+    "max":              1.5
+},
+{
     "name":         "dropLeft",
     "shortDesc":    "Using the left drop indicator",
     "longDesc":     "Can be used the left drop indicator",
