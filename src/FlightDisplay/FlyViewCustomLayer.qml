@@ -548,7 +548,7 @@ Item {
                 }
 
                 Button { // Button "IP Video" Android
-                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed && isAndroid
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "IP Camera Stream"
