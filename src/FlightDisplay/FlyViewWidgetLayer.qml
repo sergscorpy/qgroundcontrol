@@ -295,8 +295,8 @@ Item {
         anchors.left:           parent.left
         anchors.top:            parent.top
         z:                      QGroundControl.zOrderWidgets
-        maxHeight:              parent.height - y - parentToolInsets.bottomEdgeLeftInset - _toolsMargin - customOverlay._scrUnit * 8
-        visible:                false //!QGroundControl.videoManager.fullScreen
+        maxHeight:              parent.height - y - parentToolInsets.bottomEdgeLeftInset - _toolsMargin
+        visible:                !QGroundControl.videoManager.fullScreen && videoControl.pipState.state !== videoControl.pipState.fullState
 
         onDisplayPreFlightChecklist: mainWindow.showPopupDialogFromComponent(preFlightChecklistPopup)
 

@@ -88,13 +88,4 @@ Item {
         id: obstacleDistance
         showText: pipState.state === pipState.fullState
     }
-
-    // // Приціл з донаведенням
-    // FlyViewCrosshair {
-    //     id:     crosshairAim
-    //     anchors.fill:       parent
-    //     visible: pipState.state === pipState.fullState
-    //     z: 1100
-    // }
-
 }
