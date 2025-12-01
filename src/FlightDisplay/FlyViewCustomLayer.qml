@@ -175,20 +175,6 @@ Item {
                 spacing: _scrMargins
                 anchors.margins: _scrMargins
 
-                // Label { // Label "Приціл"
-                //     id: labelCameraMod
-                //     visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
-                //     text: "Режим прицілу"
-                //     font.pointSize: 10
-                //     font.bold: true
-                //     width: _btnWidth
-                //     wrapMode: Text.WordWrap
-                //     horizontalAlignment: Text.AlignHCenter
-                //     anchors.horizontalCenter: parent.horizontalCenter
-                //     anchors.margins: _scrMargins
-                //     color: "white"
-                // }
-
                 Button { // Button "Скид"
                     id: dropp
                     enabled: !disableTimer.running
@@ -697,38 +683,6 @@ Item {
         property real _contentMargin: _scrMargins * 1.5
         width: rcValuesColumn.implicitWidth + (_contentMargin * 2)
         height: rcValuesColumn.implicitHeight + (_contentMargin * 2)
-
-        Column {
-            id: rcValuesColumn
-            anchors.margins: rcValuesOverlay._contentMargin
-            anchors.left: parent.left
-            anchors.top: parent.top
-            spacing: _scrMargins
-
-            QGCLabel {
-                text: qsTr("Vehicle: %1").arg(crosshairRoot._vehicle ? crosshairRoot._vehicle.id : qsTr("—"))
-                color: "white"
-                font.pointSize: ScreenTools.defaultFontPointSize
-            }
-
-            QGCLabel {
-                text: qsTr("RC2: %1").arg(rcLoader.item ? rcLoader.item.rc2 : qsTr("—"))
-                color: "white"
-                font.pointSize: ScreenTools.defaultFontPointSize
-            }
-
-            QGCLabel {
-                text: qsTr("RC9: %1").arg(rcLoader.item ? rcLoader.item.rc9 : qsTr("—"))
-                color: "white"
-                font.pointSize: ScreenTools.defaultFontPointSize
-            }
-
-            QGCLabel {
-                text: qsTr("RC10: %1").arg(rcLoader.item ? rcLoader.item.rc10 : qsTr("—"))
-                color: "white"
-                font.pointSize: ScreenTools.defaultFontPointSize
-            }
-        }
     }
 
     Component { // Drops indicator
@@ -740,17 +694,15 @@ Item {
             RCChannelMonitorController {
                 id: rcController
             }
-
-            property int rc2:       78
+            //property int rc2:       78
             property int rc9:       15
             property int rc10:      25
 
             Connections {
                 target: rcController
                 onChannelRCValueChanged: {
-                    console.log("RC Channel", channel, "value:", rcValue)
-
-                    if (channel === 1) rc2 = rcValue
+                    //console.log("RC Channel", channel, "value:", rcValue)
+                    //if (channel === 1) rc2 = rcValue
                     if (channel === 8) rc9 = rcValue
                     if (channel === 9) rc10 = rcValue
                 }
