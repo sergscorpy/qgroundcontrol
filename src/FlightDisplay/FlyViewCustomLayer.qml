@@ -684,6 +684,52 @@ Item {
         height: _btnHeight * 3
         sourceComponent: dropsPanelComponent
     }
+    Rectangle {
+        id: rcValuesOverlay
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.margins: _scrMargins * 2
+        color: "#99000000"
+        radius: _scrMargins
+        border.color: "white"
+        border.width: 1
+        visible: rcLoader.active && rcLoader.item
+        property real _contentMargin: _scrMargins * 1.5
+        width: rcValuesColumn.implicitWidth + (_contentMargin * 2)
+        height: rcValuesColumn.implicitHeight + (_contentMargin * 2)
+
+        Column {
+            id: rcValuesColumn
+            anchors.margins: rcValuesOverlay._contentMargin
+            anchors.left: parent.left
+            anchors.top: parent.top
+            spacing: _scrMargins
+
+            QGCLabel {
+                text: qsTr("Vehicle: %1").arg(crosshairRoot._vehicle ? crosshairRoot._vehicle.id : qsTr("—"))
+                color: "white"
+                font.pointSize: ScreenTools.defaultFontPointSize
+            }
+
+            QGCLabel {
+                text: qsTr("RC2: %1").arg(rcLoader.item ? rcLoader.item.rc2 : qsTr("—"))
+                color: "white"
+                font.pointSize: ScreenTools.defaultFontPointSize
+            }
+
+            QGCLabel {
+                text: qsTr("RC9: %1").arg(rcLoader.item ? rcLoader.item.rc9 : qsTr("—"))
+                color: "white"
+                font.pointSize: ScreenTools.defaultFontPointSize
+            }
+
+            QGCLabel {
+                text: qsTr("RC10: %1").arg(rcLoader.item ? rcLoader.item.rc10 : qsTr("—"))
+                color: "white"
+                font.pointSize: ScreenTools.defaultFontPointSize
+            }
+        }
+    }
 
     Component { // Drops indicator
         id: dropsPanelComponent
@@ -702,7 +748,8 @@ Item {
             Connections {
                 target: rcController
                 onChannelRCValueChanged: {
-                    //console.log("RC Channel", channel, "value:", rcValue)
+                    console.log("RC Channel", channel, "value:", rcValue)
+
                     if (channel === 1) rc2 = rcValue
                     if (channel === 8) rc9 = rcValue
                     if (channel === 9) rc10 = rcValue
