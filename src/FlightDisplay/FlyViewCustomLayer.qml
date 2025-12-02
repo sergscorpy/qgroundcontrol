@@ -670,20 +670,6 @@ Item {
         height: _btnHeight * 3
         sourceComponent: dropsPanelComponent
     }
-    Rectangle {
-        id: rcValuesOverlay
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        anchors.margins: _scrMargins * 2
-        color: "#99000000"
-        radius: _scrMargins
-        border.color: "white"
-        border.width: 1
-        visible: rcLoader.active && rcLoader.item
-        property real _contentMargin: _scrMargins * 1.5
-        width: rcValuesColumn.implicitWidth + (_contentMargin * 2)
-        height: rcValuesColumn.implicitHeight + (_contentMargin * 2)
-    }
 
     Component { // Drops indicator
         id: dropsPanelComponent
