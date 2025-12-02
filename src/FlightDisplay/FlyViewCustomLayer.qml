@@ -175,20 +175,6 @@ Item {
                 spacing: _scrMargins
                 anchors.margins: _scrMargins
 
-                // Label { // Label "Приціл"
-                //     id: labelCameraMod
-                //     visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
-                //     text: "Режим прицілу"
-                //     font.pointSize: 10
-                //     font.bold: true
-                //     width: _btnWidth
-                //     wrapMode: Text.WordWrap
-                //     horizontalAlignment: Text.AlignHCenter
-                //     anchors.horizontalCenter: parent.horizontalCenter
-                //     anchors.margins: _scrMargins
-                //     color: "white"
-                // }
-
                 Button { // Button "Скид"
                     id: dropp
                     enabled: !disableTimer.running
@@ -694,8 +680,7 @@ Item {
             RCChannelMonitorController {
                 id: rcController
             }
-
-            property int rc2:       78
+            //property int rc2:       78
             property int rc9:       15
             property int rc10:      25
 
@@ -703,7 +688,7 @@ Item {
                 target: rcController
                 onChannelRCValueChanged: {
                     //console.log("RC Channel", channel, "value:", rcValue)
-                    if (channel === 1) rc2 = rcValue
+                    //if (channel === 1) rc2 = rcValue
                     if (channel === 8) rc9 = rcValue
                     if (channel === 9) rc10 = rcValue
                 }
