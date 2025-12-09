@@ -1676,6 +1676,8 @@ void Vehicle::_handleRadioStatus(mavlink_message_t& message)
     mavlink_radio_status_t rstatus;
     mavlink_msg_radio_status_decode(&message, &rstatus);
 
+    if (message.sysid == 43) return;
+
     int rssi    = rstatus.rssi;
     int remrssi = rstatus.remrssi;
     int lnoise = (int)(int8_t)rstatus.noise;

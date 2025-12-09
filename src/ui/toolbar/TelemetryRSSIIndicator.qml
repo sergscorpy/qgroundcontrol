@@ -22,7 +22,7 @@ Item {
     id:             _root
     anchors.top:    parent.top
     anchors.bottom: parent.bottom
-    width:          telemIcon.width * 1.1
+    width:          row.width
 
     property bool showIndicator: _hasTelemetry
 
@@ -74,8 +74,10 @@ Item {
         }
     }
     Row {
+        id: row
         anchors.top:    parent.top
         anchors.bottom: parent.bottom
+        spacing:        ScreenTools.defaultFontPixelWidth
         QGCColoredImage {
             id:                 telemIcon
             anchors.top:        parent.top
@@ -89,14 +91,14 @@ Item {
         Column {
             anchors.verticalCenter: parent.verticalCenter
             QGCLabel {
-                text: "  " + _activeVehicle.telemetryLRSSI + " dBm"
-                font.pointSize:         ScreenTools.mediumFontPointSize
-                color:                  qgcPal.buttonText
+                text:           _activeVehicle.telemetryLRSSI + " dBm"
+                font.pointSize: ScreenTools.mediumFontPointSize
+                color:          qgcPal.buttonText
             }
             QGCLabel {
-                text: "  " + _activeVehicle.telemetryLNoise + " dBm"
-                font.pointSize:         ScreenTools.mediumFontPointSize
-                color:                  qgcPal.warningText
+                text:           _activeVehicle.telemetryLNoise + " dBm"
+                font.pointSize: ScreenTools.mediumFontPointSize
+                color:          qgcPal.warningText
             }
         }
     }
