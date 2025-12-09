@@ -23,7 +23,7 @@ Item {
     width:          rssiRow.width * 1.1
     anchors.top:    parent.top
     anchors.bottom: parent.bottom
-    visible:        false
+    visible:        _activeVehicle.telemetryLRSSI === 0
 
     property bool showIndicator: _activeVehicle.supportsRadio
 
