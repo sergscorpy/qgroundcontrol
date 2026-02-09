@@ -319,6 +319,7 @@ Item {
                 }
 
                 Button { // Button "Video Off"
+                    id: videoToggleButton
                     visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
                     width: _btnWidth
                     height: _btnHeight
@@ -351,7 +352,7 @@ Item {
                         Text {
                             id: textVideoToggle
                             anchors.centerIn: parent
-                            text: parent.isChecked ? "Video On" : "Video Off"
+                            text: videoToggleButton.isChecked ? "Video On" : "Video Off"
                             font.pointSize: 10
                             font.bold: false
                             color: "white"
