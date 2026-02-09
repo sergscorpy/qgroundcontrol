@@ -52,6 +52,7 @@ Item {
     property bool isAndroid:        Qt.platform.os === "android"
     property bool isWindows:        Qt.platform.os === "windows"
     property bool isA8mini:         _cameraSettings.cameraType.value === 0
+    property string _videoSourceBeforeDisable: ""
 
     property real _btnHeight: _scrToolsUnit * 5
     property real _btnWidth: _scrToolsUnit * 13
@@ -315,6 +316,57 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.margins: _scrMargins
                     color: "white"
+                }
+
+                Button { // Button "Video Off"
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === _videoSettings.disabledVideoSource
+                    onClicked: {
+                        if (isChecked) {
+                            if (_videoSourceBeforeDisable && _videoSourceBeforeDisable !== _videoSettings.disabledVideoSource) {
+                                _videoSettings.videoSource.rawValue = _videoSourceBeforeDisable
+                            } else {
+                                _videoSettings.videoSource.rawValue = _videoSettings.videoSource.rawDefaultValue
+                            }
+                        } else {
+                            _videoSourceBeforeDisable = _videoSettings.videoSource.rawValue
+                            _videoSettings.videoSource.rawValue = _videoSettings.disabledVideoSource
+                        }
+                    }
+
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textVideoToggle
+                            source: textVideoToggle
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textVideoToggle
+                            anchors.centerIn: parent
+                            text: parent.isChecked ? "Video On" : "Video Off"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: "white"
+                        }
+                    }
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
                 }
 
                 Button { // Button "Камера"
