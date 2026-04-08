@@ -27,6 +27,7 @@ Q_DECLARE_LOGGING_CATEGORY(VideoManagerLog)
 class VideoSettings;
 class Vehicle;
 class Joystick;
+class VideoStreamControl;
 
 class VideoManager : public QGCTool
 {
@@ -55,6 +56,7 @@ public:
     Q_PROPERTY(bool             decoding                READ    decoding                                    NOTIFY decodingChanged)
     Q_PROPERTY(bool             recording               READ    recording                                   NOTIFY recordingChanged)
     Q_PROPERTY(QSize            videoSize               READ    videoSize                                   NOTIFY videoSizeChanged)
+    Q_PROPERTY(VideoStreamControl* videoStreamControl   READ    videoStreamControl                          CONSTANT)
 
     virtual bool        hasVideo            ();
     virtual bool        isGStreamer         ();
@@ -87,6 +89,8 @@ public:
         const quint32 size = _videoSize;
         return QSize((size >> 16) & 0xFFFF, size & 0xFFFF);
     }
+
+    VideoStreamControl* videoStreamControl() { return _videoStreamControl; }
 
 // FIXME: AV: they should be removed after finishing multiple video stream support
 // new arcitecture does not assume direct access to video receiver from QML side, even if it works for now
@@ -176,7 +180,9 @@ protected:
     QString                 _videoSourceID;
     bool                    _fullScreen             = false;
     Vehicle*                _activeVehicle          = nullptr;
+    VideoStreamControl*     _videoStreamControl     = nullptr;
     QString _getHerelinkHotspotIP(); // Моя кнопка
 };
 
 #endif
+

@@ -1469,10 +1469,12 @@ INCLUDEPATH += \
 
 HEADERS += \
     src/VideoManager/SubtitleWriter.h \
+    src/VideoManager/VideoStreamControl.h \
     src/VideoManager/VideoManager.h
 
 SOURCES += \
     src/VideoManager/SubtitleWriter.cc \
+    src/VideoManager/VideoStreamControl.cc \
     src/VideoManager/VideoManager.cc
 
 contains (CONFIG, DISABLE_VIDEOSTREAMING) {
