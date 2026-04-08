@@ -39,6 +39,7 @@ public:
     DEFINE_SETTINGFACT(usingHDMIstream)
     DEFINE_SETTINGFACT(rtspSecondaryUrl)
     DEFINE_SETTINGFACT(forceVideoDecoder)
+    DEFINE_SETTINGFACT(cameraId)
 
     enum VideoDecoderOptions {
         ForceVideoDecoderDefault = 0,
