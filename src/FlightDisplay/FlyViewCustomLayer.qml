@@ -44,10 +44,13 @@ Item {
     property var totalToolInsets:   _toolInsets // These are the insets for your custom overlay additions
     property var mapControl
 
-    property var  _activeVehicle:   QGroundControl.multiVehicleManager.activeVehicle
-    property var  _videoSettings:   QGroundControl.settingsManager.videoSettings
-    property var  _cameraSettings:  QGroundControl.settingsManager.cameraSettings
-    property var  _flyViewSettings: QGroundControl.settingsManager.flyViewSettings
+    property var  _activeVehicle:           QGroundControl.multiVehicleManager.activeVehicle
+    property var  _videoSettings:           QGroundControl.settingsManager.videoSettings
+    property var  _cameraSettings:          QGroundControl.settingsManager.cameraSettings
+    property var  _flyViewSettings:         QGroundControl.settingsManager.flyViewSettings
+    property var  _videoManager:            QGroundControl.videoManager
+    property var  _videoStreamControl:      _videoManager ? _videoManager.videoStreamControl : null
+    property bool _cameraSwitchInProgress:  _videoStreamControl ? _videoStreamControl.settingInProgress : false
     property bool _isRTSP:          _videoSettings.videoSource.rawValue === _videoSettings.rtspVideoSource
     property bool isAndroid:        Qt.platform.os === "android"
     property bool isWindows:        Qt.platform.os === "windows"
@@ -434,7 +437,7 @@ Item {
                             text: "HotSpot"
                             font.pointSize: 10
                             font.bold: false
-                            color: "white"
+                            color: !parent.enabled ? "darkgray" : "white"
                         }
                     }
 
@@ -477,7 +480,7 @@ Item {
                             text: "Router"
                             font.pointSize: 10
                             font.bold: false
-                            color: "white"
+                            color: !parent.enabled ? "darkgray" : "white"
                         }
                     }
 
@@ -497,7 +500,7 @@ Item {
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit" && _videoSettings.cameraId.rawValue === 0
-                    enabled: true
+                    enabled: !_cameraSwitchInProgress
                     onClicked: {
                         _videoSettings.videoSource.rawValue = "Herelink Air Unit"
                         _videoSettings.cameraId.rawValue = 0
@@ -521,7 +524,7 @@ Item {
                             text: "HDMI1"
                             font.pointSize: 10
                             font.bold: false
-                            color: "white"
+                            color: !parent.enabled ? "darkgray" : "white"
                         }
                     }
 
@@ -541,7 +544,7 @@ Item {
                     width: _btnWidth
                     height: _btnHeight
                     property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit" && _videoSettings.cameraId.rawValue === 1
-                    enabled: true
+                    enabled: !_cameraSwitchInProgress
                     onClicked: {
                         _videoSettings.videoSource.rawValue = "Herelink Air Unit"
                         _videoSettings.cameraId.rawValue = 1
@@ -565,7 +568,7 @@ Item {
                             text: "HDMI2"
                             font.pointSize: 10
                             font.bold: false
-                            color: "white"
+                            color: !parent.enabled ? "darkgray" : "white"
                         }
                     }
 
