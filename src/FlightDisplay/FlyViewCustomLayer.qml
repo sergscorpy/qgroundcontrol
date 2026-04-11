@@ -44,10 +44,13 @@ Item {
     property var totalToolInsets:   _toolInsets // These are the insets for your custom overlay additions
     property var mapControl
 
-    property var  _activeVehicle:   QGroundControl.multiVehicleManager.activeVehicle
-    property var  _videoSettings:   QGroundControl.settingsManager.videoSettings
-    property var  _cameraSettings:  QGroundControl.settingsManager.cameraSettings
-    property var  _flyViewSettings: QGroundControl.settingsManager.flyViewSettings
+    property var  _activeVehicle:           QGroundControl.multiVehicleManager.activeVehicle
+    property var  _videoSettings:           QGroundControl.settingsManager.videoSettings
+    property var  _cameraSettings:          QGroundControl.settingsManager.cameraSettings
+    property var  _flyViewSettings:         QGroundControl.settingsManager.flyViewSettings
+    property var  _videoManager:            QGroundControl.videoManager
+    property var  _videoStreamControl:      _videoManager ? _videoManager.videoStreamControl : null
+    property bool _cameraSwitchInProgress:  _videoStreamControl ? _videoStreamControl.settingInProgress : false
     property bool _isRTSP:          _videoSettings.videoSource.rawValue === _videoSettings.rtspVideoSource
     property bool isAndroid:        Qt.platform.os === "android"
     property bool isWindows:        Qt.platform.os === "windows"
@@ -434,7 +437,7 @@ Item {
                             text: "HotSpot"
                             font.pointSize: 10
                             font.bold: false
-                            color: "white"
+                            color: !parent.enabled ? "darkgray" : "white"
                         }
                     }
 
@@ -477,7 +480,7 @@ Item {
                             text: "Router"
                             font.pointSize: 10
                             font.bold: false
-                            color: "white"
+                            color: !parent.enabled ? "darkgray" : "white"
                         }
                     }
 
@@ -492,20 +495,23 @@ Item {
                     }
                 }
 
-                Button { // Button "HDMI Android"
+                Button { // Button "HDMI1 Android"
                     visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed && isAndroid
                     width: _btnWidth
                     height: _btnHeight
-                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit"
-                    enabled: true
-                        onClicked: _videoSettings.videoSource.rawValue = "Herelink Air Unit"
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit" && _videoSettings.cameraId.rawValue === 0
+                    enabled: !_cameraSwitchInProgress
+                    onClicked: {
+                        _videoSettings.videoSource.rawValue = "Herelink Air Unit"
+                        _videoSettings.cameraId.rawValue = 0
+                    }
 
                     contentItem: Item {
                         anchors.fill: parent
 
                         DropShadow {
-                            anchors.fill: textItem8
-                            source: textItem8
+                            anchors.fill: textItemHDMI1
+                            source: textItemHDMI1
                             horizontalOffset: 1
                             verticalOffset: 1
                             radius: 6
@@ -513,12 +519,56 @@ Item {
                         }
 
                         Text {
-                            id: textItem8
+                            id: textItemHDMI1
                             anchors.centerIn: parent
-                            text: "HDMI"
+                            text: "HDMI1"
                             font.pointSize: 10
                             font.bold: false
-                            color: "white"
+                            color: !parent.enabled ? "darkgray" : "white"
+                        }
+                    }
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: _btnRadius
+                        color: parent.isChecked
+                               ? (parent.down ? "#66008B00" : "#e6005900")
+                               : (parent.down ? "#33000000" : "#66000000")
+                        border.color: "#666666"
+                        border.width: 1
+                    }
+                }
+
+                Button { // Button "HDMI2 Android"
+                    visible: _cameraSettings.cameraType.value === 0 && !leftControlPanel.collapsed && isAndroid
+                    width: _btnWidth
+                    height: _btnHeight
+                    property bool isChecked: _videoSettings.videoSource.rawValue === "Herelink Air Unit" && _videoSettings.cameraId.rawValue === 1
+                    enabled: !_cameraSwitchInProgress
+                    onClicked: {
+                        _videoSettings.videoSource.rawValue = "Herelink Air Unit"
+                        _videoSettings.cameraId.rawValue = 1
+                    }
+
+                    contentItem: Item {
+                        anchors.fill: parent
+
+                        DropShadow {
+                            anchors.fill: textItemHDMI2
+                            source: textItemHDMI2
+                            horizontalOffset: 1
+                            verticalOffset: 1
+                            radius: 6
+                            color: "#000000"
+                        }
+
+                        Text {
+                            id: textItemHDMI2
+                            anchors.centerIn: parent
+                            text: "HDMI2"
+                            font.pointSize: 10
+                            font.bold: false
+                            color: !parent.enabled ? "darkgray" : "white"
                         }
                     }
 

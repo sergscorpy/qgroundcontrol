@@ -30,6 +30,7 @@
 #include "Vehicle.h"
 #include "UDPLink.h"
 #include "QGCCameraManager.h"
+#include "VideoStreamControl.h"
 
 #if defined(QGC_GST_STREAMING)
 #include "GStreamer.h"
@@ -84,6 +85,9 @@ VideoManager::~VideoManager()
         }
 #endif
     }
+
+    delete _videoStreamControl;
+    _videoStreamControl = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,6 +98,7 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
    QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
    qmlRegisterUncreatableType<VideoManager> ("QGroundControl.VideoManager", 1, 0, "VideoManager", "Reference only");
    qmlRegisterUncreatableType<VideoReceiver>("QGroundControl",              1, 0, "VideoReceiver","Reference only");
+   qmlRegisterUncreatableType<VideoStreamControl>("QGroundControl.VideoManager", 1, 0, "VideoStreamControl", "Reference only");
 
    // TODO: Those connections should be Per Video, not per VideoManager.
    _videoSettings = toolbox->settingsManager()->videoSettings();
@@ -107,6 +112,9 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
    connect(_videoSettings->lowLatencyMode(),&Fact::rawValueChanged, this, &VideoManager::_lowLatencyModeChanged);
    MultiVehicleManager *pVehicleMgr = qgcApp()->toolbox()->multiVehicleManager();
    connect(pVehicleMgr, &MultiVehicleManager::activeVehicleChanged, this, &VideoManager::_setActiveVehicle);
+
+   _videoStreamControl = new VideoStreamControl();
+   connect(_videoStreamControl, &VideoStreamControl::videoNeedsReset, this, &VideoManager::_restartAllVideos);
 
 #if defined(QGC_GST_STREAMING)
     GStreamer::blacklist(static_cast<VideoSettings::VideoDecoderOptions>(_videoSettings->forceVideoDecoder()->rawValue().toInt()));

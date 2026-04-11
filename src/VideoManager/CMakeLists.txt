@@ -3,6 +3,8 @@ add_library(VideoManager
     GLVideoItemStub.h
     SubtitleWriter.cc
     SubtitleWriter.h
+    VideoStreamControl.cc
+    VideoStreamControl.h
     VideoManager.cc
     VideoManager.h
 )

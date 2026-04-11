@@ -159,6 +159,15 @@
     "enumValues":       "0,1,2,3,4,5",
     "default":           0,
     "qgcRebootRequired": true
+},
+{
+    "name":             "cameraId",
+    "shortDesc":        "Camera ID",
+    "longDesc":         "Selects which Herelink video input (HDMI) QGC should request.",
+    "type":             "uint32",
+    "default":          0,
+    "min":              0,
+    "max":              1
 }
 ]
 }
