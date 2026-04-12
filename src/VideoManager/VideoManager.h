@@ -45,6 +45,7 @@ public:
     Q_PROPERTY(bool             fullScreen              READ    fullScreen      WRITE   setfullScreen       NOTIFY fullScreenChanged)
     Q_PROPERTY(VideoReceiver*   videoReceiver           READ    videoReceiver                               CONSTANT)
     Q_PROPERTY(VideoReceiver*   thermalVideoReceiver    READ    thermalVideoReceiver                        CONSTANT)
+    Q_PROPERTY(VideoReceiver*   panoramaVideoReceiver   READ    panoramaVideoReceiver                       CONSTANT)
     Q_PROPERTY(double           aspectRatio             READ    aspectRatio                                 NOTIFY aspectRatioChanged)
     Q_PROPERTY(double           thermalAspectRatio      READ    thermalAspectRatio                          NOTIFY aspectRatioChanged)
     Q_PROPERTY(double           hfov                    READ    hfov                                        NOTIFY aspectRatioChanged)
@@ -96,6 +97,7 @@ public:
 // new arcitecture does not assume direct access to video receiver from QML side, even if it works for now
     virtual VideoReceiver*  videoReceiver           () { return _videoReceiver[0]; }
     virtual VideoReceiver*  thermalVideoReceiver    () { return _videoReceiver[1]; }
+    virtual VideoReceiver*  panoramaVideoReceiver   () { return _videoReceiver[2]; }
 
 #if defined(QGC_DISABLE_UVC)
     virtual bool        uvcEnabled          () { return false; }
@@ -158,20 +160,22 @@ protected:
     void _stopReceiver              (unsigned id);
 
 protected:
+    static constexpr unsigned kVideoReceiverCount = 3;
+
     QString                 _videoFile;
     QString                 _imageFile;
     SubtitleWriter          _subtitleWriter;
     bool                    _isTaisync              = false;
-    VideoReceiver*          _videoReceiver[2]       = { nullptr, nullptr };
-    void*                   _videoSink[2]           = { nullptr, nullptr };
-    QString                 _videoUri[2];
+    VideoReceiver*          _videoReceiver[kVideoReceiverCount]       = { nullptr, nullptr, nullptr };
+    void*                   _videoSink[kVideoReceiverCount]           = { nullptr, nullptr, nullptr };
+    QString                 _videoUri[kVideoReceiverCount];
     // FIXME: AV: _videoStarted seems to be access from 3 different threads, from time to time
     // 1) Video Receiver thread
     // 2) Video Manager/main app thread
     // 3) Qt rendering thread (during video sink creation process which should happen in this thread)
     // It works for now but...
-    bool                    _videoStarted[2]        = { false, false };
-    bool                    _lowLatencyStreaming[2] = { false, false };
+    bool                    _videoStarted[kVideoReceiverCount]        = { false, false, false };
+    bool                    _lowLatencyStreaming[kVideoReceiverCount] = { false, false, false };
     QAtomicInteger<bool>    _streaming              = false;
     QAtomicInteger<bool>    _decoding               = false;
     QAtomicInteger<bool>    _recording              = false;

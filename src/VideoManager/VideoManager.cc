@@ -69,7 +69,7 @@ VideoManager::VideoManager(QGCApplication* app, QGCToolbox* toolbox)
 //-----------------------------------------------------------------------------
 VideoManager::~VideoManager()
 {
-    for (int i = 0; i < 2; i++) {
+    for (unsigned i = 0; i < kVideoReceiverCount; i++) {
         if (_videoReceiver[i] != nullptr) {
             delete _videoReceiver[i];
             _videoReceiver[i] = nullptr;
@@ -128,6 +128,7 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
 #if defined(QGC_GST_STREAMING)
     _videoReceiver[0] = toolbox->corePlugin()->createVideoReceiver(this);
     _videoReceiver[1] = toolbox->corePlugin()->createVideoReceiver(this);
+    _videoReceiver[2] = toolbox->corePlugin()->createVideoReceiver(this);
 
     connect(_videoReceiver[0], &VideoReceiver::streamingChanged, this, [this](bool active){
         _streaming = active;
@@ -207,9 +208,32 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
             _startReceiver(1);
         });
     }
+
+    if (_videoReceiver[2] != nullptr) {
+        connect(_videoReceiver[2], &VideoReceiver::onStartComplete, this, [this](VideoReceiver::STATUS status) {
+            if (status == VideoReceiver::STATUS_OK) {
+                _videoStarted[2] = true;
+                if (_videoSink[2] != nullptr) {
+                    _videoReceiver[2]->startDecoding(_videoSink[2]);
+                }
+            } else if (status == VideoReceiver::STATUS_INVALID_URL) {
+                // Invalid URL - don't restart
+            } else if (status == VideoReceiver::STATUS_INVALID_STATE) {
+                // Already running
+            } else {
+                _restartVideo(2);
+            }
+        });
+
+        connect(_videoReceiver[2], &VideoReceiver::onStopComplete, this, [this](VideoReceiver::STATUS) {
+            _videoStarted[2] = false;
+            _startReceiver(2);
+        });
+    }
 #endif
     _updateSettings(0);
     _updateSettings(1);
+    _updateSettings(2);
     if(isGStreamer()) {
         startVideo();
     } else {
@@ -275,6 +299,7 @@ VideoManager::startVideo()
 
     _startReceiver(0);
     _startReceiver(1);
+    _startReceiver(2);
 }
 
 //-----------------------------------------------------------------------------
@@ -285,6 +310,7 @@ VideoManager::stopVideo()
         return;
     }
 
+    _stopReceiver(2);
     _stopReceiver(1);
     _stopReceiver(0);
 }
@@ -319,17 +345,21 @@ VideoManager::startRecording(const QString& videoFile)
         return;
     }
 
-    _videoFile = savePath + "/"
+    const QString videoFileBase = savePath + "/"
             + (videoFile.isEmpty() ? QDateTime::currentDateTime().toString("yyyy-MM-dd_hh.mm.ss") : videoFile)
             + ".";
-    QString videoFile2 = _videoFile + "2." + ext;
-    _videoFile += ext;
+    _videoFile = videoFileBase + ext;
+    QString videoFile2 = videoFileBase + "2." + ext;
 
     if (_videoReceiver[0] && _videoStarted[0]) {
         _videoReceiver[0]->startRecording(_videoFile, fileFormat);
     }
     if (_videoReceiver[1] && _videoStarted[1]) {
         _videoReceiver[1]->startRecording(videoFile2, fileFormat);
+    }
+    if (_videoReceiver[2] && _videoStarted[2]) {
+        QString videoFile3 = videoFileBase + "3." + ext;
+        _videoReceiver[2]->startRecording(videoFile3, fileFormat);
     }
 
 #else
@@ -345,7 +375,7 @@ VideoManager::stopRecording()
     }
 #if defined(QGC_GST_STREAMING)
 
-    for (int i = 0; i < 2; i++) {
+    for (unsigned i = 0; i < kVideoReceiverCount; i++) {
         if (_videoReceiver[i]) {
             _videoReceiver[i]->stopRecording();
         }
@@ -629,6 +659,21 @@ VideoManager::_initVideo()
     } else {
         qCDebug(VideoManagerLog) << "thermal video receiver disabled";
     }
+
+    widget = root->findChild<QQuickItem*>("panoramaVideo");
+
+    if (widget != nullptr && _videoReceiver[2] != nullptr) {
+        _videoSink[2] = qgcApp()->toolbox()->corePlugin()->createVideoSink(this, widget);
+        if (_videoSink[2] != nullptr) {
+            if (_videoStarted[2]) {
+                _videoReceiver[2]->startDecoding(_videoSink[2]);
+            }
+        } else {
+            qCDebug(VideoManagerLog) << "createVideoSink() failed";
+        }
+    } else {
+        qCDebug(VideoManagerLog) << "panorama video receiver disabled";
+    }
 #endif
 }
 
@@ -638,6 +683,9 @@ VideoManager::_updateSettings(unsigned id)
 {
     if(!_videoSettings)
         return false;
+    if (id >= kVideoReceiverCount) {
+        return false;
+    }
 
     const bool lowLatencyStreaming  =_videoSettings->lowLatencyMode()->rawValue().toBool();
 
@@ -761,10 +809,10 @@ VideoManager::_updateVideoUri(unsigned id, const QString& uri)
     if (isTaisync()) {
         if (id == 0) {
             return _updateVideoUri(0, QString("tsusb://0.0.0.0:%1").arg(TAISYNC_VIDEO_UDP_PORT));
-        } if (id == 1) {
-            // FIXME: AV: TAISYNC_VIDEO_UDP_PORT is used by video stream, thermal stream should go via its own proxy
-            if (!_videoUri[1].isEmpty()) {
-                _videoUri[1].clear();
+        } if (id >= 1 && id < kVideoReceiverCount) {
+            // FIXME: AV: TAISYNC_VIDEO_UDP_PORT is used by video stream, secondary streams should go via their own proxies
+            if (!_videoUri[id].isEmpty()) {
+                _videoUri[id].clear();
                 return true;
             } else {
                 return false;
@@ -822,6 +870,7 @@ VideoManager::_restartAllVideos()
 {
     _restartVideo(0);
     _restartVideo(1);
+    _restartVideo(2);
 }
 
 //----------------------------------------------------------------------------------------
@@ -831,7 +880,7 @@ VideoManager::_startReceiver(unsigned id)
 #if defined(QGC_GST_STREAMING)
     const unsigned timeout = _videoSettings->rtspTimeout()->rawValue().toUInt();
 
-    if (id > 1) {
+    if (id >= kVideoReceiverCount) {
         qCDebug(VideoManagerLog) << "Unsupported receiver id" << id;
     } else if (_videoReceiver[id] != nullptr/* && _videoSink[id] != nullptr*/) {
         if (!_videoUri[id].isEmpty()) {
@@ -848,7 +897,7 @@ void
 VideoManager::_stopReceiver(unsigned id)
 {
 #if defined(QGC_GST_STREAMING)
-    if (id > 1) {
+    if (id >= kVideoReceiverCount) {
         qCDebug(VideoManagerLog) << "Unsupported receiver id" << id;
     } else if (_videoReceiver[id] != nullptr) {
         _videoReceiver[id]->stop();
