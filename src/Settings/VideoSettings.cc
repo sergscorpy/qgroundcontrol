@@ -85,6 +85,7 @@ DECLARE_SETTINGGROUP(Video, "Video")
     }
 
     _nameToMetaDataMap[videoSourceName]->setEnumInfo(videoSourceCookedList, videoSourceList);
+    _nameToMetaDataMap[panoramaVideoSourceName]->setEnumInfo(videoSourceCookedList, videoSourceList);
 
     const QVariantList removeForceVideoDecodeList{
 #ifdef Q_OS_LINUX
@@ -113,8 +114,10 @@ void VideoSettings::_setDefaults()
 {
     if (_noVideo) {
         _nameToMetaDataMap[videoSourceName]->setRawDefaultValue(videoSourceNoVideo);
+        _nameToMetaDataMap[panoramaVideoSourceName]->setRawDefaultValue(videoSourceNoVideo);
     } else {
         _nameToMetaDataMap[videoSourceName]->setRawDefaultValue(videoDisabled);
+        _nameToMetaDataMap[panoramaVideoSourceName]->setRawDefaultValue(videoDisabled);
     }
 }
 
@@ -132,6 +135,11 @@ DECLARE_SETTINGSFACT(VideoSettings, lowLatencyMode)
 DECLARE_SETTINGSFACT(VideoSettings, usingHDMIstream)
 DECLARE_SETTINGSFACT(VideoSettings, rtspSecondaryUrl)
 DECLARE_SETTINGSFACT(VideoSettings, cameraId)
+DECLARE_SETTINGSFACT(VideoSettings, panoramaEnabled)
+DECLARE_SETTINGSFACT(VideoSettings, panoramaUdpPort)
+DECLARE_SETTINGSFACT(VideoSettings, panoramaRtspUrl)
+DECLARE_SETTINGSFACT(VideoSettings, panoramaTcpUrl)
+DECLARE_SETTINGSFACT(VideoSettings, panoramaLowLatency)
 
 
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, videoSource)
@@ -171,6 +179,21 @@ DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, forceVideoDecoder)
         connect(_forceVideoDecoderFact, &Fact::valueChanged, this, &VideoSettings::_configChanged);
     }
     return _forceVideoDecoderFact;
+}
+
+DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, panoramaVideoSource)
+{
+    if (!_panoramaVideoSourceFact) {
+        _panoramaVideoSourceFact = _createSettingsFact(panoramaVideoSourceName);
+        if(!_panoramaVideoSourceFact->enumValues().contains(_panoramaVideoSourceFact->rawValue().toString())) {
+            if (_noVideo) {
+                _panoramaVideoSourceFact->setRawValue(videoSourceNoVideo);
+            } else {
+                _panoramaVideoSourceFact->setRawValue(videoDisabled);
+            }
+        }
+    }
+    return _panoramaVideoSourceFact;
 }
 
 DECLARE_SETTINGSFACT_NO_FUNC(VideoSettings, udpPort)

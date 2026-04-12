@@ -168,6 +168,49 @@
     "default":          0,
     "min":              0,
     "max":              1
+},
+{
+    "name":             "panoramaEnabled",
+    "shortDesc":        "Panorama Stream Enabled",
+    "longDesc":         "Enable/disable panorama video stream.",
+    "type":             "bool",
+    "default":          false
+},
+{
+    "name":             "panoramaVideoSource",
+    "shortDesc":        "Panorama Video Source",
+    "longDesc":         "Source for panorama video stream.",
+    "type":             "string",
+    "default":          "Video Stream Disabled"
+},
+{
+    "name":             "panoramaUdpPort",
+    "shortDesc":        "Panorama Video UDP Port",
+    "longDesc":         "UDP port to bind to for panorama video stream.",
+    "type":             "uint16",
+    "min":              1025,
+    "default":          5601
+},
+{
+    "name":             "panoramaRtspUrl",
+    "shortDesc":        "Panorama Video RTSP Url",
+    "longDesc":         "RTSP url address and port to bind to for panorama video stream.",
+    "type":             "string",
+    "default":          "rtsp://192.168.144.108:556/stream=3"
+},
+{
+    "name":             "panoramaTcpUrl",
+    "shortDesc":        "Panorama Video TCP Url",
+    "longDesc":         "TCP url address and port to bind to for panorama video stream.",
+    "type":             "string",
+    "default":          ""
+},
+{
+    "name":             "panoramaLowLatency",
+    "shortDesc":        "Panorama low latency mode",
+    "longDesc":         "If this option is enabled, panorama stream is configured for lower latency.",
+    "type":             "bool",
+    "default":          true
 }
 ]
 }

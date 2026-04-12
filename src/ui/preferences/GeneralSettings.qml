@@ -57,6 +57,13 @@ Rectangle {
     property bool   _isRTSP2:                   _isGst && _videoSource === _videoSettings.rtspVideoSource2
     property bool   _isTCP:                     _isGst && _videoSource === _videoSettings.tcpVideoSource
     property bool   _isMPEGTS:                  _isGst && _videoSource === _videoSettings.mpegtsVideoSource
+    property string _panoramaVideoSource:       _videoSettings.panoramaVideoSource.rawValue
+    property bool   _panoramaEnabled:           _videoSettings.panoramaEnabled.rawValue
+    property bool   _isPanoramaUDP264:          _isGst && _panoramaVideoSource === _videoSettings.udp264VideoSource
+    property bool   _isPanoramaUDP265:          _isGst && _panoramaVideoSource === _videoSettings.udp265VideoSource
+    property bool   _isPanoramaRTSP:            _isGst && (_panoramaVideoSource === _videoSettings.rtspVideoSource || _panoramaVideoSource === _videoSettings.rtspVideoSource2)
+    property bool   _isPanoramaTCP:             _isGst && _panoramaVideoSource === _videoSettings.tcpVideoSource
+    property bool   _isPanoramaMPEGTS:          _isGst && _panoramaVideoSource === _videoSettings.mpegtsVideoSource
     property bool   _videoAutoStreamConfig:     QGroundControl.videoManager.autoStreamConfigured
     property bool   _showSaveVideoSettings:     _isGst || _videoAutoStreamConfig
     property bool   _disableAllDataPersistence: QGroundControl.settingsManager.appSettings.disableAllPersistence.rawValue
@@ -436,6 +443,75 @@ Rectangle {
                                 text:       qsTr("Low Latency Mode")
                                 fact:       _videoSettings.lowLatencyMode
                                 visible:    !_videoAutoStreamConfig && _isGst && fact.visible
+                            }
+
+                            Item { width: 1; height: _margins * 0.5 }
+                            Item { width: 1; height: _margins * 0.5 }
+
+                            QGCLabel {
+                                text:               qsTr("Panorama Stream")
+                                Layout.columnSpan:  2
+                                Layout.alignment:   Qt.AlignHCenter
+                                visible:            _isGst
+                            }
+
+                            Item { width: 1; height: 1}
+                            FactCheckBox {
+                                text:       qsTr("Enable Panorama Stream")
+                                fact:       _videoSettings.panoramaEnabled
+                                visible:    _isGst && fact.visible
+                            }
+
+                            QGCLabel {
+                                id:         panoramaSourceLabel
+                                text:       qsTr("Panorama Source")
+                                visible:    _isGst && _panoramaEnabled && _videoSettings.panoramaVideoSource.visible
+                            }
+                            FactComboBox {
+                                Layout.preferredWidth:  _comboFieldWidth
+                                indexModel:             false
+                                fact:                   _videoSettings.panoramaVideoSource
+                                visible:                panoramaSourceLabel.visible
+                            }
+
+                            QGCLabel {
+                                id:         panoramaUdpPortLabel
+                                text:       qsTr("Panorama UDP Port")
+                                visible:    _isGst && _panoramaEnabled && (_isPanoramaUDP264 || _isPanoramaUDP265 || _isPanoramaMPEGTS) && _videoSettings.panoramaUdpPort.visible
+                            }
+                            FactTextField {
+                                Layout.preferredWidth:  _comboFieldWidth
+                                fact:                   _videoSettings.panoramaUdpPort
+                                visible:                panoramaUdpPortLabel.visible
+                            }
+
+                            QGCLabel {
+                                id:         panoramaRtspUrlLabel
+                                text:       qsTr("Panorama RTSP URL")
+                                visible:    _isGst && _panoramaEnabled && _isPanoramaRTSP && _videoSettings.panoramaRtspUrl.visible
+                            }
+                            FactTextField {
+                                Layout.preferredWidth:  _comboFieldWidth
+                                fact:                   _videoSettings.panoramaRtspUrl
+                                visible:                panoramaRtspUrlLabel.visible
+                            }
+
+                            QGCLabel {
+                                id:         panoramaTcpUrlLabel
+                                text:       qsTr("Panorama TCP URL")
+                                visible:    _isGst && _panoramaEnabled && _isPanoramaTCP && _videoSettings.panoramaTcpUrl.visible
+                            }
+                            FactTextField {
+                                Layout.preferredWidth:  _comboFieldWidth
+                                fact:                   _videoSettings.panoramaTcpUrl
+                                visible:                panoramaTcpUrlLabel.visible
+                            }
+
+                            Item { width: 1; height: 1}
+                            FactCheckBox {
+                                text:       qsTr("Panorama Low Latency Mode")
+                                fact:       _videoSettings.panoramaLowLatency
+                                visible:    _isGst && _panoramaEnabled && fact.visible
                             }
 
                             Item { width: 1; height: 1}

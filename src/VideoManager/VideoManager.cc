@@ -110,6 +110,12 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
    connect(_videoSettings->tcpUrl(),        &Fact::rawValueChanged, this, &VideoManager::_tcpUrlChanged);
    connect(_videoSettings->aspectRatio(),   &Fact::rawValueChanged, this, &VideoManager::_aspectRatioChanged);
    connect(_videoSettings->lowLatencyMode(),&Fact::rawValueChanged, this, &VideoManager::_lowLatencyModeChanged);
+   connect(_videoSettings->panoramaEnabled(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
+   connect(_videoSettings->panoramaVideoSource(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
+   connect(_videoSettings->panoramaUdpPort(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
+   connect(_videoSettings->panoramaRtspUrl(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
+   connect(_videoSettings->panoramaTcpUrl(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
+   connect(_videoSettings->panoramaLowLatency(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    MultiVehicleManager *pVehicleMgr = qgcApp()->toolbox()->multiVehicleManager();
    connect(pVehicleMgr, &MultiVehicleManager::activeVehicleChanged, this, &VideoManager::_setActiveVehicle);
 
@@ -292,7 +298,7 @@ VideoManager::startVideo()
         return;
     }
 
-    if(!_videoSettings->streamEnabled()->rawValue().toBool() || !_videoSettings->streamConfigured()) {
+    if(!_videoSettings->streamEnabled()->rawValue().toBool()) {
         qCDebug(VideoManagerLog) << "Stream not enabled/configured";
         return;
     }
@@ -687,7 +693,9 @@ VideoManager::_updateSettings(unsigned id)
         return false;
     }
 
-    const bool lowLatencyStreaming  =_videoSettings->lowLatencyMode()->rawValue().toBool();
+    const bool lowLatencyStreaming = (id == 2)
+        ? _videoSettings->panoramaLowLatency()->rawValue().toBool()
+        : _videoSettings->lowLatencyMode()->rawValue().toBool();
 
     bool settingsChanged = _lowLatencyStreaming[id] != lowLatencyStreaming;
 
@@ -755,8 +763,57 @@ VideoManager::_updateSettings(unsigned id)
                     }
                 }
             }
+            if (id == 0 || id == 1) {
+                return settingsChanged;
+            }
+        }
+    }
+
+    if (id == 2) {
+        if (!_videoSettings->panoramaEnabled()->rawValue().toBool()) {
+            settingsChanged |= _updateVideoUri(2, QString());
             return settingsChanged;
         }
+
+        const QString source = _videoSettings->panoramaVideoSource()->rawValue().toString();
+
+        if (source == VideoSettings::videoSourceNoVideo || source == VideoSettings::videoDisabled) {
+            settingsChanged |= _updateVideoUri(2, QString());
+        } else if (source == VideoSettings::videoSourceUDPH264) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("udp://0.0.0.0:%1").arg(_videoSettings->panoramaUdpPort()->rawValue().toInt()));
+        } else if (source == VideoSettings::videoSourceUDPH265) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("udp265://0.0.0.0:%1").arg(_videoSettings->panoramaUdpPort()->rawValue().toInt()));
+        } else if (source == VideoSettings::videoSourceMPEGTS) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("mpegts://0.0.0.0:%1").arg(_videoSettings->panoramaUdpPort()->rawValue().toInt()));
+        } else if (source == VideoSettings::videoSourceRTSP || source == VideoSettings::videoSourceRTSP2) {
+            settingsChanged |= _updateVideoUri(2, _videoSettings->panoramaRtspUrl()->rawValue().toString());
+        } else if (source == VideoSettings::videoSourceTCP) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("tcp://%1").arg(_videoSettings->panoramaTcpUrl()->rawValue().toString()));
+        } else if (source == VideoSettings::videoSource3DRSolo) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("udp://0.0.0.0:5600"));
+        } else if (source == VideoSettings::videoSourceParrotDiscovery) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("udp://0.0.0.0:8888"));
+        } else if (source == VideoSettings::videoSourceYuneecMantisG) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://192.168.42.1:554/live"));
+        } else if (source == VideoSettings::videoSourceHerelinkAirUnit) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://192.168.0.10:8554/H264Video"));
+        } else if (source == VideoSettings::videoSourceHerelinkHotspot) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://192.168.43.1:8554/fpv_stream"));
+        } else if (source == VideoSettings::videoSourceIPCamera) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://192.168.144.25:8554/main.264"));
+        } else if (source == VideoSettings::videoSourceHerelinkHotspotDynamic) {
+            const QString dynamicIp = qgcApp()->toolbox()->linkManager()->getLastUDPAddress();
+            if (!dynamicIp.isEmpty()) {
+                settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://%1:8554/fpv_stream").arg(dynamicIp));
+            } else {
+                qCDebug(VideoManagerLog) << "Dynamic Herelink IP not available";
+                settingsChanged |= _updateVideoUri(2, QString());
+            }
+        } else {
+            settingsChanged |= _updateVideoUri(2, QString());
+        }
+
+        return settingsChanged;
     }
     QString source = _videoSettings->videoSource()->rawValue().toString();
     if (source == VideoSettings::videoSourceUDPH264)
