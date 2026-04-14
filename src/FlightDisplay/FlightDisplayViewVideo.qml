@@ -189,18 +189,6 @@ Item {
             }
         }
 
-        // Panorama video is wired as an independent third stream endpoint.
-        // UI/placement control will be added in the next step.
-        Item {
-            anchors.fill: parent
-            visible: false
-            QGCVideoBackground {
-                id:             panoramaVideo
-                objectName:     "panoramaVideo"
-                anchors.fill:   parent
-                receiver:       QGroundControl.videoManager.panoramaVideoReceiver
-            }
-        }
         //-- Zoom
         PinchArea {
             id:             pinchZoom

@@ -12,6 +12,7 @@ add_custom_target(FligthDisplayQml
 		FlyViewInstrumentPanel.qml
 		FlyViewMap.qml
 		FlyViewMissionCompleteDialog.qml
+		FlyViewPanorama.qml
 		FlyViewPreFlightChecklistPopup.qml
 		FlyView.qml
 		FlyViewToolStripActionList.qml

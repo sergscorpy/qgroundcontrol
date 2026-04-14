@@ -157,6 +157,10 @@ Item {
         id: videoControl
     }
 
+    FlyViewPanorama {
+        id: panoramaControl
+    }
+
 
 
     QGCPipOverlay {
