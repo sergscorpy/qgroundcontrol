@@ -58,13 +58,12 @@ Rectangle {
     property bool   _isTCP:                     _isGst && _videoSource === _videoSettings.tcpVideoSource
     property bool   _isMPEGTS:                  _isGst && _videoSource === _videoSettings.mpegtsVideoSource
     property string _panoramaVideoSource:       _videoSettings.panoramaVideoSource.rawValue
-    property bool   _panoramaEnabled:           _videoSettings.panoramaEnabled.rawValue
     property bool   _panoramaSourceConfigured:  _panoramaVideoSource !== "" && _panoramaVideoSource !== _videoSettings.disabledVideoSource
-    property bool   _isPanoramaUDP264:          _isGst && _panoramaVideoSource === _videoSettings.udp264VideoSource
-    property bool   _isPanoramaUDP265:          _isGst && _panoramaVideoSource === _videoSettings.udp265VideoSource
-    property bool   _isPanoramaRTSP:            _isGst && (_panoramaVideoSource === _videoSettings.rtspVideoSource || _panoramaVideoSource === _videoSettings.rtspVideoSource2)
-    property bool   _isPanoramaTCP:             _isGst && _panoramaVideoSource === _videoSettings.tcpVideoSource
-    property bool   _isPanoramaMPEGTS:          _isGst && _panoramaVideoSource === _videoSettings.mpegtsVideoSource
+    property bool   _isPanoramaUDP264:           _panoramaVideoSource === _videoSettings.udp264VideoSource
+    property bool   _isPanoramaUDP265:           _panoramaVideoSource === _videoSettings.udp265VideoSource
+    property bool   _isPanoramaRTSP:             (_panoramaVideoSource === _videoSettings.rtspVideoSource || _panoramaVideoSource === _videoSettings.rtspVideoSource2)
+    property bool   _isPanoramaTCP:              _panoramaVideoSource === _videoSettings.tcpVideoSource
+    property bool   _isPanoramaMPEGTS:           _panoramaVideoSource === _videoSettings.mpegtsVideoSource
     property bool   _videoAutoStreamConfig:     QGroundControl.videoManager.autoStreamConfigured
     property bool   _showSaveVideoSettings:     _isGst || _videoAutoStreamConfig
     property bool   _disableAllDataPersistence: QGroundControl.settingsManager.appSettings.disableAllPersistence.rawValue
@@ -455,17 +454,10 @@ Rectangle {
                                 Layout.alignment:   Qt.AlignHCenter
                             }
 
-                            Item { width: 1; height: 1}
-                            FactCheckBox {
-                                text:       qsTr("Enable Panorama Stream")
-                                fact:       _videoSettings.panoramaEnabled
-                                visible:    fact.visible
-                            }
-
                             QGCLabel {
                                 id:         panoramaSourceLabel
                                 text:       qsTr("Panorama Source")
-                                visible:    _panoramaEnabled && _videoSettings.panoramaVideoSource.visible
+                                visible:    _videoSettings.panoramaVideoSource.visible
                             }
                             FactComboBox {
                                 Layout.preferredWidth:  _comboFieldWidth
@@ -477,7 +469,7 @@ Rectangle {
                             QGCLabel {
                                 id:         panoramaUdpPortLabel
                                 text:       qsTr("Panorama UDP Port")
-                                visible:    _isGst && _panoramaEnabled && _panoramaSourceConfigured && (_isPanoramaUDP264 || _isPanoramaUDP265 || _isPanoramaMPEGTS) && _videoSettings.panoramaUdpPort.visible
+                                visible:    _panoramaSourceConfigured && (_isPanoramaUDP264 || _isPanoramaUDP265 || _isPanoramaMPEGTS) && _videoSettings.panoramaUdpPort.visible
                             }
                             FactTextField {
                                 Layout.preferredWidth:  _comboFieldWidth
@@ -488,7 +480,7 @@ Rectangle {
                             QGCLabel {
                                 id:         panoramaRtspUrlLabel
                                 text:       qsTr("Panorama RTSP URL")
-                                visible:    _isGst && _panoramaEnabled && _panoramaSourceConfigured && _isPanoramaRTSP && _videoSettings.panoramaRtspUrl.visible
+                                visible:    _panoramaSourceConfigured && _isPanoramaRTSP && _videoSettings.panoramaRtspUrl.visible
                             }
                             FactTextField {
                                 Layout.preferredWidth:  _comboFieldWidth
@@ -499,7 +491,7 @@ Rectangle {
                             QGCLabel {
                                 id:         panoramaTcpUrlLabel
                                 text:       qsTr("Panorama TCP URL")
-                                visible:    _isGst && _panoramaEnabled && _panoramaSourceConfigured && _isPanoramaTCP && _videoSettings.panoramaTcpUrl.visible
+                                visible:    _panoramaSourceConfigured && _isPanoramaTCP && _videoSettings.panoramaTcpUrl.visible
                             }
                             FactTextField {
                                 Layout.preferredWidth:  _comboFieldWidth
@@ -511,7 +503,7 @@ Rectangle {
                             FactCheckBox {
                                 text:       qsTr("Panorama Low Latency Mode")
                                 fact:       _videoSettings.panoramaLowLatency
-                                visible:    _isGst && _panoramaEnabled && _panoramaSourceConfigured && fact.visible
+                                visible:    _panoramaSourceConfigured && fact.visible
                             }
 
                             Item { width: 1; height: 1}

@@ -18,7 +18,7 @@ import QGroundControl.ScreenTools   1.0
 Item {
     id:             _root
     anchors.fill:   parent
-    visible:        _panoramaEnabled && _isGst
+    visible:        _panoramaEnabled
 
     property bool   _panoramaEnabled:   QGroundControl.settingsManager.videoSettings.panoramaEnabled.rawValue
     property bool   _isGst:             QGroundControl.videoManager.isGStreamer
