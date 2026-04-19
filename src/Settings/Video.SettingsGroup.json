@@ -170,13 +170,6 @@
     "max":              1
 },
 {
-    "name":             "panoramaEnabled",
-    "shortDesc":        "Panorama Stream Enabled",
-    "longDesc":         "Enable/disable panorama video stream.",
-    "type":             "bool",
-    "default":          false
-},
-{
     "name":             "panoramaVideoSource",
     "shortDesc":        "Panorama Video Source",
     "longDesc":         "Source for panorama video stream.",

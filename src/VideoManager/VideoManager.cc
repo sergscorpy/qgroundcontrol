@@ -110,7 +110,6 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
    connect(_videoSettings->tcpUrl(),        &Fact::rawValueChanged, this, &VideoManager::_tcpUrlChanged);
    connect(_videoSettings->aspectRatio(),   &Fact::rawValueChanged, this, &VideoManager::_aspectRatioChanged);
    connect(_videoSettings->lowLatencyMode(),&Fact::rawValueChanged, this, &VideoManager::_lowLatencyModeChanged);
-   connect(_videoSettings->panoramaEnabled(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    connect(_videoSettings->panoramaVideoSource(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    connect(_videoSettings->panoramaUdpPort(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    connect(_videoSettings->panoramaRtspUrl(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
@@ -770,16 +769,18 @@ VideoManager::_updateSettings(unsigned id)
     }
 
     if (id == 2) {
-        if (!_videoSettings->panoramaEnabled()->rawValue().toBool()) {
+        const QString source = _videoSettings->panoramaVideoSource()->rawValue().toString();
+        const bool panoramaSourceConfigured =
+            !source.isEmpty() &&
+            source != VideoSettings::videoDisabled &&
+            source != VideoSettings::videoSourceNoVideo;
+
+        if (!panoramaSourceConfigured) {
             settingsChanged |= _updateVideoUri(2, QString());
             return settingsChanged;
         }
 
-        const QString source = _videoSettings->panoramaVideoSource()->rawValue().toString();
-
-        if (source == VideoSettings::videoSourceNoVideo || source == VideoSettings::videoDisabled) {
-            settingsChanged |= _updateVideoUri(2, QString());
-        } else if (source == VideoSettings::videoSourceUDPH264) {
+        if (source == VideoSettings::videoSourceUDPH264) {
             settingsChanged |= _updateVideoUri(2, QStringLiteral("udp://0.0.0.0:%1").arg(_videoSettings->panoramaUdpPort()->rawValue().toInt()));
         } else if (source == VideoSettings::videoSourceUDPH265) {
             settingsChanged |= _updateVideoUri(2, QStringLiteral("udp265://0.0.0.0:%1").arg(_videoSettings->panoramaUdpPort()->rawValue().toInt()));

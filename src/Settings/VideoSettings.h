@@ -40,7 +40,6 @@ public:
     DEFINE_SETTINGFACT(rtspSecondaryUrl)
     DEFINE_SETTINGFACT(forceVideoDecoder)
     DEFINE_SETTINGFACT(cameraId)
-    DEFINE_SETTINGFACT(panoramaEnabled)
     DEFINE_SETTINGFACT(panoramaVideoSource)
     DEFINE_SETTINGFACT(panoramaUdpPort)
     DEFINE_SETTINGFACT(panoramaRtspUrl)
