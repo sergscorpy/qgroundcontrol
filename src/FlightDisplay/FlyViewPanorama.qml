@@ -116,11 +116,7 @@ Item {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton
             hoverEnabled: true
-            onClicked: {
-                if (!_windowMode) {
-                    _fullMode = !_fullMode
-                }
-            }
+            onClicked: {}
         }
 
         Image {
