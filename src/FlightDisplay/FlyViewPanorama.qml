@@ -36,6 +36,11 @@ Item {
     property bool   _savedFullMode:       false
     property bool   _savedIsExpanded:     true
     property real   _savedPipSize:        0
+    property bool   _hasSavedWindowGeometry: false
+    property real   _savedWindowX: 0
+    property real   _savedWindowY: 0
+    property real   _savedWindowWidth: 0
+    property real   _savedWindowHeight: 0
 
     function _resetPanoramaUiState() {
         _hasSavedWindowState = false
@@ -135,15 +140,25 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
-                    const pipWidth = panoramaFrame.width
-                    const pipHeight = panoramaFrame.height
                     _savedFullMode = _fullMode
                     _savedIsExpanded = _isExpanded
                     _savedPipSize = _pipSize
                     _hasSavedWindowState = true
                     _fullMode = false
-                    panoramaWindow.width = pipWidth
-                    panoramaWindow.height = pipHeight
+
+                    if (_hasSavedWindowGeometry) {
+                        panoramaWindow.x = _savedWindowX
+                        panoramaWindow.y = _savedWindowY
+                        panoramaWindow.width = _savedWindowWidth
+                        panoramaWindow.height = _savedWindowHeight
+                    } else {
+                        const pipTopLeft = panoramaFrame.mapToGlobal(0, 0)
+                        panoramaWindow.x = pipTopLeft.x
+                        panoramaWindow.y = pipTopLeft.y
+                        panoramaWindow.width = panoramaFrame.width
+                        panoramaWindow.height = panoramaFrame.height
+                    }
+
                     _windowMode = true
                     panoramaWindow.show()
                 }
@@ -259,8 +274,25 @@ Item {
     Window {
         id:         panoramaWindow
         visible:    false
+        onVisibleChanged: {
+            if (visible) {
+                // qmlglsink target should be rebound only after the window is shown.
+                Qt.callLater(function() {
+                    QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaVideo)
+                })
+            }
+        }
+        onXChanged: if (visible) _savedWindowX = x
+        onYChanged: if (visible) _savedWindowY = y
+        onWidthChanged: if (visible) _savedWindowWidth = width
+        onHeightChanged: if (visible) _savedWindowHeight = height
         onClosing: {
+            _hasSavedWindowGeometry = true
             _windowMode = false
+            // Rebind sink back to embedded PiP target after returning from window mode.
+            Qt.callLater(function() {
+                QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaVideo)
+            })
             if (_hasSavedWindowState) {
                 Qt.callLater(function() {
                     _fullMode = _savedFullMode

@@ -113,6 +113,7 @@ public:
 
     Q_INVOKABLE void startVideo     ();
     Q_INVOKABLE void stopVideo      ();
+    Q_INVOKABLE void rebindPanoramaVideoSink(QObject* videoItem);
 
     Q_INVOKABLE void startRecording (const QString& videoFile = QString());
     Q_INVOKABLE void stopRecording  ();

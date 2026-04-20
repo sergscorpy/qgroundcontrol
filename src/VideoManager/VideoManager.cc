@@ -15,6 +15,7 @@
 #include <QUrl>
 #include <QDir>
 #include <QQuickWindow>
+#include <QQuickItem>
 
 #ifndef QGC_DISABLE_UVC
 #include <QCameraInfo>
@@ -318,6 +319,45 @@ VideoManager::stopVideo()
     _stopReceiver(2);
     _stopReceiver(1);
     _stopReceiver(0);
+}
+
+void
+VideoManager::rebindPanoramaVideoSink(QObject* videoItem)
+{
+#if defined(QGC_GST_STREAMING)
+    QQuickItem* widget = qobject_cast<QQuickItem*>(videoItem);
+
+    if (widget == nullptr) {
+        qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink: invalid video item";
+        return;
+    }
+
+    if (_videoReceiver[2] == nullptr) {
+        qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink: panorama receiver is not available";
+        return;
+    }
+
+    const bool wasStarted = _videoStarted[2];
+
+    // Stop receiver so restart path reattaches decoder to the new sink reliably.
+    if (wasStarted) {
+        _stopReceiver(2);
+    }
+
+    if (_videoSink[2] != nullptr) {
+        qgcApp()->toolbox()->corePlugin()->releaseVideoSink(_videoSink[2]);
+        _videoSink[2] = nullptr;
+    }
+
+    _videoSink[2] = qgcApp()->toolbox()->corePlugin()->createVideoSink(this, widget);
+
+    if (!wasStarted) {
+        // Receiver wasn't running yet; start it directly with the new sink.
+        _startReceiver(2);
+    }
+#else
+    Q_UNUSED(videoItem);
+#endif
 }
 
 void
