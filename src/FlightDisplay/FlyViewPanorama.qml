@@ -140,6 +140,9 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
+                    console.log("[Panorama] popup click: switch to window mode",
+                                "windowMode=", _windowMode,
+                                "pipSize=", _pipSize)
                     _savedFullMode = _fullMode
                     _savedIsExpanded = _isExpanded
                     _savedPipSize = _pipSize
@@ -276,6 +279,9 @@ Item {
         visible:    false
         onVisibleChanged: {
             if (visible) {
+                console.log("[Panorama] window visible, rebinding sink",
+                            "x=", x, "y=", y, "w=", width, "h=", height,
+                            "itemWindow=", panoramaVideo.window)
                 // qmlglsink target should be rebound only after the window is shown.
                 Qt.callLater(function() {
                     QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaVideo)
@@ -287,6 +293,7 @@ Item {
         onWidthChanged: if (visible) _savedWindowWidth = width
         onHeightChanged: if (visible) _savedWindowHeight = height
         onClosing: {
+            console.log("[Panorama] window closing, rebinding back to PiP")
             _hasSavedWindowGeometry = true
             _windowMode = false
             // Rebind sink back to embedded PiP target after returning from window mode.
