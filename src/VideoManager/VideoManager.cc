@@ -16,6 +16,7 @@
 #include <QDir>
 #include <QQuickWindow>
 #include <QQuickItem>
+#include <QPointer>
 
 #ifndef QGC_DISABLE_UVC
 #include <QCameraInfo>
@@ -333,6 +334,12 @@ VideoManager::stopVideo()
 void
 VideoManager::rebindPanoramaVideoSink(QObject* videoItem)
 {
+    _rebindPanoramaVideoSinkInternal(videoItem, 0);
+}
+
+void
+VideoManager::_rebindPanoramaVideoSinkInternal(QObject* videoItem, int retryCount)
+{
 #if defined(QGC_GST_STREAMING)
     QQuickItem* widget = qobject_cast<QQuickItem*>(videoItem);
 
@@ -346,8 +353,25 @@ VideoManager::rebindPanoramaVideoSink(QObject* videoItem)
         return;
     }
 
-    const bool wasStarted = _videoStarted[2];
     QQuickWindow* itemWindow = widget->window();
+    if (itemWindow == nullptr || !itemWindow->isExposed()) {
+        if (retryCount < 40) {
+            QPointer<QObject> safeVideoItem(videoItem);
+            QTimer::singleShot(50, this, [this, safeVideoItem, retryCount]() {
+                if (safeVideoItem) {
+                    _rebindPanoramaVideoSinkInternal(safeVideoItem, retryCount + 1);
+                }
+            });
+            qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink waiting for item window expose"
+                                     << "retry" << retryCount
+                                     << "itemWindow" << itemWindow;
+        } else {
+            qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink aborted: item window not exposed after retries";
+        }
+        return;
+    }
+
+    const bool wasStarted = _videoStarted[2];
     qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink begin"
                              << "widget" << widget
                              << "itemWindow" << itemWindow

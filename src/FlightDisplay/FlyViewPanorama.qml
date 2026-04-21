@@ -61,45 +61,17 @@ Item {
     Item {
         id:         panoramaFrame
         z:          QGroundControl.zOrderWidgets + 150
-        state:      _windowMode ? "windowState" : "embeddedState"
 
         width:      _fullMode ? _root.width : _pipSize
         height:     _fullMode ? _root.height : _pipSize * (9 / 16)
-        visible:    _fullMode || _isExpanded || _windowMode
+        visible:    !_windowMode && (_fullMode || _isExpanded)
 
-        anchors.rightMargin: (_windowMode || _fullMode) ? 0 : _margin
-        anchors.bottomMargin: (_windowMode || _fullMode) ? 0 : _margin
-
-        states: [
-            State {
-                name: "embeddedState"
-                ParentChange {
-                    target: panoramaFrame
-                    parent: _root
-                }
-                AnchorChanges {
-                    target:         panoramaFrame
-                    anchors.top:    undefined
-                    anchors.left:   undefined
-                    anchors.right:  _root.right
-                    anchors.bottom: _root.bottom
-                }
-            },
-            State {
-                name: "windowState"
-                ParentChange {
-                    target: panoramaFrame
-                    parent: panoramaWindow.contentItem
-                }
-                AnchorChanges {
-                    target:         panoramaFrame
-                    anchors.top:    panoramaWindow.contentItem.top
-                    anchors.bottom: panoramaWindow.contentItem.bottom
-                    anchors.left:   panoramaWindow.contentItem.left
-                    anchors.right:  panoramaWindow.contentItem.right
-                }
-            }
-        ]
+        anchors.rightMargin: _fullMode ? 0 : _margin
+        anchors.bottomMargin: _fullMode ? 0 : _margin
+        anchors.top: undefined
+        anchors.left: undefined
+        anchors.right: _root.right
+        anchors.bottom: _root.bottom
 
         Rectangle {
             anchors.fill:   parent
@@ -140,6 +112,10 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
+                    if (_windowMode) {
+                        console.log("[Panorama] popup click ignored: already in window mode")
+                        return
+                    }
                     console.log("[Panorama] popup click: switch to window mode",
                                 "windowMode=", _windowMode,
                                 "pipSize=", _pipSize)
@@ -281,11 +257,27 @@ Item {
             if (visible) {
                 console.log("[Panorama] window visible, rebinding sink",
                             "x=", x, "y=", y, "w=", width, "h=", height,
-                            "itemWindow=", panoramaVideo.window)
-                // qmlglsink target should be rebound only after the window is shown.
-                Qt.callLater(function() {
-                    QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaVideo)
-                })
+                            "windowMode=", _windowMode)
+                QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaWindowVideo)
+                console.log("[Panorama] rebind requested:", "window became visible")
+            }
+        }
+        Item {
+            id: panoramaWindowFrame
+            anchors.fill: parent
+
+            Rectangle {
+                anchors.fill:   parent
+                color:          "black"
+                border.width:   0
+                radius:         0
+            }
+
+            QGCVideoBackground {
+                id:             panoramaWindowVideo
+                objectName:     "panoramaWindowVideo"
+                anchors.fill:   parent
+                receiver:       QGroundControl.videoManager.panoramaVideoReceiver
             }
         }
         onXChanged: if (visible) _savedWindowX = x
@@ -296,10 +288,8 @@ Item {
             console.log("[Panorama] window closing, rebinding back to PiP")
             _hasSavedWindowGeometry = true
             _windowMode = false
-            // Rebind sink back to embedded PiP target after returning from window mode.
-            Qt.callLater(function() {
-                QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaVideo)
-            })
+            QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaVideo)
+            console.log("[Panorama] rebind requested:", "window closing")
             if (_hasSavedWindowState) {
                 Qt.callLater(function() {
                     _fullMode = _savedFullMode

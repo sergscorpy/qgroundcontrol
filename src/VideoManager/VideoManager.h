@@ -159,6 +159,7 @@ protected:
     void _restartVideo              (unsigned id);
     void _startReceiver             (unsigned id);
     void _stopReceiver              (unsigned id);
+    void _rebindPanoramaVideoSinkInternal(QObject* videoItem, int retryCount);
 
 protected:
     static constexpr unsigned kVideoReceiverCount = 3;
