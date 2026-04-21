@@ -167,28 +167,21 @@ Item {
             width:          height
             visible:        !_fullMode && !_windowMode && _isExpanded
 
-            property real initialX:     0
-            property real initialWidth: 0
+            property real initialMouseRootX: 0
+            property real initialWidth:      0
 
             onPressed: {
-                pipResize.anchors.top = undefined
-                pipResize.anchors.left = undefined
-                pipResize.initialX = mouse.x
+                pipResize.initialMouseRootX = pipResize.mapToItem(_root, mouse.x, mouse.y).x
                 pipResize.initialWidth = _pipSize
-            }
-
-            onReleased: {
-                pipResize.anchors.top = panoramaFrame.top
-                pipResize.anchors.left = panoramaFrame.left
             }
 
             onPositionChanged: {
                 if (pipResize.pressed) {
                     const parentWidth = _root.width
-                    const newWidth = pipResize.initialWidth - (mouse.x - pipResize.initialX)
-                    if (newWidth < parentWidth * _maxSize && newWidth > parentWidth * _minSize) {
-                        _pipSize = newWidth
-                    }
+                    const currentMouseRootX = pipResize.mapToItem(_root, mouse.x, mouse.y).x
+                    // PiP is anchored to the right edge, so dragging left should increase width.
+                    const newWidth = pipResize.initialWidth - (currentMouseRootX - pipResize.initialMouseRootX)
+                    _pipSize = Math.max(parentWidth * _minSize, Math.min(parentWidth * _maxSize, newWidth))
                 }
             }
         }
