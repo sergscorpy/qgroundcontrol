@@ -9,6 +9,7 @@
 
 import QtQuick                  2.12
 import QtQuick.Window           2.12
+import Qt.labs.settings         1.0
 
 import QGroundControl               1.0
 import QGroundControl.Controls      1.0
@@ -36,11 +37,56 @@ Item {
     property bool   _savedFullMode:       false
     property bool   _savedIsExpanded:     true
     property real   _savedPipSize:        0
-    property bool   _hasSavedWindowGeometry: false
-    property real   _savedWindowX: 0
-    property real   _savedWindowY: 0
-    property real   _savedWindowWidth: 0
-    property real   _savedWindowHeight: 0
+
+    Settings {
+        id: _panoramaWindowSettings
+        category: "PanoramaWindowState"
+
+        property int x: 0
+        property int y: 0
+        property int width: 0
+        property int height: 0
+        property string screenName: ""
+        property bool windowMode: false
+    }
+
+    function _findScreenByName(screenName) {
+        const screens = Qt.application.screens
+        for (let i = 0; i < screens.length; i++) {
+            if (screens[i].name === screenName) {
+                return screens[i]
+            }
+        }
+        return null
+    }
+
+    function _setDefaultWindowGeometry() {
+        const topLeft = _root.mapToGlobal(0, 0)
+        const defaultWidth = Math.max(320, Math.round(_root.width * 0.30))
+        const defaultHeight = Math.max(180, Math.round(_root.height * 0.30))
+        panoramaWindow.width = defaultWidth
+        panoramaWindow.height = defaultHeight
+        panoramaWindow.x = Math.round(topLeft.x + (_root.width - defaultWidth) / 2)
+        panoramaWindow.y = Math.round(topLeft.y + (_root.height - defaultHeight) / 2)
+    }
+
+    function _restoreWindowGeometryFromSettings() {
+        if (_panoramaWindowSettings.width <= 0 || _panoramaWindowSettings.height <= 0 || _panoramaWindowSettings.screenName === "") {
+            return false
+        }
+
+        const savedScreen = _findScreenByName(_panoramaWindowSettings.screenName)
+        if (!savedScreen) {
+            return false
+        }
+
+        panoramaWindow.screen = savedScreen
+        panoramaWindow.x = _panoramaWindowSettings.x
+        panoramaWindow.y = _panoramaWindowSettings.y
+        panoramaWindow.width = _panoramaWindowSettings.width
+        panoramaWindow.height = _panoramaWindowSettings.height
+        return true
+    }
 
     function _resetPanoramaUiState() {
         _hasSavedWindowState = false
@@ -56,6 +102,20 @@ Item {
         if (!visible) {
             _resetPanoramaUiState()
         }
+    }
+
+    Component.onCompleted: {
+        Qt.callLater(function() {
+            if (!visible || !_panoramaWindowSettings.windowMode) {
+                return
+            }
+            if (_restoreWindowGeometryFromSettings()) {
+                _windowMode = true
+                panoramaWindow.show()
+            } else {
+                _windowMode = false
+            }
+        })
     }
 
     Item {
@@ -121,20 +181,12 @@ Item {
                     _hasSavedWindowState = true
                     _fullMode = false
 
-                    if (_hasSavedWindowGeometry) {
-                        panoramaWindow.x = _savedWindowX
-                        panoramaWindow.y = _savedWindowY
-                        panoramaWindow.width = _savedWindowWidth
-                        panoramaWindow.height = _savedWindowHeight
-                    } else {
-                        const pipTopLeft = panoramaFrame.mapToGlobal(0, 0)
-                        panoramaWindow.x = pipTopLeft.x
-                        panoramaWindow.y = pipTopLeft.y
-                        panoramaWindow.width = panoramaFrame.width
-                        panoramaWindow.height = panoramaFrame.height
+                    if (!_restoreWindowGeometryFromSettings()) {
+                        _setDefaultWindowGeometry()
                     }
 
                     _windowMode = true
+                    _panoramaWindowSettings.windowMode = true
                     panoramaWindow.show()
                 }
             }
@@ -244,6 +296,10 @@ Item {
         visible:    false
         onVisibleChanged: {
             if (visible) {
+                _panoramaWindowSettings.windowMode = true
+                if (screen) {
+                    _panoramaWindowSettings.screenName = screen.name
+                }
                 QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaWindowVideo)
             }
         }
@@ -265,13 +321,14 @@ Item {
                 receiver:       QGroundControl.videoManager.panoramaVideoReceiver
             }
         }
-        onXChanged: if (visible) _savedWindowX = x
-        onYChanged: if (visible) _savedWindowY = y
-        onWidthChanged: if (visible) _savedWindowWidth = width
-        onHeightChanged: if (visible) _savedWindowHeight = height
+        onXChanged: if (visible) _panoramaWindowSettings.x = x
+        onYChanged: if (visible) _panoramaWindowSettings.y = y
+        onWidthChanged: if (visible) _panoramaWindowSettings.width = width
+        onHeightChanged: if (visible) _panoramaWindowSettings.height = height
+        onScreenChanged: if (visible && screen) _panoramaWindowSettings.screenName = screen.name
         onClosing: {
-            _hasSavedWindowGeometry = true
             _windowMode = false
+            _panoramaWindowSettings.windowMode = false
             QGroundControl.videoManager.rebindPanoramaVideoSink(panoramaVideo)
             if (_hasSavedWindowState) {
                 Qt.callLater(function() {
