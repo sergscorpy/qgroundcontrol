@@ -132,8 +132,12 @@
         <file alias="PatternPresets.png">resources/PatternPresets.png</file>
         <file alias="PatternTerrain.png">resources/PatternTerrain.png</file>
         <file alias="PiP.svg">src/FlightMap/Images/PiP.svg</file>
+        <file alias="Panorama/PiP.svg">src/Panorama/Images/PiP.svg</file>
         <file alias="pipHide.svg">src/FlightMap/Images/pipHide.svg</file>
+        <file alias="Panorama/pipHide.svg">src/Panorama/Images/pipHide.svg</file>
         <file alias="pipResize.svg">src/FlightMap/Images/pipResize.svg</file>
+        <file alias="Panorama/pipResize.svg">src/Panorama/Images/pipResize.svg</file>
+        <file alias="Panorama/buttonRight.svg">src/Panorama/Images/buttonRight.svg</file>
         <file alias="Plan.svg">src/ui/toolbar/Images/Plan.svg</file>
         <file alias="PlanCreator/BlankPlanCreator.png">src/MissionManager/BlankPlanCreator.png</file>
         <file alias="PlanCreator/CorridorScanPlanCreator.png">src/MissionManager/CorridorScanPlanCreator.png</file>

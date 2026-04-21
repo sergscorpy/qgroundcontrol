@@ -158,7 +158,7 @@ Item {
 
         Image {
             id:             popupPIP
-            source:         "/qmlimages/PiP.svg"
+            source:         "/qmlimages/Panorama/PiP.svg"
             mipmap:         true
             fillMode:       Image.PreserveAspectFit
             anchors.right:  parent.right
@@ -194,7 +194,7 @@ Item {
 
         Image {
             id:             hidePIP
-            source:         "/qmlimages/pipHide.svg"
+            source:         "/qmlimages/Panorama/pipHide.svg"
             mipmap:         true
             fillMode:       Image.PreserveAspectFit
             anchors.right:  parent.right
@@ -239,7 +239,7 @@ Item {
         }
 
         Image {
-            source:         "/qmlimages/pipResize.svg"
+            source:         "/qmlimages/Panorama/pipResize.svg"
             fillMode:       Image.PreserveAspectFit
             mipmap:         true
             anchors.left:   parent.left
@@ -267,7 +267,7 @@ Item {
             width:              parent.width  * 0.75
             height:             parent.height * 0.75
             sourceSize.height:  height
-            source:             "/res/buttonRight.svg"
+            source:             "/qmlimages/Panorama/buttonRight.svg"
             mipmap:             true
             fillMode:           Image.PreserveAspectFit
             anchors.verticalCenter:     parent.verticalCenter
