@@ -218,16 +218,10 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
 
     if (_videoReceiver[2] != nullptr) {
         connect(_videoReceiver[2], &VideoReceiver::onStartComplete, this, [this](VideoReceiver::STATUS status) {
-            qCDebug(VideoManagerLog) << "panorama receiver onStartComplete"
-                                     << "status" << status
-                                     << "uri" << _videoUri[2]
-                                     << "sink" << _videoSink[2]
-                                     << "startedBefore" << _videoStarted[2];
             if (status == VideoReceiver::STATUS_OK) {
                 _videoStarted[2] = true;
                 if (_videoSink[2] != nullptr) {
                     _videoReceiver[2]->startDecoding(_videoSink[2]);
-                    qCDebug(VideoManagerLog) << "panorama receiver startDecoding sink" << _videoSink[2];
                 }
             } else if (status == VideoReceiver::STATUS_INVALID_URL) {
                 // Invalid URL - don't restart
@@ -239,9 +233,6 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
         });
 
         connect(_videoReceiver[2], &VideoReceiver::onStopComplete, this, [this](VideoReceiver::STATUS) {
-            qCDebug(VideoManagerLog) << "panorama receiver onStopComplete"
-                                     << "uri" << _videoUri[2]
-                                     << "sink" << _videoSink[2];
             _videoStarted[2] = false;
             _startReceiver(2);
         });
@@ -344,12 +335,10 @@ VideoManager::_rebindPanoramaVideoSinkInternal(QObject* videoItem, int retryCoun
     QQuickItem* widget = qobject_cast<QQuickItem*>(videoItem);
 
     if (widget == nullptr) {
-        qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink: invalid video item";
         return;
     }
 
     if (_videoReceiver[2] == nullptr) {
-        qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink: panorama receiver is not available";
         return;
     }
 
@@ -362,48 +351,27 @@ VideoManager::_rebindPanoramaVideoSinkInternal(QObject* videoItem, int retryCoun
                     _rebindPanoramaVideoSinkInternal(safeVideoItem, retryCount + 1);
                 }
             });
-            qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink waiting for item window expose"
-                                     << "retry" << retryCount
-                                     << "itemWindow" << itemWindow;
-        } else {
-            qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink aborted: item window not exposed after retries";
         }
         return;
     }
 
     const bool wasStarted = _videoStarted[2];
-    qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink begin"
-                             << "widget" << widget
-                             << "itemWindow" << itemWindow
-                             << "itemVisible" << widget->isVisible()
-                             << "itemEnabled" << widget->isEnabled()
-                             << "windowVisible" << (itemWindow ? itemWindow->isVisible() : false)
-                             << "windowExposed" << (itemWindow ? itemWindow->isExposed() : false)
-                             << "wasStarted" << wasStarted
-                             << "oldSink" << _videoSink[2]
-                             << "uri" << _videoUri[2];
 
     // Stop receiver so restart path reattaches decoder to the new sink reliably.
     if (wasStarted) {
-        qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink stopping receiver 2";
         _stopReceiver(2);
     }
 
     if (_videoSink[2] != nullptr) {
-        qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink releasing old sink" << _videoSink[2];
         qgcApp()->toolbox()->corePlugin()->releaseVideoSink(_videoSink[2]);
         _videoSink[2] = nullptr;
     }
 
     _videoSink[2] = qgcApp()->toolbox()->corePlugin()->createVideoSink(this, widget);
-    qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink created sink" << _videoSink[2];
 
     if (!wasStarted) {
         // Receiver wasn't running yet; start it directly with the new sink.
-        qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink starting receiver 2 immediately";
         _startReceiver(2);
-    } else {
-        qCDebug(VideoManagerLog) << "rebindPanoramaVideoSink waiting on onStopComplete to restart receiver 2";
     }
 #else
     Q_UNUSED(videoItem);
