@@ -61,7 +61,8 @@ Rectangle {
     property bool   _panoramaSourceConfigured:  _panoramaVideoSource !== "" && _panoramaVideoSource !== _videoSettings.disabledVideoSource
     property bool   _isPanoramaUDP264:           _panoramaVideoSource === _videoSettings.udp264VideoSource
     property bool   _isPanoramaUDP265:           _panoramaVideoSource === _videoSettings.udp265VideoSource
-    property bool   _isPanoramaRTSP:             (_panoramaVideoSource === _videoSettings.rtspVideoSource || _panoramaVideoSource === _videoSettings.rtspVideoSource2)
+    property bool   _isPanoramaRTSP:             _panoramaVideoSource === _videoSettings.rtspVideoSource
+    property bool   _isPanoramaRTSP2:            _panoramaVideoSource === _videoSettings.rtspVideoSource2
     property bool   _isPanoramaTCP:              _panoramaVideoSource === _videoSettings.tcpVideoSource
     property bool   _isPanoramaMPEGTS:           _panoramaVideoSource === _videoSettings.mpegtsVideoSource
     property bool   _videoAutoStreamConfig:     QGroundControl.videoManager.autoStreamConfigured
@@ -486,6 +487,17 @@ Rectangle {
                                 Layout.preferredWidth:  _comboFieldWidth
                                 fact:                   _videoSettings.panoramaRtspUrl
                                 visible:                panoramaRtspUrlLabel.visible
+                            }
+
+                            QGCLabel {
+                                id:         panoramaRtspUrl2Label
+                                text:       qsTr("Panorama RTSP2 URL")
+                                visible:    _panoramaSourceConfigured && _isPanoramaRTSP2 && _videoSettings.panoramaRtspUrl2.visible
+                            }
+                            FactTextField {
+                                Layout.preferredWidth:  _comboFieldWidth
+                                fact:                   _videoSettings.panoramaRtspUrl2
+                                visible:                panoramaRtspUrl2Label.visible
                             }
 
                             QGCLabel {

@@ -192,6 +192,13 @@
     "default":          "rtsp://192.168.144.108:556/stream=3"
 },
 {
+    "name":             "panoramaRtspUrl2",
+    "shortDesc":        "Panorama Video RTSP Url 2",
+    "longDesc":         "RTSP2 url address and port to bind to for panorama video stream.",
+    "type":             "string",
+    "default":          "rtsp://192.168.144.108:557/stream=4"
+},
+{
     "name":             "panoramaTcpUrl",
     "shortDesc":        "Panorama Video TCP Url",
     "longDesc":         "TCP url address and port to bind to for panorama video stream.",

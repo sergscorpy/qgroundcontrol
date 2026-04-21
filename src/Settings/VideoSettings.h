@@ -43,6 +43,7 @@ public:
     DEFINE_SETTINGFACT(panoramaVideoSource)
     DEFINE_SETTINGFACT(panoramaUdpPort)
     DEFINE_SETTINGFACT(panoramaRtspUrl)
+    DEFINE_SETTINGFACT(panoramaRtspUrl2)
     DEFINE_SETTINGFACT(panoramaTcpUrl)
     DEFINE_SETTINGFACT(panoramaLowLatency)
 

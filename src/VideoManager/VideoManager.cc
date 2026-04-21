@@ -115,6 +115,7 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
    connect(_videoSettings->panoramaVideoSource(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    connect(_videoSettings->panoramaUdpPort(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    connect(_videoSettings->panoramaRtspUrl(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
+   connect(_videoSettings->panoramaRtspUrl2(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    connect(_videoSettings->panoramaTcpUrl(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    connect(_videoSettings->panoramaLowLatency(), &Fact::rawValueChanged, this, [this](QVariant){ _restartVideo(2); });
    MultiVehicleManager *pVehicleMgr = qgcApp()->toolbox()->multiVehicleManager();
@@ -844,8 +845,10 @@ VideoManager::_updateSettings(unsigned id)
             settingsChanged |= _updateVideoUri(2, QStringLiteral("udp265://0.0.0.0:%1").arg(_videoSettings->panoramaUdpPort()->rawValue().toInt()));
         } else if (source == VideoSettings::videoSourceMPEGTS) {
             settingsChanged |= _updateVideoUri(2, QStringLiteral("mpegts://0.0.0.0:%1").arg(_videoSettings->panoramaUdpPort()->rawValue().toInt()));
-        } else if (source == VideoSettings::videoSourceRTSP || source == VideoSettings::videoSourceRTSP2) {
+        } else if (source == VideoSettings::videoSourceRTSP) {
             settingsChanged |= _updateVideoUri(2, _videoSettings->panoramaRtspUrl()->rawValue().toString());
+        } else if (source == VideoSettings::videoSourceRTSP2) {
+            settingsChanged |= _updateVideoUri(2, _videoSettings->panoramaRtspUrl2()->rawValue().toString());
         } else if (source == VideoSettings::videoSourceTCP) {
             settingsChanged |= _updateVideoUri(2, QStringLiteral("tcp://%1").arg(_videoSettings->panoramaTcpUrl()->rawValue().toString()));
         } else if (source == VideoSettings::videoSource3DRSolo) {

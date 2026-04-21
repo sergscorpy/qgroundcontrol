@@ -137,6 +137,7 @@ DECLARE_SETTINGSFACT(VideoSettings, rtspSecondaryUrl)
 DECLARE_SETTINGSFACT(VideoSettings, cameraId)
 DECLARE_SETTINGSFACT(VideoSettings, panoramaUdpPort)
 DECLARE_SETTINGSFACT(VideoSettings, panoramaRtspUrl)
+DECLARE_SETTINGSFACT(VideoSettings, panoramaRtspUrl2)
 DECLARE_SETTINGSFACT(VideoSettings, panoramaTcpUrl)
 DECLARE_SETTINGSFACT(VideoSettings, panoramaLowLatency)
 
