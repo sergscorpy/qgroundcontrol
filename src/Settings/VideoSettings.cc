@@ -47,9 +47,9 @@ DECLARE_SETTINGGROUP(Video, "Video")
 #ifdef QGC_GST_STREAMING
     videoSourceList.append(videoSourceRTSP);
     videoSourceList.append(videoSourceRTSP2);
+    videoSourceList.append(videoSourceHerelinkAirUnit);
     // Моя кнопка
 #ifdef Q_OS_ANDROID
-    videoSourceList.append(videoSourceHerelinkAirUnit);
     videoSourceList.append(videoSourceIPCamera);
 #else
     videoSourceList.append(videoSourceHerelinkHotspot);

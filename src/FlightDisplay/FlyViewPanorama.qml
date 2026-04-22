@@ -21,10 +21,14 @@ Item {
     anchors.fill:   parent
     visible:        _panoramaSourceConfigured
 
-    property string _panoramaVideoSource: QGroundControl.settingsManager.videoSettings.panoramaVideoSource.rawValue
+    property var    _videoSettings:       QGroundControl.settingsManager.videoSettings
+    property var    _videoStreamControl:  QGroundControl.videoManager.videoStreamControl
+    property string _panoramaVideoSource: _videoSettings.panoramaVideoSource.rawValue
     property bool   _panoramaSourceConfigured: _panoramaVideoSource !== "" &&
-                                               _panoramaVideoSource !== QGroundControl.settingsManager.videoSettings.disabledVideoSource &&
+                                               _panoramaVideoSource !== _videoSettings.disabledVideoSource &&
                                                _panoramaVideoSource !== "No Video Available"
+    property bool   _isPanoramaHerelinkAirUnit: _panoramaVideoSource === "Herelink Air Unit"
+    property bool   _cameraSwitchInProgress: _videoStreamControl ? _videoStreamControl.settingInProgress : false
     property bool   _isGst:             QGroundControl.videoManager.isGStreamer
     property bool   _fullMode:          false
     property bool   _isExpanded:        true
@@ -68,6 +72,23 @@ Item {
         panoramaWindow.height = defaultHeight
         panoramaWindow.x = Math.round(topLeft.x + (_root.width - defaultWidth) / 2)
         panoramaWindow.y = Math.round(topLeft.y + (_root.height - defaultHeight) / 2)
+    }
+
+    function _togglePanoramaCameraId() {
+        if (_cameraSwitchInProgress || !_isPanoramaHerelinkAirUnit) {
+            return
+        }
+        const currentId = Number(_videoSettings.cameraId.rawValue)
+        _videoSettings.cameraId.rawValue = currentId === 0 ? 1 : 0
+    }
+
+    function _panoramaCameraIconSource() {
+        if (_cameraSwitchInProgress) {
+            return "/qmlimages/Panorama/HDMI0Icons.svg"
+        }
+        return Number(_videoSettings.cameraId.rawValue) === 1
+            ? "/qmlimages/Panorama/HDMI2Icons.svg"
+            : "/qmlimages/Panorama/HDMI1Icons.svg"
     }
 
     function _restoreWindowGeometryFromSettings() {
@@ -211,6 +232,36 @@ Item {
             }
         }
 
+        Rectangle {
+            id:                     panoramaCameraTogglePip
+            anchors.left:           parent.left
+            anchors.bottom:         parent.bottom
+            anchors.margins:        ScreenTools.defaultFontPixelWidth * 0.5
+            width:                  ScreenTools.defaultFontPixelHeight * 5.7
+            height:                 ScreenTools.defaultFontPixelHeight * 1.5
+            color:                  Qt.rgba(0, 0, 0, 0.45)
+            visible:                _isPanoramaHerelinkAirUnit &&
+                                    !_fullMode &&
+                                    _isExpanded &&
+                                    (ScreenTools.isMobile || panoramaMouseArea.containsMouse)
+            opacity:                _cameraSwitchInProgress ? 0.7 : 1.0
+
+            Image {
+                anchors.fill:           parent
+                anchors.margins:        ScreenTools.defaultFontPixelWidth * 0.35
+                source:                 _panoramaCameraIconSource()
+                fillMode:               Image.PreserveAspectFit
+                mipmap:                 true
+                sourceSize.height:      height
+            }
+
+            MouseArea {
+                anchors.fill:   parent
+                enabled:        !_cameraSwitchInProgress
+                onClicked:      _togglePanoramaCameraId()
+            }
+        }
+
         MouseArea {
             id:             pipResize
             anchors.top:    parent.top
@@ -307,6 +358,13 @@ Item {
             id: panoramaWindowFrame
             anchors.fill: parent
 
+            MouseArea {
+                id:                     panoramaWindowMouseArea
+                anchors.fill:           parent
+                acceptedButtons:        Qt.NoButton
+                hoverEnabled:           true
+            }
+
             Rectangle {
                 anchors.fill:   parent
                 color:          "black"
@@ -319,6 +377,34 @@ Item {
                 objectName:     "panoramaWindowVideo"
                 anchors.fill:   parent
                 receiver:       QGroundControl.videoManager.panoramaVideoReceiver
+            }
+
+            Rectangle {
+                id:                     panoramaCameraToggleWindow
+                anchors.left:           parent.left
+                anchors.bottom:         parent.bottom
+                anchors.margins:        ScreenTools.defaultFontPixelWidth * 0.5
+                width:                  ScreenTools.defaultFontPixelHeight * 5.7
+                height:                 ScreenTools.defaultFontPixelHeight * 1.5
+                color:                  Qt.rgba(0, 0, 0, 0.45)
+                visible:                _isPanoramaHerelinkAirUnit &&
+                                        (ScreenTools.isMobile || panoramaWindowMouseArea.containsMouse)
+                opacity:                _cameraSwitchInProgress ? 0.7 : 1.0
+
+                Image {
+                    anchors.fill:           parent
+                    anchors.margins:        ScreenTools.defaultFontPixelWidth * 0.35
+                    source:                 _panoramaCameraIconSource()
+                    fillMode:               Image.PreserveAspectFit
+                    mipmap:                 true
+                    sourceSize.height:      height
+                }
+
+                MouseArea {
+                    anchors.fill:   parent
+                    enabled:        !_cameraSwitchInProgress
+                    onClicked:      _togglePanoramaCameraId()
+                }
             }
         }
         onXChanged: if (visible) _panoramaWindowSettings.x = x
