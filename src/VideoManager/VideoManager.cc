@@ -650,6 +650,7 @@ VideoManager::isGStreamer()
             videoSource == VideoSettings::videoSourceParrotDiscovery ||
             videoSource == VideoSettings::videoSourceYuneecMantisG ||
             videoSource == VideoSettings::videoSourceHerelinkAirUnit ||
+            videoSource == VideoSettings::videoSourceHerelinkAirGroundUnit ||
             videoSource == VideoSettings::videoSourceHerelinkHotspot ||
             videoSource == VideoSettings::videoSourceIPCamera ||
             videoSource == VideoSettings::videoSourceHerelinkHotspotDynamic ||
@@ -859,6 +860,8 @@ VideoManager::_updateSettings(unsigned id)
             settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://192.168.42.1:554/live"));
         } else if (source == VideoSettings::videoSourceHerelinkAirUnit) {
             settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://192.168.0.10:8554/H264Video"));
+        } else if (source == VideoSettings::videoSourceHerelinkAirGroundUnit) {
+            settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://192.168.144.10:8554/H264Video"));
         } else if (source == VideoSettings::videoSourceHerelinkHotspot) {
             settingsChanged |= _updateVideoUri(2, QStringLiteral("rtsp://192.168.43.1:8554/fpv_stream"));
         } else if (source == VideoSettings::videoSourceIPCamera) {
@@ -899,6 +902,8 @@ VideoManager::_updateSettings(unsigned id)
     // Моя кнопка
     else if (source == VideoSettings::videoSourceHerelinkAirUnit)
         settingsChanged |= _updateVideoUri(0, QStringLiteral("rtsp://192.168.0.10:8554/H264Video"));
+    else if (source == VideoSettings::videoSourceHerelinkAirGroundUnit)
+        settingsChanged |= _updateVideoUri(0, QStringLiteral("rtsp://192.168.144.10:8554/H264Video"));
     else if (source == VideoSettings::videoSourceHerelinkHotspot)
         settingsChanged |= _updateVideoUri(0, QStringLiteral("rtsp://192.168.43.1:8554/fpv_stream"));
     else if (source == VideoSettings::videoSourceIPCamera)

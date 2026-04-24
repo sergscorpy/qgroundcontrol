@@ -32,6 +32,7 @@ const char* VideoSettings::videoSourceParrotDiscovery   = QT_TRANSLATE_NOOP("Vid
 const char* VideoSettings::videoSourceYuneecMantisG     = QT_TRANSLATE_NOOP("VideoSettings", "Yuneec Mantis G");
 // Моя кнопка
 const char* VideoSettings::videoSourceHerelinkAirUnit   = QT_TRANSLATE_NOOP("VideoSettings", "Herelink Air Unit");
+const char* VideoSettings::videoSourceHerelinkAirGroundUnit = "videoSourceHerelinkAirGroundUnit";
 const char* VideoSettings::videoSourceHerelinkHotspot   = QT_TRANSLATE_NOOP("VideoSettings", "Herelink Hotspot");
 const char* VideoSettings::videoSourceIPCamera          = QT_TRANSLATE_NOOP("VideoSettings", "IP Camera Stream");
 const char* VideoSettings::videoSourceHerelinkHotspotDynamic = QT_TRANSLATE_NOOP("VideoSettings", "Herelink Hotspot (Dynamic)");
@@ -47,11 +48,14 @@ DECLARE_SETTINGGROUP(Video, "Video")
 #ifdef QGC_GST_STREAMING
     videoSourceList.append(videoSourceRTSP);
     videoSourceList.append(videoSourceRTSP2);
-    videoSourceList.append(videoSourceHerelinkAirUnit);
     // Моя кнопка
 #ifdef Q_OS_ANDROID
+    videoSourceList.append(videoSourceHerelinkAirUnit);
     videoSourceList.append(videoSourceIPCamera);
 #else
+#ifdef Q_OS_WIN
+    videoSourceList.append(videoSourceHerelinkAirGroundUnit);
+#endif
     videoSourceList.append(videoSourceHerelinkHotspot);
     videoSourceList.append(videoSourceHerelinkHotspotDynamic);
 #endif
@@ -81,7 +85,11 @@ DECLARE_SETTINGGROUP(Video, "Video")
     // make translated strings
     QStringList videoSourceCookedList;
     for (const QVariant& videoSource: videoSourceList) {
-        videoSourceCookedList.append( VideoSettings::tr(videoSource.toString().toStdString().c_str()) );
+        if (videoSource.toString() == videoSourceHerelinkAirGroundUnit) {
+            videoSourceCookedList.append(VideoSettings::tr(videoSourceHerelinkAirUnit));
+        } else {
+            videoSourceCookedList.append(VideoSettings::tr(videoSource.toString().toStdString().c_str()));
+        }
     }
 
     _nameToMetaDataMap[videoSourceName]->setEnumInfo(videoSourceCookedList, videoSourceList);
@@ -274,6 +282,10 @@ bool VideoSettings::streamConfigured(void)
     //-- If Herelink Air unit, good to go    Моя кнопка
     if(vSource == videoSourceHerelinkAirUnit) {
         qCDebug(VideoManagerLog) << "Stream configured for Herelink Air Unit";
+        return true;
+    }
+    if(vSource == videoSourceHerelinkAirGroundUnit) {
+        qCDebug(VideoManagerLog) << "Stream configured for Herelink Air Ground Unit";
         return true;
     }
     //-- If Herelink Hotspot, good to go

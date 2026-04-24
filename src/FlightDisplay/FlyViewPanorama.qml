@@ -27,7 +27,7 @@ Item {
     property bool   _panoramaSourceConfigured: _panoramaVideoSource !== "" &&
                                                _panoramaVideoSource !== _videoSettings.disabledVideoSource &&
                                                _panoramaVideoSource !== "No Video Available"
-    property bool   _isPanoramaHerelinkAirUnit: _panoramaVideoSource === "Herelink Air Unit"
+    property bool   _isPanoramaHerelinkAirUnit: _panoramaVideoSource === _videoSettings.herelinkAirGroundUnitVideoSource
     property bool   _cameraSwitchInProgress: _videoStreamControl ? _videoStreamControl.settingInProgress : false
     property bool   _isGst:             QGroundControl.videoManager.isGStreamer
     property bool   _fullMode:          false

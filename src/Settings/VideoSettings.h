@@ -64,6 +64,8 @@ public:
     Q_PROPERTY(QString  udp265VideoSource       READ udp265VideoSource      CONSTANT)
     Q_PROPERTY(QString  tcpVideoSource          READ tcpVideoSource         CONSTANT)
     Q_PROPERTY(QString  mpegtsVideoSource       READ mpegtsVideoSource      CONSTANT)
+    Q_PROPERTY(QString  herelinkAirUnitVideoSource READ herelinkAirUnitVideoSource CONSTANT)
+    Q_PROPERTY(QString  herelinkAirGroundUnitVideoSource READ herelinkAirGroundUnitVideoSource CONSTANT)
     Q_PROPERTY(QString  disabledVideoSource     READ disabledVideoSource    CONSTANT)
 
     bool     streamConfigured       ();
@@ -73,6 +75,8 @@ public:
     QString  udp265VideoSource      () { return videoSourceUDPH265; }
     QString  tcpVideoSource         () { return videoSourceTCP; }
     QString  mpegtsVideoSource      () { return videoSourceMPEGTS; }
+    QString  herelinkAirUnitVideoSource () { return videoSourceHerelinkAirUnit; }
+    QString  herelinkAirGroundUnitVideoSource () { return videoSourceHerelinkAirGroundUnit; }
     QString  disabledVideoSource    () { return videoDisabled; }
 
     static const char* videoSourceNoVideo;
@@ -88,6 +92,7 @@ public:
     static const char* videoSourceYuneecMantisG;
     // Моя кнопка
     static const char* videoSourceHerelinkAirUnit;
+    static const char* videoSourceHerelinkAirGroundUnit;
     static const char* videoSourceHerelinkHotspot;
     static const char* videoSourceIPCamera;
     static const char* videoSourceHerelinkHotspotDynamic;
