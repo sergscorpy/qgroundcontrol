@@ -7,6 +7,7 @@ LinuxBuild {
 } else:WindowsBuild {
     DEFINES += HAVE_QT_WIN32 HAVE_QT_QPA_HEADER
     LIBS += opengl32.lib user32.lib
+    INCLUDEPATH += $$PWD/libs/qmlglsink/windows $$[QT_INSTALL_HEADERS]/QtANGLE
 } else:AndroidBuild {
     DEFINES += HAVE_QT_ANDROID
 }

@@ -60,15 +60,10 @@ WindowsBuild {
         QMAKE_POST_LINK += $$escape_expand(\\n) $$QMAKE_COPY \"$$COPY_FILE\" \"$$DESTDIR\"
     }
 
-    ReleaseBuild {
-        # Copy Visual Studio DLLs
-        # Note that this is only done for release because the debugging versions of these DLLs cannot be redistributed.
-        QMAKE_POST_LINK += $$escape_expand(\\n) $$QMAKE_COPY \"$$SOURCE_DIR\\libs\\Microsoft\\windows\\msvcp140.dll\"  \"$$DESTDIR\"
-        QMAKE_POST_LINK += $$escape_expand(\\n) $$QMAKE_COPY \"$$SOURCE_DIR\\libs\\Microsoft\\windows\\vcruntime140.dll\"  \"$$DESTDIR\"
-    }
-
     DEPLOY_TARGET = $$shell_quote($$shell_path($$DESTDIR\\$${TARGET}.exe))
-    QMAKE_POST_LINK += $$escape_expand(\\n) $$QT_BIN_DIR\\windeployqt --qmldir=$${SOURCE_DIR}\\src $${DEPLOY_TARGET}
+    # The bundled VC++ runtime predates the runtime required by current GStreamer.
+    # Use the installed Visual C++ Redistributable instead.
+    QMAKE_POST_LINK += $$escape_expand(\\n) $$QT_BIN_DIR\\windeployqt --no-compiler-runtime --qmldir=$${SOURCE_DIR}\\src $${DEPLOY_TARGET}
 }
 
 LinuxBuild {
