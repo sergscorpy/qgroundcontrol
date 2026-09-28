@@ -440,6 +440,13 @@ Rectangle {
 
                             Item { width: 1; height: 1}
                             FactCheckBox {
+                                text:       qsTr("Use Legacy RTSP URLs")
+                                fact:       _videoSettings.forceNonCompliantRtspUrl
+                                visible:    _isGst && fact.visible
+                            }
+
+                            Item { width: 1; height: 1}
+                            FactCheckBox {
                                 text:       qsTr("Auto-Delete Saved Recordings")
                                 fact:       _videoSettings.enableStorageLimit
                                 visible:    _showSaveVideoSettings && fact.visible

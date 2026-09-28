@@ -137,6 +137,13 @@
     "default":     true
 },
 {
+    "name":             "forceNonCompliantRtspUrl",
+    "shortDesc": "Use legacy RTSP control URLs",
+    "longDesc":  "Always use the legacy URL construction method for RTSP streams. This can help with RTSP servers that do not handle standard control URLs correctly.",
+    "type":             "bool",
+    "default":     false
+},
+{
     "name":         "usingHDMIstream",
     "shortDesc":    "Using HDMI stream",
     "longDesc":     "Can be used if the camera supports HDMI connection",

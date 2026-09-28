@@ -95,12 +95,12 @@ void GstVideoReceiver::_updateRestartTimerState()
 }
 
 void
-GstVideoReceiver::start(const QString& uri, unsigned timeout, int buffer)
+GstVideoReceiver::start(const QString& uri, unsigned timeout, int buffer, bool forceNonCompliantRtspUrl)
 {
     if (_needDispatch()) {
         QString cachedUri = uri;
-        _slotHandler.dispatch([this, cachedUri, timeout, buffer]() {
-            start(cachedUri, timeout, buffer);
+        _slotHandler.dispatch([this, cachedUri, timeout, buffer, forceNonCompliantRtspUrl]() {
+            start(cachedUri, timeout, buffer, forceNonCompliantRtspUrl);
         });
         return;
     }
@@ -121,9 +121,16 @@ GstVideoReceiver::start(const QString& uri, unsigned timeout, int buffer)
         return;
     }
 
+    if (_uri != uri || _forceNonCompliantRtspUrl != forceNonCompliantRtspUrl) {
+        _retryNonCompliantRtspUrl = false;
+    }
+
     _uri = uri;
     _timeout = timeout;
     _buffer = buffer;
+    _forceNonCompliantRtspUrl = forceNonCompliantRtspUrl;
+    _nonCompliantRtspUrlSupported = false;
+    _receivedSourceFrame = false;
 
     qCDebug(VideoReceiverLog) << "Starting" << _uri << ", buffer" << _buffer;
 
@@ -244,6 +251,7 @@ GstVideoReceiver::start(const QString& uri, unsigned timeout, int buffer)
 
     if (!running) {
         qCCritical(VideoReceiverLog) << "Failed";
+        _retryNonCompliantRtspUrlAfterFailure();
 
         // In newer versions, the pipeline will clean up all references that are added to it
         if (_pipeline != nullptr) {
@@ -309,7 +317,7 @@ void GstVideoReceiver::restartPipeline()
         _pipeline = nullptr;
     }
 
-    start(_uri, _timeout, _buffer);
+    start(_uri, _timeout, _buffer, _forceNonCompliantRtspUrl);
 }
 
 void
@@ -682,6 +690,7 @@ GstVideoReceiver::_watchdog(void)
 
         if (now - _lastSourceFrameTime > _timeout) {
             qCDebug(VideoReceiverLog) << "Stream timeout, no frames for " << now - _lastSourceFrameTime << "" << _uri;
+            _retryNonCompliantRtspUrlAfterFailure();
             _dispatchSignal([this](){
                 emit timeout();
             });
@@ -705,6 +714,17 @@ GstVideoReceiver::_watchdog(void)
 }
 
 void
+GstVideoReceiver::_retryNonCompliantRtspUrlAfterFailure()
+{
+    if (_uri.startsWith("rtsp://", Qt::CaseInsensitive) &&
+        !_forceNonCompliantRtspUrl && !_retryNonCompliantRtspUrl &&
+        _nonCompliantRtspUrlSupported && !_receivedSourceFrame.load()) {
+        _retryNonCompliantRtspUrl = true;
+        qCWarning(VideoReceiverLog) << "Retrying RTSP stream with legacy control URLs:" << _uri;
+    }
+}
+
+void
 GstVideoReceiver::_handleEOS(void)
 {
     if(_pipeline == nullptr) {
@@ -712,6 +732,7 @@ GstVideoReceiver::_handleEOS(void)
     }
 
     if (_endOfStream) {
+        _retryNonCompliantRtspUrlAfterFailure();
         stop();
     } else {
         if(_decoding && _removingDecoder) {
@@ -757,6 +778,14 @@ GstVideoReceiver::_makeSource(const QString& uri)
         } else if (isRtsp) {
             if ((source = gst_element_factory_make("rtspsrc", "source")) != nullptr) {
                 g_object_set(static_cast<gpointer>(source), "location", qPrintable(uri), "latency", 17, "udp-reconnect", 1, "timeout", _udpReconnect_us, NULL);
+                _nonCompliantRtspUrlSupported = g_object_class_find_property(
+                    G_OBJECT_GET_CLASS(source), "force-non-compliant-url") != nullptr;
+                if (_nonCompliantRtspUrlSupported &&
+                    (_forceNonCompliantRtspUrl || _retryNonCompliantRtspUrl)) {
+                    g_object_set(source, "force-non-compliant-url", TRUE, nullptr);
+                } else if (_forceNonCompliantRtspUrl && !_nonCompliantRtspUrlSupported) {
+                    qCWarning(VideoReceiverLog) << "This GStreamer rtspsrc does not support force-non-compliant-url";
+                }
             }
         } else if(isUdp264 || isUdp265 || isUdpMPEGTS || isTaisync) {
             if ((source = gst_element_factory_make("udpsrc", "source")) != nullptr) {
@@ -1163,6 +1192,7 @@ GstVideoReceiver::_addVideoSink(GstPad* pad)
 void
 GstVideoReceiver::_noteTeeFrame(void)
 {
+    _receivedSourceFrame = true;
     _lastSourceFrameTime = QDateTime::currentSecsSinceEpoch();
 }
 
@@ -1351,6 +1381,7 @@ GstVideoReceiver::_onBusMessage(GstBus* bus, GstMessage* msg, gpointer data)
 
             pThis->_slotHandler.dispatch([pThis](){
                 qCDebug(VideoReceiverLog) << "Stopping because of error";
+                pThis->_retryNonCompliantRtspUrlAfterFailure();
                 pThis->stop();
             });
         } while(0);

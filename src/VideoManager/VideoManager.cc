@@ -110,6 +110,7 @@ VideoManager::setToolbox(QGCToolbox *toolbox)
    connect(_videoSettings->tcpUrl(),        &Fact::rawValueChanged, this, &VideoManager::_tcpUrlChanged);
    connect(_videoSettings->aspectRatio(),   &Fact::rawValueChanged, this, &VideoManager::_aspectRatioChanged);
    connect(_videoSettings->lowLatencyMode(),&Fact::rawValueChanged, this, &VideoManager::_lowLatencyModeChanged);
+   connect(_videoSettings->forceNonCompliantRtspUrl(), &Fact::rawValueChanged, this, &VideoManager::_restartAllVideos);
    MultiVehicleManager *pVehicleMgr = qgcApp()->toolbox()->multiVehicleManager();
    connect(pVehicleMgr, &MultiVehicleManager::activeVehicleChanged, this, &VideoManager::_setActiveVehicle);
 
@@ -640,10 +641,13 @@ VideoManager::_updateSettings(unsigned id)
         return false;
 
     const bool lowLatencyStreaming  =_videoSettings->lowLatencyMode()->rawValue().toBool();
+    const bool forceNonCompliantRtspUrl = _videoSettings->forceNonCompliantRtspUrl()->rawValue().toBool();
 
-    bool settingsChanged = _lowLatencyStreaming[id] != lowLatencyStreaming;
+    bool settingsChanged = _lowLatencyStreaming[id] != lowLatencyStreaming ||
+                           _forceNonCompliantRtspUrl[id] != forceNonCompliantRtspUrl;
 
     _lowLatencyStreaming[id] = lowLatencyStreaming;
+    _forceNonCompliantRtspUrl[id] = forceNonCompliantRtspUrl;
 
     //-- Auto discovery
 
@@ -795,13 +799,16 @@ VideoManager::_restartVideo(unsigned id)
 
 #if defined(QGC_GST_STREAMING)
     bool oldLowLatencyStreaming = _lowLatencyStreaming[id];
+    bool oldForceNonCompliantRtspUrl = _forceNonCompliantRtspUrl[id];
     QString oldUri = _videoUri[id];
     _updateSettings(id);
     bool newLowLatencyStreaming = _lowLatencyStreaming[id];
+    bool newForceNonCompliantRtspUrl = _forceNonCompliantRtspUrl[id];
     QString newUri = _videoUri[id];
 
     // FIXME: AV: use _updateSettings() result to check if settings were changed
-    if (oldUri == newUri && oldLowLatencyStreaming == newLowLatencyStreaming && _videoStarted[id]) {
+    if (oldUri == newUri && oldLowLatencyStreaming == newLowLatencyStreaming &&
+        oldForceNonCompliantRtspUrl == newForceNonCompliantRtspUrl && _videoStarted[id]) {
         qCDebug(VideoManagerLog) << "No sense to restart video streaming, skipped"  << id;
         return;
     }
@@ -835,7 +842,8 @@ VideoManager::_startReceiver(unsigned id)
         qCDebug(VideoManagerLog) << "Unsupported receiver id" << id;
     } else if (_videoReceiver[id] != nullptr/* && _videoSink[id] != nullptr*/) {
         if (!_videoUri[id].isEmpty()) {
-            _videoReceiver[id]->start(_videoUri[id], timeout, _lowLatencyStreaming[id] ? -1 : 0);
+            _videoReceiver[id]->start(_videoUri[id], timeout, _lowLatencyStreaming[id] ? -1 : 0,
+                                      _forceNonCompliantRtspUrl[id]);
         }
     }
 #else

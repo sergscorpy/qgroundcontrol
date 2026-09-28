@@ -36,6 +36,7 @@ public:
     DEFINE_SETTINGFACT(streamEnabled)
     DEFINE_SETTINGFACT(disableWhenDisarmed)
     DEFINE_SETTINGFACT(lowLatencyMode)
+    DEFINE_SETTINGFACT(forceNonCompliantRtspUrl)
     DEFINE_SETTINGFACT(usingHDMIstream)
     DEFINE_SETTINGFACT(rtspSecondaryUrl)
     DEFINE_SETTINGFACT(forceVideoDecoder)

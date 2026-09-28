@@ -26,6 +26,7 @@
 #include "VideoReceiver.h"
 
 #include <gst/gst.h>
+#include <atomic>
 
 Q_DECLARE_LOGGING_CATEGORY(VideoReceiverLog)
 
@@ -91,7 +92,7 @@ public:
     void restartPipeline();
     void _updateRestartTimerState();
 public slots:
-    virtual void start(const QString& uri, unsigned timeout, int buffer = 0);
+    virtual void start(const QString& uri, unsigned timeout, int buffer = 0, bool forceNonCompliantRtspUrl = false);
     virtual void stop(void);
     virtual void startDecoding(void* sink);
     virtual void stopDecoding(void);
@@ -121,6 +122,7 @@ protected:
 
     bool _needDispatch(void);
     void _dispatchSignal(std::function<void()> emitter);
+    void _retryNonCompliantRtspUrlAfterFailure();
 
     static gboolean _onBusMessage(GstBus* bus, GstMessage* message, gpointer user_data);
     static void _onNewPad(GstElement* element, GstPad* pad, gpointer data);
@@ -160,6 +162,10 @@ protected:
     QString             _uri;
     unsigned            _timeout;
     int                 _buffer;
+    bool                _forceNonCompliantRtspUrl = false;
+    bool                _retryNonCompliantRtspUrl = false;
+    bool                _nonCompliantRtspUrlSupported = false;
+    std::atomic_bool    _receivedSourceFrame{false};
 
     Worker              _slotHandler;
     uint32_t            _signalDepth;
