@@ -13,7 +13,7 @@ TemplateManager::TemplateManager(QGCApplication* app, QGCToolbox* toolbox)
     QString downloadPath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     QDir baseDir(downloadPath);
     baseDir.cdUp();
-    QString configDirPath = baseDir.filePath("49KSConfigs");
+    QString configDirPath = baseDir.filePath("QGSConfig");
     QDir().mkpath(configDirPath);
     _templatePath = configDirPath + "/" + _templateName;
 
