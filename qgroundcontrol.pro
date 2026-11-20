@@ -50,7 +50,7 @@ LinuxBuild {
 }
 
 WindowsBuild {
-    RC_ICONS = resources/icons/KSLogoFull.ico
+    RC_ICONS = resources/icons/qgroundcontrol.ico
     CONFIG += resources_big
 }
 
