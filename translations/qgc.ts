@@ -5360,7 +5360,7 @@ Click Ok to start the auto-tuning process.
     </message>
     <message>
         <location filename="../src/AutoPilotPlugins/Common/ESP8266Component.qml" line="452"/>
-        <source>This will restart the WiFi Bridge so the settings you&apos;ve changed can take effect. Note that you may have to change your computer WiFi settings and QGroundControl link settings to match these changes. Are you sure you want to restart it?</source>
+        <source>This will restart the WiFi Bridge so the settings you&apos;ve changed can take effect. Note that you may have to change your computer WiFi settings and %1 link settings to match these changes. Are you sure you want to restart it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11151,7 +11151,7 @@ Is this really what you want?</source>
     <message>
         <location filename="../src/AutoPilotPlugins/PX4/PX4AdvancedFlightModes.qml" line="76"/>
         <location filename="../src/AutoPilotPlugins/PX4/PX4AdvancedFlightModes.qml" line="76"/>
-        <source>The aircraft obeys the programmed mission sent by QGroundControl. </source>
+        <source>The aircraft obeys the programmed mission sent by %1. </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11378,7 +11378,7 @@ Is this really what you want?</source>
     </message>
     <message>
         <location filename="../src/FirmwarePlugin/PX4/PX4FirmwarePlugin.cc" line="609"/>
-        <source>QGroundControl supports PX4 Pro firmware Version %1.%2.%3 and above. You are using a version prior to that which will lead to unpredictable results. Please upgrade your firmware.</source>
+        <source>%1 supports PX4 Pro firmware Version %2.%3.%4 and above. You are using a version prior to that which will lead to unpredictable results. Please upgrade your firmware.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -18013,6 +18013,15 @@ Confirm change?</source>
     <message>
         <location filename="../src/Settings/VideoSettings.cc" line="31"/>
         <source>Yuneec Mantis G</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MAVLinkLogManager</name>
+    <message>
+        <location filename="../src/Vehicle/MAVLinkLogManager.cc" line="314"/>
+        <location filename="../src/Vehicle/MAVLinkLogManager.cc" line="670"/>
+        <source>%1 Session</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

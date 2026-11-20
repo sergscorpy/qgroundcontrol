@@ -26,7 +26,6 @@ QGC_LOGGING_CATEGORY(MAVLinkLogManagerLog, "MAVLinkLogManagerLog")
 static const char* kMAVLinkLogGroup         = "MAVLinkLogGroup";
 static const char* kEmailAddressKey         = "Email";
 static const char* kDescriptionsKey         = "Description";
-static const char* kDefaultDescr            = "QGroundControl Session";
 static const char* kPx4URLKey               = "LogURL";
 static const char* kDefaultPx4URL           = "https://logs.px4.io/upload";
 static const char* kEnableAutoUploadKey     = "EnableAutoUpload";
@@ -315,7 +314,7 @@ MAVLinkLogManager::MAVLinkLogManager(QGCApplication* app, QGCToolbox* toolbox)
     QSettings settings;
     settings.beginGroup(kMAVLinkLogGroup);
     setEmailAddress(settings.value(kEmailAddressKey, QString()).toString());
-    setDescription(settings.value(kDescriptionsKey, QString(kDefaultDescr)).toString());
+    setDescription(settings.value(kDescriptionsKey, tr("%1 Session").arg(app->applicationName())).toString());
     setUploadURL(settings.value(kPx4URLKey, QString(kDefaultPx4URL)).toString());
     setVideoURL(settings.value(kVideoURLKey, QString()).toString());
     setEnableAutoUpload(settings.value(kEnableAutoUploadKey, true).toBool());
@@ -671,7 +670,7 @@ MAVLinkLogManager::_sendLog(const QString& logFile)
     QString defaultDescription = _description;
     if(_description.isEmpty()) {
         qCWarning(MAVLinkLogManagerLog) << "Log description missing. Using defaults.";
-        defaultDescription = kDefaultDescr;
+        defaultDescription = tr("%1 Session").arg(_app->applicationName());
     }
     if(_emailAddress.isEmpty()) {
         qCWarning(MAVLinkLogManagerLog) << "User email missing.";
