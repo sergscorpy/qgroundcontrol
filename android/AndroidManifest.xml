@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<manifest package="org.ks49.groundstation" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="-- %%INSERT_VERSION_NAME%% --" android:versionCode="-- %%INSERT_VERSION_CODE%% --" android:installLocation="auto">
+<manifest package="org.mavlink.qgroundstation" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="-- %%INSERT_VERSION_NAME%% --" android:versionCode="-- %%INSERT_VERSION_CODE%% --" android:installLocation="auto">
     <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
          Remove the comment if you do not require these default permissions. -->
     <!-- %%INSERT_PERMISSIONS -->
@@ -77,20 +77,7 @@
             <meta-data android:name="android.app.extract_android_style" android:value="default"/>
             <!-- extract android style -->
             <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/splashscreen"/>
-            <meta-data android:name="android.app.splash_screen_drawable_portrait" android:resource="@drawable/splashscreen_port"/>
-            <meta-data android:name="android.app.splash_screen_drawable_landscape" android:resource="@drawable/splashscreen_land"/>
-            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/splashscreen"/>
-            <meta-data android:name="android.app.splash_screen_drawable_portrait" android:resource="@drawable/splashscreen_port"/>
-            <meta-data android:name="android.app.splash_screen_drawable_landscape" android:resource="@drawable/splashscreen_land"/>
-            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/splashscreen"/>
-            <meta-data android:name="android.app.splash_screen_drawable_portrait" android:resource="@drawable/splashscreen_port"/>
-            <meta-data android:name="android.app.splash_screen_drawable_landscape" android:resource="@drawable/splashscreen_land"/>
-            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/splashscreen"/>
-            <meta-data android:name="android.app.splash_screen_drawable_portrait" android:resource="@drawable/splashscreen_port"/>
-            <meta-data android:name="android.app.splash_screen_drawable_landscape" android:resource="@drawable/splashscreen_land"/>
-            <meta-data android:name="android.app.splash_screen_drawable" android:resource="@drawable/splashscreen"/>
-            <meta-data android:name="android.app.splash_screen_drawable_portrait" android:resource="@drawable/splashscreen_port"/>
-            <meta-data android:name="android.app.splash_screen_drawable_landscape" android:resource="@drawable/splashscreen_land"/>
+            <meta-data android:name="android.app.splash_screen_sticky" android:value="false"/>
         </activity>
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
     </application>
